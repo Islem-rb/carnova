@@ -1,0 +1,288 @@
+/* --- Navbar Violet --- */
+.navbar-violet {
+  background: linear-gradient(90deg, #000000, #9333ea);
+  color: white;
+  font-family: "Open Sans", sans-serif;
+}
+
+/* Liens du menu */
+.navbar-violet .nav-link {
+  color: #e9d5ff;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
+    white-space: nowrap; /* 🔹 Empêche le retour à la ligne */
+
+}
+.navbar-violet .nav-link:hover {
+  color: white;
+}
+
+/* Boutons Login & Register */
+.btn-login {
+  padding: 0.5rem 1rem;
+  border: 1px solid #e9d5ff;
+  color: #e9d5ff;
+  border-radius: 0.375rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  background: transparent;
+  transition: all 0.3s ease;
+}
+.btn-login:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.btn-register {
+  margin-left: 0.75rem;
+  padding: 0.5rem 1rem;
+  background: white;
+  color: #6d28d9;
+  border-radius: 0.375rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+.btn-register:hover {
+  background: #e9d5ff;
+  color: #581c87;
+}
+
+/* Bouton Logout */
+.btn-logout {
+  margin-left: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #320636;
+  color: white;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+.btn-logout:hover {
+  background: #463c3c;
+}
+
+/* Mobile menu button */
+.btn-mobile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  color: #e9d5ff;
+  background: transparent;
+  border-radius: 0.375rem;
+  border: none;
+  cursor: pointer;
+}
+.btn-mobile:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+
+
+/* Ajoute de l'espace entre logo et menu */
+.navbar-violet nav {
+  margin-left: 2rem; /* augmente si besoin (2rem ≈ 32px) */
+}
+
+/* Avatar utilisateur */
+.user-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #9333ea, #6d28d9);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(147, 51, 234, 0.5);
+  border: 2px solid #fff;
+  transition: transform 0.2s ease;
+}
+.user-avatar:hover {
+  transform: scale(1.05);
+}
+
+/* Infos utilisateur */
+.user-info span.name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #fff;
+}
+.user-info span.email {
+  font-size: 0.8rem;
+  color: #d8b4fe;
+  font-style: italic;
+}
+
+/* Bouton logout modernisé */
+.btn-logout {
+  margin-left: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-radius: 9999px; /* pill shape */
+  font-size: 0.85rem;
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(6px);
+}
+.btn-logout i {
+  color: #f87171; /* icône rouge clair */
+}
+.btn-logout:hover {
+  background: linear-gradient(90deg, #9333ea, #6d28d9);
+  border-color: transparent;
+  box-shadow: 0 4px 14px rgba(109, 40, 217, 0.6);
+}
+
+
+
+
+
+
+
+
+
+
+/* ===== User button (avatar compact) ===== */
+.uicon-btn{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:42px; height:42px; border-radius:9999px; border:1px solid rgba(255,255,255,.25);
+  background:rgba(255,255,255,.08);
+  box-shadow:0 4px 14px rgba(0,0,0,.25), inset 0 0 0 2px rgba(255,255,255,.04);
+  backdrop-filter: blur(6px);
+  cursor:pointer; transition:transform .15s ease, background .2s ease, border-color .2s ease;
+}
+.uicon-btn:hover{ background:rgba(255,255,255,.12); transform: translateY(-1px); }
+.uicon-inner{
+  width:34px; height:34px; border-radius:9999px;
+  display:flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:1rem; color:#fff;
+  background: radial-gradient(120% 120% at 0% 0%, #9a5bff 0%, #6d28d9 60%, #4c1d95 100%);
+  box-shadow: inset 0 1px 4px rgba(255,255,255,.25), 0 6px 16px rgba(109,40,217,.45);
+}
+
+/* ===== Dropdown glass card ===== */
+.u-dropdown{
+  position:absolute; right:.5rem; top:3.5rem; min-width:280px;
+  background: rgba(255,255,255,0.9);
+  border:1px solid rgba(99,102,241,.15);
+  border-radius:14px; overflow:hidden; z-index:2000;
+  box-shadow: 0 18px 38px rgba(0,0,0,.25);
+  animation: uPop .16s ease-out;
+}
+@keyframes uPop { from{ transform:translateY(-6px); opacity:0 } to{ transform:translateY(0); opacity:1 } }
+
+/* Header gradient avec avatar large */
+.u-header{
+  background: linear-gradient(120deg, #7c3aed, #6d28d9 55%, #4c1d95 100%);
+  color:#fff; padding:14px; display:flex; gap:12px; align-items:center;
+}
+.u-avatar-lg{
+  width:40px; height:40px; border-radius:9999px; display:flex; align-items:center; justify-content:center;
+  font-weight:800; background: rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.35);
+  box-shadow: inset 0 1px 2px rgba(255,255,255,.3);
+}
+.u-id .u-name{ font-weight:700; line-height:1.1 }
+.u-id .u-mail{ font-size:.85rem; opacity:.95 }
+
+/* Actions grid */
+.u-actions{
+  display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px; padding:10px;
+  background: rgba(255,255,255,.65);
+}
+.u-action{
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  text-decoration:none; padding:10px 8px; border-radius:10px;
+  color:#1f2937; font-weight:600; font-size:.85rem;
+  border:1px solid rgba(0,0,0,.05); background: rgba(255,255,255,.8);
+  transition: transform .12s ease, box-shadow .12s ease, background .15s ease;
+}
+.u-action i{ font-size:1rem; opacity:.9 }
+.u-action:hover{
+  transform: translateY(-2px);
+  box-shadow:0 8px 18px rgba(109,40,217,.18);
+  background:#fff;
+}
+
+/* Séparateur */
+.u-sep{ height:1px; background:linear-gradient(90deg, transparent, rgba(0,0,0,.08), transparent); }
+
+/* Logout primary */
+.u-logout{
+  width: calc(100% - 20px); margin:10px; padding:10px 12px;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  border-radius:10px; border:0; cursor:pointer;
+  background: linear-gradient(90deg, #ef4444, #dc2626);
+  color:#fff; font-weight:700; letter-spacing:.1px;
+  box-shadow: 0 10px 22px rgba(220,38,38,.35);
+  transition: transform .12s ease, box-shadow .12s ease, filter .15s ease;
+}
+.u-logout:hover{ transform: translateY(-1px); filter:saturate(1.05); box-shadow:0 14px 26px rgba(220,38,38,.45); }
+
+
+
+
+
+/* Le conteneur du bouton dans la barre */
+.nav-item { list-style: none; }
+.nav-tab { position: relative; }
+
+/* Le seul bouton visible */
+.tab-link{
+  background: transparent; color:#fff; font-weight:600;
+  padding:.5rem .75rem; border:0; cursor:pointer; border-radius:.5rem;
+}
+
+/* Sous-menu : ABSOLU + caché par défaut */
+.guide-menu{
+  position:absolute; top:100%; left:0;
+  min-width:220px; margin-top:6px; padding:.25rem 0;
+  background:#fff; border:1px solid #e5e7eb; border-radius:6px;
+  box-shadow:0 12px 28px rgba(0,0,0,.18);
+  display:none; z-index:1000;
+}
+
+/* Afficher le sous-menu au survol/focus du parent */
+.nav-tab:hover .guide-menu,
+.nav-tab:focus-within .guide-menu{ display:block; }
+
+/* Lignes internes du menu */
+.menu-link{
+  --dot:#d1d5db;
+  position:relative; display:block;
+  padding:.5rem .75rem .5rem 2rem;
+  color:#374151; text-decoration:none; font-weight:500;
+  border-top:1px solid #f3f4f6; transition:background .15s,color .15s;
+}
+.menu-link:first-child{ border-top:0; }
+.menu-link::before{
+  content:""; position:absolute; left:.7rem; top:50%; transform:translateY(-50%);
+  width:10px; height:10px; border-radius:2px; background:var(--dot);
+}
+.menu-link:hover{ background:#f7f7f7; color:#111; }
+
+/* Couleur du petit carré par item (facultatif) */
+.c-fcr{ --dot:#9ca3af; }
+.c-douanes{ --dot:#9ca3af; }
+.c-visite{ --dot:#9ca3af; }
+.c-vignette{ --dot:#9ca3af; }
+
+/* (Optionnel) s'assure que le menu n'est pas coupé par un overflow */
+.navbar-violet, .navbar-violet nav { overflow: visible; }

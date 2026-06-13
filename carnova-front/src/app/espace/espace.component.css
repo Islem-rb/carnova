@@ -1,0 +1,110 @@
+/* Ajustez ces variables pour régler le cadrage sans toucher au HTML */
+.hero-section {
+  --video-shift-x: -6vw;   /* décale vers la gauche (ex: -6vw, -10vw, etc.) */
+  --video-zoom: 1.12;      /* zoom léger pour éviter les bandes noires */
+}
+
+.hero-section {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #000; /* couleur de secours */
+}
+
+.hero-video {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;           /* couvre toute la zone */
+  transform-origin: left center;
+  transform: translateX(var(--video-shift-x)) scale(var(--video-zoom));
+  z-index: 0;
+  background: #000;
+}
+
+/* Texte plus lisible sans overlay */
+.text-glow { text-shadow: 0 2px 8px rgba(0,0,0,.85); }
+
+/* Cartes / UI (inchangé) */
+.card {
+  position: relative;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.15); /* Transparence */
+  backdrop-filter: blur(12px);           /* Effet flou derrière */
+  -webkit-backdrop-filter: blur(12px);   /* Compatibilité Safari */
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.card:hover {
+  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.25); /* un peu plus opaque au hover */
+}
+.card {
+  position: relative;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.15); /* Transparence */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, background 0.3s ease;
+  color: #fff; /* ✅ texte en blanc */
+}
+
+.card h3,
+.card p {
+  color: #fff; /* ✅ titres et paragraphes en blanc */
+}
+
+.card:hover {
+  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.card:hover { transform: scale(1.05); }
+
+.icon {
+  width: 4rem; height: 4rem; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1.5rem;
+}
+.icon.purple { background: linear-gradient(90deg,#7c3aed,#9333ea); }
+.icon.orange { background: linear-gradient(90deg,#f59e0b,#ea580c); }
+.icon.green  { background: linear-gradient(90deg,#10b981,#059669); }
+
+.title { font-size: 1.5rem; font-weight: 700; color:#111827; margin-bottom: 1rem; }
+.desc  { color:#4b5563; margin-bottom: 1.5rem; }
+
+.btn {
+  width: 100%; font-weight: 600; padding: .75rem 1.5rem; border-radius: .5rem;
+  color:#fff; display:inline-flex; align-items:center; justify-content:center; transition: all .2s;
+}
+.btn.purple { background: linear-gradient(90deg,#4f46e5,#7c3aed); }
+.btn.orange { background: linear-gradient(90deg,#f59e0b,#ea580c); }
+.btn.green  { background: linear-gradient(90deg,#10b981,#059669); }
+
+.stat {
+  background: rgba(255,255,255,.9); border-radius:.75rem; padding:1.5rem; text-align:center;
+}
+.stat i{ font-size:1.75rem; margin-bottom:.5rem; }
+.stat .label{ font-size:1.25rem; font-weight:700; color:#111827; }
+.stat .value{ color:#4b5563; }
+
+.welcome-box {
+  background: rgba(255,255,255,.9); border-radius:1rem; padding:1.5rem; max-width:32rem; margin:0 auto;
+}
+
+/* Optionnel : sur écrans très larges, zoom un peu plus pour garantir aucune bande */
+@media (min-width: 1600px) {
+  .hero-section { --video-zoom: 1.16; }
+}
+
+/* Optionnel : sur mobile, zoom un peu moins si besoin */
+@media (max-width: 640px) {
+  .hero-section { --video-zoom: 1.08; --video-shift-x: -4vw; }
+}

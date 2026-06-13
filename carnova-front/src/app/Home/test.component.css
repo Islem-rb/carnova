@@ -1,0 +1,32 @@
+.car-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+}
+
+.car-card ul li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 0.9rem;
+  color: #374151;
+  border-bottom: 1px dashed #e5e7eb;
+}
+
+.car-card ul li:last-child {
+  border-bottom: none;
+}
+
+.car-card ul li i {
+  color: #2563eb;
+  margin-right: 8px;
+  font-size: 0.95rem;
+}
+
+.price {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #10b981;
+  margin-top: 6px;
+}

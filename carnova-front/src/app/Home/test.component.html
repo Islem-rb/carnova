@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CarNova - Trouvez votre voiture</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+
+  <!-- Hero Section -->
+  <div class="relative text-white flex items-center justify-center" style="min-height: 600px;">
+    <video
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+      class="absolute top-0 left-0 w-full h-full object-cover z-0"
+      poster="/assets/fallback-image.jpg"
+    >
+      <source src="/assets/videoplayback.mp4" type="video/mp4" />
+      Votre navigateur ne supporte pas la balise vidéo.
+    </video>
+    <div class="relative z-10 w-full bg-black bg-opacity-50">
+      <div class="text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-6">
+          Trouvez la voiture de vos rêves aujourd'hui
+        </h1>
+        <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
+          Parcourez des milliers de voitures neuves et d'occasion de concessionnaires
+          et vendeurs privés
+        </p>
+
+        <!-- Formulaire de recherche -->
+        <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-xl p-6">
+          <form class="grid grid-cols-1 md:grid-cols-4 gap-4" (ngSubmit)="onSearch($event)">
+            <div>
+              <label for="brand" class="sr-only">Marque</label>
+              <select
+                id="brand"
+                [(ngModel)]="selectedBrand"
+                name="brand"
+                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-700"
+              >
+                <option value="">Toutes les marques</option>
+                <option value="Audi">Audi</option>
+                <option value="BMW">BMW</option>
+                <option value="Mercedes">Mercedes</option>
+                <option value="Tesla">Tesla</option>
+                <option value="Toyota">Toyota</option>
+              </select>
+            </div>
+            <div>
+              <label for="model" class="sr-only">Modèle</label>
+              <input
+                type="text"
+                id="model"
+                [(ngModel)]="searchModel"
+                name="model"
+                placeholder="Modèle"
+                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-700"
+              />
+            </div>
+            <div>
+              <label for="price" class="sr-only">Tranche de prix</label>
+              <select
+                id="price"
+                [(ngModel)]="selectedPrice"
+                name="price"
+                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-700"
+              >
+                <option value="">Tranche de prix</option>
+                <option value="Under $10,000">Moins de 10 000 $</option>
+                <option value="$10,000 - $20,000">10 000 $ - 20 000 $</option>
+                <option value="$20,000 - $30,000">20 000 $ - 30 000 $</option>
+                <option value="Over $30,000">Plus de 30 000 $</option>
+              </select>
+            </div>
+            <div class="flex gap-2">
+              <button
+                type="submit"
+                class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded-md shadow-sm transition duration-150 ease-in-out"
+              >
+                <i class="fas fa-search mr-2"></i> Rechercher
+              </button>
+              <button
+                type="button"
+                (click)="resetFilters()"
+                class="px-4 bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 rounded-md shadow-sm transition duration-150 ease-in-out"
+              >
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Boutons CTA -->
+        <div class="mt-10 flex flex-col sm:flex-row justify-center gap-4">
+          <a
+            href="#"
+            class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-700 hover:bg-blue-800"
+          >
+            <i class="fas fa-search mr-2"></i> Parcourir les véhicules
+          </a>
+          <a
+            href="#"
+            class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-blue-700 bg-white hover:bg-gray-50"
+          >
+            <i class="fas fa-car mr-2"></i> Publier votre voiture
+          </a>
+          <a
+            href="#"
+            class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-blue-700 bg-yellow-400 hover:bg-yellow-500"
+          >
+            <i class="fas fa-store mr-2"></i> Créer un showroom
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Featured Vehicles -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl font-bold text-gray-900">Annonces Disponibles</h2>
+      <p class="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
+        Découvrez toutes les annonces de nos utilisateurs
+      </p>
+    </div>
+
+    <!-- Loading spinner -->
+    <div *ngIf="loading" class="text-center py-12">
+      <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-700"></div>
+      <p class="mt-4 text-gray-600">Chargement des annonces...</p>
+    </div>
+
+    <!-- Error message -->
+    <div *ngIf="error" class="text-center py-12">
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+        {{ error }}
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div *ngIf="!loading && !error && filteredAnnonces.length === 0" class="text-center py-12">
+      <div class="text-gray-500">
+        <i class="fas fa-search text-6xl mb-4"></i>
+        <h3 class="text-xl font-semibold mb-2">Aucune annonce trouvée</h3>
+        <p *ngIf="selectedBrand || searchModel || selectedPrice">
+          Aucune annonce ne correspond à vos critères de recherche.
+          <button (click)="resetFilters()" class="text-blue-600 hover:text-blue-800 underline ml-1">
+            Réinitialiser les filtres
+          </button>
+        </p>
+        <p *ngIf="!selectedBrand && !searchModel && !selectedPrice">
+          Aucune annonce n'a été publiée pour le moment.
+        </p>
+      </div>
+    </div>
+
+    <!-- Annonces Grid -->
+    <div *ngIf="!loading && !error && filteredAnnonces.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div
+        *ngFor="let annonce of filteredAnnonces"
+        class="car-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300 ease-in-out hover:shadow-lg"
+      >
+        <div class="relative pb-2/3 h-48">
+          <img
+            [src]="getImageUrl(annonce.imageUrl)"
+            [alt]="annonce.titre"
+            class="absolute h-full w-full object-cover"
+            (error)="onImageError($event)"
+          />
+          <!-- Badges overlay -->
+          <div class="absolute top-2 left-2 flex flex-col gap-1">
+            <span
+              [class]="getTypeAnnonceClass(annonce.typeAnnonce) + ' text-white text-xs font-semibold px-2 py-1 rounded-full'"
+            >
+              {{ annonce.typeAnnonce }}
+            </span>
+            <span
+              [class]="getStatutClass(annonce.statut) + ' text-white text-xs font-semibold px-2 py-1 rounded-full'"
+            >
+              {{ annonce.statut }}
+            </span>
+          </div>
+
+          <!-- Bouton Assistant -->
+          <div class="absolute top-2 right-2">
+            <button
+              (click)="openAssistantFor(annonce, $event)"
+              class="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow"
+              title="Assistant auto (conseils, prix, démarches)"
+            >
+              <i class="fas fa-robot"></i> Assistant
+            </button>
+          </div>
+        </div>
+
+        <div class="p-6">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-bold text-gray-900">
+              {{ annonce.titre }}
+            </h3>
+          </div>
+          <div class="mt-2 text-sm text-gray-600">
+            {{ annonce.description.length > 100 ? (annonce.description | slice:0:100) + '...' : annonce.description }}
+          </div>
+          <div class="mt-4 flex justify-between items-center">
+            <div class="flex items-center">
+              <i class="fas fa-user text-gray-400 mr-1"></i>
+              <span class="text-sm text-gray-500">{{ annonce.user?.email || 'Utilisateur' }}</span>
+            </div>
+            <div class="flex items-center">
+              <i class="fas fa-calendar text-gray-400 mr-1"></i>
+              <span class="text-sm text-gray-500">{{ annonce.createdAt | date:'dd/MM/yyyy' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Filters -->
+  <div class="bg-gray-100 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-gray-900">Parcourir par Catégorie</h2>
+        <p class="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
+          Trouvez exactement ce que vous cherchez
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+        <!-- Category 1 -->
+        <a
+          href="#"
+          class="brand-filter bg-white rounded-lg shadow-sm p-4 text-center hover:shadow-md transition duration-300 ease-in-out"
+        >
+          <div class="mx-auto h-16 w-16 flex items-center justify-center">
+            <i class="fas fa-car text-blue-700 text-3xl"></i>
+          </div>
+          <h3 class="mt-4 font-medium text-gray-900">Berline</h3>
+          <p class="mt-1 text-sm text-gray-500">1,240 véhicules</p>
+        </a>
+
+        <!-- Category 2 -->
+        <a
+          href="#"
+          class="brand-filter bg-white rounded-lg shadow-sm p-4 text-center hover:shadow-md transition duration-300 ease-in-out"
+        >
+          <div class="mx-auto h-16 w-16 flex items-center justify-center">
+            <i class="fas fa-truck-pickup text-blue-700 text-3xl"></i>
+          </div>
+          <h3 class="mt-4 font-medium text-gray-900">Pick-up</h3>
+          <p class="mt-1 text-sm text-gray-500">890 véhicules</p>
+        </a>
+
+        <!-- Category 3 -->
+        <a
+          href="#"
+          class="brand-filter bg-white rounded-lg shadow-sm p-4 text-center hover:shadow-md transition duration-300 ease-in-out"
+        >
+          <div class="mx-auto h-16 w-16 flex items-center justify-center">
+            <i class="fas fa-caravan text-blue-700 text-3xl"></i>
+          </div>
+          <h3 class="mt-4 font-medium text-gray-900">SUV</h3>
+          <p class="mt-1 text-sm text-gray-500">1,750 véhicules</p>
+        </a>
+
+        <!-- Category 4 -->
+        <a
+          href="#"
+          class="brand-filter bg-white rounded-lg shadow-sm p-4 text-center hover:shadow-md transition duration-300 ease-in-out"
+        >
+          <div class="mx-auto h-16 w-16 flex items-center justify-center">
+            <i class="fas fa-bolt text-blue-700 text-3xl"></i>
+          </div>
+          <h3 class="mt-4 font-medium text-gray-900">Électrique</h3>
+          <p class="mt-1 text-sm text-gray-500">420 véhicules</p>
+        </a>
+
+        <!-- Category 5 -->
+        <a
+          href="#"
+          class="brand-filter bg-white rounded-lg shadow-sm p-4 text-center hover:shadow-md transition duration-300 ease-in-out"
+        >
+          <div class="mx-auto h-16 w-16 flex items-center justify-center">
+            <i class="fas fa-road text-blue-700 text-3xl"></i>
+          </div>
+          <h3 class="mt-4 font-medium text-gray-900">Luxe</h3>
+          <p class="mt-1 text-sm text-gray-500">650 véhicules</p>
+        </a>
+
+        <!-- Category 6 -->
+        <a
+          href="#"
+          class="brand-filter bg-white rounded-lg shadow-sm p-4 text-center hover:shadow-md transition duration-300 ease-in-out"
+        >
+          <div class="mx-auto h-16 w-16 flex items-center justify-center">
+            <i class="fas fa-shuttle-van text-blue-700 text-3xl"></i>
+          </div>
+          <h3 class="mt-4 font-medium text-gray-900">Utilitaire</h3>
+          <p class="mt-1 text-sm text-gray-500">320 véhicules</p>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Popular Brands -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl font-bold text-gray-900">Marques Populaires</h2>
+      <p class="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
+        Parcourez les véhicules de vos marques préférées
+      </p>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+      <!-- Brand 1 -->
+      <a
+        href="#"
+        class="brand-filter bg-white rounded-lg shadow-sm p-4 text-center hover:shadow-md transition duration-300 ease-in-out"
+      >
+        <div class="mx-auto h-16 w-16 flex items-center justify-center">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BMW.svg/1200px-BMW.svg.png"
+            alt="BMW"
+            class="h-full object-contain transition duration-300 ease-in-out"
+          />
+        </div>
+        <h3 class="mt-4 font-medium text-gray-900">BMW</h3>
+      </a>
+
+      <!-- Brand 2 -->
+      <a
+        href="#"
+        class="brand-filter bg-white rounded-lg shadow-sm p-4 text-center hover:shadow-md transition duration-300 ease-in-out"
+      >
+        <div class="mx-auto h-16 w-16 flex items-center justify-center">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Mercedes-Logo.svg/2048px-Mercedes-Logo.svg.png"
+            alt="Mercedes"
+            class="h-full object-contain transition duration-300 ease-in-out"
+          />
+        </div>
+        <h3 class="mt-4 font-medium text-gray-900">Mercedes</h3>
+      </a>
+
+      <!-- Brand 3 -->
+      <a
+        href="#"
+        class="brand-filter bg-white rounded-lg shadow-sm p-4 text-center hover:shadow-md transition duration-300 ease-in-out"
+      >
+        <div class="mx-auto h-16 w-16 flex items-center justify-center">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BMW.svg/1200px-BMW.svg.png"
+            alt="Audi"
+            class="h-full object-contain transition duration-300 ease-in-out"
+          />
+        </div>
+        <h3 class="mt-4 font-medium text-gray-900">Audi</h3>
+      </a>
+
+      <!-- Brand 4 -->
+      <a
+        href="#"
+        class="brand-filter bg-white rounded-lg shadow-sm p-4 text-center hover:shadow-md transition duration-300 ease-in-out"
+      >
+        <div class="mx-auto h-16 w-16 flex items-center justify-center">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Mercedes-Logo.svg/2048px-Mercedes-Logo.svg.png"
+            alt="Tesla"
+            class="h-full object-contain transition duration-300 ease-in-out"
+          />
+        </div>
+        <h3 class="mt-4 font-medium text-gray-900">Tesla</h3>
+      </a>
+
+      <!-- Brand 5 -->
+      <a
+        href="#"
+        class="brand-filter bg-white rounded-lg shadow-sm p-4 text-center hover:shadow-md transition duration-300 ease-in-out"
+      >
+        <div class="mx-auto h-16 w-16 flex items-center justify-center">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BMW.svg/1200px-BMW.svg.png"
+            alt="Toyota"
+            class="h-full object-contain transition duration-300 ease-in-out"
+          />
+        </div>
+        <h3 class="mt-4 font-medium text-gray-900">Toyota</h3>
+      </a>
+
+      <!-- Brand 6 -->
+      <a
+        href="#"
+        class="brand-filter bg-white rounded-lg shadow-sm p-4 text-center hover:shadow-md transition duration-300 ease-in-out"
+      >
+        <div class="mx-auto h-16 w-16 flex items-center justify-center">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Mercedes-Logo.svg/2048px-Mercedes-Logo.svg.png"
+            alt="Honda"
+            class="h-full object-contain transition duration-300 ease-in-out"
+          />
+        </div>
+        <h3 class="mt-4 font-medium text-gray-900">Honda</h3>
+      </a>
+    </div>
+  </div>
+
+  <!-- Testimonials -->
+  <div class="bg-blue-700 text-white py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold">Pourquoi choisir CarNova ?</h2>
+        <p class="mt-4 max-w-2xl text-xl opacity-90 mx-auto">
+          Faites confiance à des milliers de clients satisfaits
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Testimonial 1 -->
+        <div class="testimonial-card rounded-lg p-6 shadow-lg">
+          <div class="flex items-center mb-4">
+            <div class="flex-shrink-0">
+              <i class="fas fa-check-circle text-yellow-400 text-3xl"></i>
+            </div>
+            <div class="ml-4">
+              <h3 class="text-lg font-bold text-gray-900">
+                Annonces vérifiées
+              </h3>
+            </div>
+          </div>
+          <p class="text-gray-600">
+            Chaque véhicule passe par notre processus d'inspection en 200 points pour
+            garantir qualité et fiabilité.
+          </p>
+        </div>
+
+        <!-- Testimonial 2 -->
+        <div class="testimonial-card rounded-lg p-6 shadow-lg">
+          <div class="flex items-center mb-4">
+            <div class="flex-shrink-0">
+              <i class="fas fa-shield-alt text-yellow-400 text-3xl"></i>
+            </div>
+            <div class="ml-4">
+              <h3 class="text-lg font-bold text-gray-900">
+                Transactions sécurisées
+              </h3>
+            </div>
+          </div>
+          <p class="text-gray-600">
+            Notre système de paiement sécurisé protège à la fois acheteurs et vendeurs
+            tout au long de la transaction.
+          </p>
+        </div>
+
+        <!-- Testimonial 3 -->
+        <div class="testimonial-card rounded-lg p-6 shadow-lg">
+          <div class="flex items-center mb-4">
+            <div class="flex-shrink-0">
+              <i class="fas fa-headset text-yellow-400 text-3xl"></i>
+            </div>
+            <div class="ml-4">
+              <h3 class="text-lg font-bold text-gray-900">Support 24/7</h3>
+            </div>
+          </div>
+          <p class="text-gray-600">
+            Notre service client est disponible 24h/24 et 7j/7 pour répondre
+            à toutes vos questions.
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+        <div>
+          <div class="text-4xl font-bold">10,000+</div>
+          <div class="text-lg opacity-90 mt-2">Véhicules listés</div>
+        </div>
+        <div>
+          <div class="text-4xl font-bold">500+</div>
+          <div class="text-lg opacity-90 mt-2">Concessionnaires</div>
+        </div>
+        <div>
+          <div class="text-4xl font-bold">50+</div>
+          <div class="text-lg opacity-90 mt-2">Marques disponibles</div>
+        </div>
+        <div>
+          <div class="text-4xl font-bold">4.9★</div>
+          <div class="text-lg opacity-90 mt-2">Note clients</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA Section -->
+  <div class="bg-gray-900 text-white py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-3xl font-bold">Prêt à trouver votre voiture idéale ?</h2>
+      <p class="mt-4 max-w-2xl text-xl text-gray-300 mx-auto">
+        Rejoignez des milliers de clients satisfaits qui ont trouvé leur véhicule parfait avec
+        CarNova
+      </p>
+      <div class="mt-8 flex flex-col sm:flex-row justify-center gap-4">
+        <a
+          href="#"
+          class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-gray-900 bg-yellow-400 hover:bg-yellow-500"
+        >
+          Parcourir l'inventaire
+        </a>
+        <a
+          href="#"
+          class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-700 hover:bg-blue-800"
+        >
+          Créer un compte
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
+        <div class="col-span-2">
+          <div class="flex items-center">
+            <i class="fas fa-car text-blue-700 text-2xl mr-2"></i>
+            <span class="text-blue-700 font-bold text-xl">CarNova</span>
+          </div>
+          <p class="mt-4 text-gray-500 text-sm">
+            CarNova est la plateforme numérique leader pour l'achat, la vente
+            et la location de véhicules. Notre mission est de simplifier l'accès
+            à la propriété automobile pour tous.
+          </p>
+          <div class="mt-6 flex space-x-6">
+            <a href="#" class="text-gray-400 hover:text-blue-700">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-blue-700">
+              <i class="fab fa-twitter"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-blue-700">
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-blue-700">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <h3
+            class="text-sm font-semibold text-gray-900 tracking-wider uppercase"
+          >
+            Acheter
+          </h3>
+          <ul class="mt-4 space-y-4">
+            <li>
+              <a href="#" class="text-base text-gray-500 hover:text-blue-700"
+                >Rechercher un véhicule</a
+              >
+            </li>
+            <li>
+              <a href="#" class="text-base text-gray-500 hover:text-blue-700"
+                >Occasions certifiées</a
+              >
+            </li>
+            <li>
+              <a href="#" class="text-base text-gray-500 hover:text-blue-700"
+                >Véhicules neufs</a
+              >
+            </li>
+            <li>
+              <a href="#" class="text-base text-gray-500 hover:text-blue-700"
+                >Véhicules d'occasion</a
+              >
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h3
+            class="text-sm font-semibold text-gray-900 tracking-wider uppercase"
+          >
+            Vendre
+          </h3>
+          <ul class="mt-4 space-y-4">
+            <li>
+              <a href="#" class="text-base text-gray-500 hover:text-blue-700"
+                >Vendre votre voiture</a
+              >
+            </li>
+            <li>
+              <a href="#" class="text-base text-gray-500 hover:text-blue-700"
+                >Services pour concessionnaires</a
+              >
+            </li>
+            <li>
+              <a href="#" class="text-base text-gray-500 hover:text-blue-700"
+                >Outils de pricing</a
+              >
+            </li>
+            <li>
+              <a href="#" class="text-base text-gray-500 hover:text-blue-700"
+                >Ressources pour vendeurs</a
+              >
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h3
+            class="text-sm font-semibold text-gray-900 tracking-wider uppercase"
+          >
+            Entreprise
+          </h3>
+          <ul class="mt-4 space-y-4">
+            <li>
+              <a href="#" class="text-base text-gray-500 hover:text-blue-700"
+                >À propos</a
+              >
+            </li>
+            <li>
+              <a href="#" class="text-base text-gray-500 hover:text-blue-700"
+                >Contact</a
+              >
+            </li>
+            <li>
+              <a href="#" class="text-base text-gray-500 hover:text-blue-700"
+                >Carrières</a
+              >
+            </li>
+            <li>
+              <a href="#" class="text-base text-gray-500 hover:text-blue-700"
+                >Blog</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div
+        class="mt-12 border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between"
+      >
+        <p class="text-base text-gray-400">
+          &copy; 2023 CarNova. Tous droits réservés.
+        </p>
+        <div class="mt-4 md:mt-0 flex space-x-6">
+          <a href="#" class="text-base text-gray-400 hover:text-blue-700"
+            >Politique de confidentialité</a
+          >
+          <a href="#" class="text-base text-gray-400 hover:text-blue-700"
+            >Conditions d'utilisation</a
+          >
+          <a href="#" class="text-base text-gray-400 hover:text-blue-700"
+            >Plan du site</a
+          >
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Widget Assistant Auto -->
+  <app-assistant-bubble
+    #assistant
+    [annonceId]="activeAnnonce?.id"
+    [context]="activeContext"
+  ></app-assistant-bubble>
+
+</body>
+</html>

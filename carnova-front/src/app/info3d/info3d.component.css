@@ -1,0 +1,12 @@
+.stage{position:relative;width:100%;height:80vh;background:#0b0f1a;overflow:hidden;border-radius:10px}
+.info-btn{position:absolute;top:12px;left:12px;z-index:20;background:#111827;color:#fff;border:1px solid #374151;border-radius:8px;padding:8px 10px}
+.marker{
+  position:absolute;z-index:10;transform:translate(-50%,-50%);
+  width:26px;height:26px;border-radius:50%;
+  background:#ef4444;border:2px solid #fff;color:#fff;font-weight:700;font-size:13px;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 0 10px rgba(239,68,68,.8);cursor:pointer;
+}
+.marker-bubble{
+  position:absolute;z-index:9;max-width:260px;
+  background:rgba(0,0,0,.85);color:#fff;border-radius:6px;padding:6px 8px;font-size:13px;line-height:1.35
+}

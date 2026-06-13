@@ -1,0 +1,590 @@
+/* ===== page ===== */
+
+
+
+.wrap.blurred{
+  filter: blur(6px);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ===== header ===== */
+.page-header{
+  text-align:center;
+  margin-bottom: 1.25rem;
+}
+.page-header h1{
+  margin:0;
+  font-size:2rem;
+  font-weight:800;
+  color:#1f2937;
+  letter-spacing:.03em;
+}
+.underline{
+  width:220px; height:22px; margin:.35rem auto 0; position:relative;
+}
+.underline::before{
+  content:""; display:block; height:2px; background:#e5e7eb; margin:10px 20px 0;
+}
+.underline span{
+  position:absolute; left:50%; top:8px; transform:translateX(-50%);
+  width:12px; height:6px; background:#e11d2e; border-radius:2px;
+}
+
+/* ===== grid de cartes ===== */
+.grid{
+  display:grid;
+  grid-template-columns: 1fr;
+  gap:1rem;
+}
+@media(min-width:900px){
+  .grid{ grid-template-columns: 1fr 1fr; }
+}
+.tile{
+  width:100%;
+  text-align:left;
+  background: #fff;
+  border:1px solid #e5e7eb;
+  border-radius:.6rem;
+  padding: 1rem 1.2rem;
+  font-weight:700;
+  color:#1f2937;
+  display:flex; align-items:center; justify-content:space-between;
+  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease, background .12s ease;
+  cursor:pointer;
+}
+.tile:hover, .tile:focus{
+  transform: translateY(-1px);
+  border-color:#c7d2fe;
+  box-shadow: 0 8px 20px rgba(99,102,241,.1);
+  background: #f9fafb;
+  outline:none;
+}
+.tile i{ opacity:.65; }
+
+/* ===== overlay + modale ===== */
+.overlay{
+  position: fixed; inset: 0;
+  background: rgba(17, 24, 39, .45);
+  backdrop-filter: blur(2px);
+  z-index: 70;
+}
+.modal{
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(720px, 92vw);
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 30px 80px rgba(0,0,0,.35);
+  z-index: 80;
+  display:flex; flex-direction:column;
+  max-height: 85vh;
+}
+.modal-head{
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 1rem 1.25rem;
+  border-bottom:1px solid #e5e7eb;
+}
+.modal-head h2{
+  margin:0; font-size:1.25rem; color:#111827; font-weight:700;
+}
+.close{
+  background:#f3f4f6; border:1px solid #d1d5db; color:#374151;
+  border-radius:.5rem; width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center;
+  cursor:pointer;
+}
+.close:hover{ background:#e5e7eb; }
+
+.modal-body{
+  padding: 1rem 1.25rem;
+  overflow:auto;
+  line-height:1.6;
+  color:#374151;
+}
+.modal-foot{
+  padding: .85rem 1.25rem;
+  border-top:1px solid #f3f4f6;
+  display:flex; justify-content:flex-end; gap:.5rem;
+}
+.btn{
+  background:#4f46e5; color:#fff; border:0; border-radius:.6rem; padding:.55rem .9rem; cursor:pointer;
+}
+.btn:hover{ background:#4338ca; }
+
+
+
+
+/* appliquer une couleur rouge même pour du contenu injecté avec [innerHTML] */
+:host ::ng-deep .rdv-link {
+  color: #dc2626 !important; /* rouge vif */
+  font-weight: 700;
+  text-decoration: none;
+}
+
+:host ::ng-deep .rdv-link:hover {
+  text-decoration: underline;
+}
+
+:host ::ng-deep .rdv-link i {
+  margin-left: .35rem;
+  font-size: .9rem;
+  color: #dc2626;
+}
+
+
+
+
+/* Styles appliqués même dans du [innerHTML] */
+:host ::ng-deep .vt-title {
+  margin: 1rem 0 .3rem;
+  font-weight: 800;
+  color: #4c1d95; /* violet thème */
+}
+:host ::ng-deep .vt-subtitle {
+  margin: .6rem 0 .2rem;
+  font-weight: 700;
+  color: #6d28d9;
+}
+:host ::ng-deep .vt-where {
+  margin: .5rem 0 1rem;
+  color: #374151;
+}
+:host ::ng-deep .vt-list {
+  margin: .25rem 0 .75rem 1.2rem;
+}
+
+/* Tables */
+:host ::ng-deep .vt-table-wrap { overflow-x: auto; margin:.5rem 0 1rem; }
+:host ::ng-deep .vt-table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 560px;
+  font-size: .95rem;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: .5rem;
+  overflow: hidden;
+}
+:host ::ng-deep .vt-table thead th {
+  background: #5b21b6;
+  color: #fff;
+  text-align: center;
+  padding: .55rem .5rem;
+  border-right: 1px solid #4c1d95;
+}
+:host ::ng-deep .vt-table thead th:last-child { border-right: 0; }
+
+:host ::ng-deep .vt-table tbody td {
+  padding: .5rem .55rem;
+  border-top: 1px solid #eef2f7;
+  border-right: 1px solid #eef2f7;
+  text-align: center;
+  color: #1f2937;
+}
+:host ::ng-deep .vt-table tbody td:first-child {
+  text-align: left;
+  font-weight: 600;
+  color: #374151;
+}
+:host ::ng-deep .vt-table tbody td:last-child { border-right: 0; }
+:host ::ng-deep .vt-table tbody tr:nth-child(even) td { background: #faf5ff; }
+
+/* Variante pour grands tableaux */
+:host ::ng-deep .vt-table.vt-wide { min-width: 720px; }
+
+
+
+
+/* -- Styles appliqués au HTML injecté (innerHTML) -- */
+:host ::ng-deep .prep-intro{
+  background:#f5f3ff;
+  border:1px solid #e9d5ff;
+  color:#4c1d95;
+  padding:.75rem 1rem;
+  border-radius:.6rem;
+  margin: .2rem 0 1rem;
+}
+
+:host ::ng-deep .prep-title{
+  color:#4c1d95;           /* violet thème */
+  font-weight:800;
+  margin: .9rem 0 .4rem;
+}
+
+:host ::ng-deep .prep-list{
+  list-style:none;
+  margin:.25rem 0 1rem;
+  padding:0;
+}
+:host ::ng-deep .prep-list li{
+  position:relative;
+  padding:.35rem .25rem .35rem 1.6rem;
+  border-bottom:1px dashed #e5e7eb;
+}
+:host ::ng-deep .prep-list li:last-child{ border-bottom:none; }
+
+:host ::ng-deep .prep-list li i{
+  position:absolute; left:.25rem; top:.5rem;
+  color:#16a34a;              /* vert OK */
+  opacity:.95;
+}
+
+
+
+
+
+
+
+
+
+/* Lien externe rouge + icône pour le contenu injecté */
+:host ::ng-deep .centres-link {
+  color: #dc2626 !important;   /* rouge */
+  font-weight: 700;
+  text-decoration: none;
+}
+:host ::ng-deep .centres-link:hover {
+  text-decoration: underline;
+}
+:host ::ng-deep .centres-link i {
+  margin-left: .35rem;
+  font-size: .9rem;
+  color: #dc2626;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Titres des rubriques d'entretien */
+:host ::ng-deep .cons-title{
+  margin: .9rem 0 .4rem;
+  font-weight: 800;
+  color: #4c1d95; /* violet thème */
+}
+
+/* Liste lisible et aérée */
+:host ::ng-deep .cons-list{
+  margin: .25rem 0 1rem;
+  padding-left: 1.2rem;
+}
+:host ::ng-deep .cons-list li{
+  margin: .28rem 0;
+  line-height: 1.55;
+  color: #374151;
+}
+:host ::ng-deep .cons-list li strong{
+  color: #111827;
+}
+
+
+
+
+
+
+
+
+
+
+/* ======= MODE D'EMPLOI – styles vivants ======= */
+:host ::ng-deep .mode-section{
+  margin: 1rem 0 .5rem;
+  font-weight: 800;
+  color:#4c1d95;
+}
+
+/* Timeline */
+:host ::ng-deep .mode-steps{ position:relative; margin:.25rem 0 1rem; }
+:host ::ng-deep .mode-step{
+  display:flex; gap:.8rem; position:relative; padding:.35rem 0 .6rem;
+}
+:host ::ng-deep .mode-step:not(:last-child)::after{
+  content:""; position:absolute; left:16px; top:34px; bottom:-2px; width:2px; background:#e5e7eb;
+}
+:host ::ng-deep .mode-step-n{
+  flex:0 0 32px; height:32px; border-radius:10px;
+  background:#7c3aed; color:#fff; display:flex; align-items:center; justify-content:center;
+  font-weight:800; box-shadow:0 4px 10px rgba(124,58,237,.25);
+}
+:host ::ng-deep .mode-step-body h3{
+  margin:0 0 .25rem; font-weight:800; color:#1f2937;
+}
+
+/* Badges */
+:host ::ng-deep .badge{
+  display:inline-block; padding:.2rem .5rem; border-radius:.5rem; font-size:.75rem; font-weight:700; margin-left:.4rem;
+}
+:host ::ng-deep .badge-violet{ background:#ede9fe; color:#5b21b6; }
+:host ::ng-deep .badge-red   { background:#fee2e2; color:#dc2626; }
+:host ::ng-deep .badge-green { background:#dcfce7; color:#16a34a; }
+:host ::ng-deep .badge-blue  { background:#dbeafe; color:#2563eb; }
+:host ::ng-deep .badge-orange{ background:#ffedd5; color:#f59e0b; }
+:host ::ng-deep .badge-gray  { background:#f3f4f6; color:#374151; }
+
+/* Listes avec ticks */
+:host ::ng-deep .tick{ margin:.25rem 0 .5rem 1.2rem; }
+:host ::ng-deep .tick li{ margin:.18rem 0; position:relative; }
+:host ::ng-deep .tick li::marker{ content:""; }
+:host ::ng-deep .tick li::before{
+  content:"\\f00c"; /* fa-check */
+  font-family:"Font Awesome 5 Free"; font-weight:900;
+  color:#16a34a; margin-right:.5rem;
+}
+
+/* Callout */
+:host ::ng-deep .callout{
+  padding:.7rem .9rem; border-radius:.6rem; border:1px solid transparent; margin-top:.5rem;
+  display:flex; gap:.5rem; align-items:flex-start;
+}
+:host ::ng-deep .callout i{ margin-top:.1rem; }
+:host ::ng-deep .callout-violet{ background:#f5f3ff; border-color:#e9d5ff; color:#4c1d95; }
+
+/* Résultats */
+:host ::ng-deep .results{
+  display:grid; gap:.6rem; grid-template-columns:1fr;
+}
+@media (min-width: 700px){
+  :host ::ng-deep .results{ grid-template-columns:1fr 1fr; }
+}
+:host ::ng-deep .result-card{
+  border:1px solid #e5e7eb; border-radius:.7rem; padding:.7rem .8rem; background:#fff;
+  box-shadow:0 6px 16px rgba(0,0,0,.05);
+}
+:host ::ng-deep .result-card h4{ margin:.1rem 0 .25rem; font-weight:800; color:#111827; }
+:host ::ng-deep .result-card.ok h4{ color:#16a34a; }
+:host ::ng-deep .dot{ display:inline-block; width:.6rem; height:.6rem; border-radius:50%; margin-right:.4rem; vertical-align:baseline; }
+:host ::ng-deep .dot-green{ background:#16a34a; }
+:host ::ng-deep .dot-orange{ background:#f59e0b; }
+:host ::ng-deep .dot-red{ background:#dc2626; }
+:host ::ng-deep .result-card.minor{ border-left:4px solid #16a34a; }
+:host ::ng-deep .result-card.medium{ border-left:4px solid #f59e0b; }
+:host ::ng-deep .result-card.major{ border-left:4px solid #dc2626; }
+
+/* Frais */
+:host ::ng-deep .fees{ margin:.25rem 0 0 1.1rem; }
+:host ::ng-deep .fees li{ margin:.15rem 0; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ======= MODE D'EMPLOI – styles vivants ======= */
+:host ::ng-deep .mode-section{
+  margin: 1rem 0 .5rem;
+  font-weight: 800;
+  color:#4c1d95;
+}
+
+/* Timeline */
+:host ::ng-deep .mode-steps{ position:relative; margin:.25rem 0 1rem; }
+:host ::ng-deep .mode-step{
+  display:flex; gap:.8rem; position:relative; padding:.35rem 0 .6rem;
+}
+:host ::ng-deep .mode-step:not(:last-child)::after{
+  content:""; position:absolute; left:16px; top:34px; bottom:-2px; width:2px; background:#e5e7eb;
+}
+:host ::ng-deep .mode-step-n{
+  flex:0 0 32px; height:32px; border-radius:10px;
+  background:#7c3aed; color:#fff; display:flex; align-items:center; justify-content:center;
+  font-weight:800; box-shadow:0 4px 10px rgba(124,58,237,.25);
+}
+:host ::ng-deep .mode-step-body h3{
+  margin:0 0 .25rem; font-weight:800; color:#1f2937;
+}
+
+/* Badges */
+:host ::ng-deep .badge{
+  display:inline-block; padding:.2rem .5rem; border-radius:.5rem; font-size:.75rem; font-weight:700; margin-left:.4rem;
+}
+:host ::ng-deep .badge-violet{ background:#ede9fe; color:#5b21b6; }
+:host ::ng-deep .badge-red   { background:#fee2e2; color:#dc2626; }
+:host ::ng-deep .badge-green { background:#dcfce7; color:#16a34a; }
+:host ::ng-deep .badge-blue  { background:#dbeafe; color:#2563eb; }
+:host ::ng-deep .badge-orange{ background:#ffedd5; color:#f59e0b; }
+:host ::ng-deep .badge-gray  { background:#f3f4f6; color:#374151; }
+
+/* Listes avec ticks */
+:host ::ng-deep .tick{ margin:.25rem 0 .5rem 1.2rem; }
+:host ::ng-deep .tick li{ margin:.18rem 0; position:relative; }
+:host ::ng-deep .tick li::marker{ content:""; }
+:host ::ng-deep .tick li::before{
+  content:"\\f00c"; /* fa-check */
+  font-family:"Font Awesome 5 Free"; font-weight:900;
+  color:#16a34a; margin-right:.5rem;
+}
+
+/* Callout */
+:host ::ng-deep .callout{
+  padding:.7rem .9rem; border-radius:.6rem; border:1px solid transparent; margin-top:.5rem;
+  display:flex; gap:.5rem; align-items:flex-start;
+}
+:host ::ng-deep .callout i{ margin-top:.1rem; }
+:host ::ng-deep .callout-violet{ background:#f5f3ff; border-color:#e9d5ff; color:#4c1d95; }
+
+/* Résultats */
+:host ::ng-deep .results{
+  display:grid; gap:.6rem; grid-template-columns:1fr;
+}
+@media (min-width: 700px){
+  :host ::ng-deep .results{ grid-template-columns:1fr 1fr; }
+}
+:host ::ng-deep .result-card{
+  border:1px solid #e5e7eb; border-radius:.7rem; padding:.7rem .8rem; background:#fff;
+  box-shadow:0 6px 16px rgba(0,0,0,.05);
+}
+:host ::ng-deep .result-card h4{ margin:.1rem 0 .25rem; font-weight:800; color:#111827; }
+:host ::ng-deep .result-card.ok h4{ color:#16a34a; }
+:host ::ng-deep .dot{ display:inline-block; width:.6rem; height:.6rem; border-radius:50%; margin-right:.4rem; vertical-align:baseline; }
+:host ::ng-deep .dot-green{ background:#16a34a; }
+:host ::ng-deep .dot-orange{ background:#f59e0b; }
+:host ::ng-deep .dot-red{ background:#dc2626; }
+:host ::ng-deep .result-card.minor{ border-left:4px solid #16a34a; }
+:host ::ng-deep .result-card.medium{ border-left:4px solid #f59e0b; }
+:host ::ng-deep .result-card.major{ border-left:4px solid #dc2626; }
+
+/* Frais */
+:host ::ng-deep .fees{ margin:.25rem 0 0 1.1rem; }
+:host ::ng-deep .fees li{ margin:.15rem 0; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ==== CONSEILS D’ENTRETIEN ==== */
+:host ::ng-deep .tips-grid{
+  display:grid; gap:.8rem; grid-template-columns:1fr;
+  margin:.5rem 0 1rem;
+}
+@media (min-width: 760px){
+  :host ::ng-deep .tips-grid{ grid-template-columns:repeat(2,1fr); }
+}
+:host ::ng-deep .tip-card{
+  background:#fff; border:1px solid #e5e7eb; border-radius:.8rem;
+  padding:.9rem; box-shadow:0 6px 16px rgba(0,0,0,.05);
+  display:flex; flex-direction:column; justify-content:space-between;
+}
+:host ::ng-deep .tip-card h4{
+  margin:0 0 .3rem; font-weight:800; color:#111827;
+  display:flex; align-items:center; gap:.4rem;
+}
+:host ::ng-deep .tip-card h4 i{ color:#7c3aed; }
+:host ::ng-deep .tip-card p,
+:host ::ng-deep .tip-card ul{
+  margin:.2rem 0 .5rem; color:#374151; line-height:1.55;
+}
+:host ::ng-deep .tip-card ul{ padding-left:1.2rem; list-style:disc; }
+
+/* tagline en bas */
+:host ::ng-deep .tagline{
+  margin-top:auto; display:inline-flex; align-items:center; gap:.35rem;
+  font-size:.85rem; color:#4b5563; background:#f9fafb;
+  border:1px solid #eef2f7; padding:.25rem .5rem; border-radius:.5rem;
+}
+
+/* pastilles réutilisables */
+:host ::ng-deep .dot{ width:.55rem; height:.55rem; border-radius:50%; display:inline-block; }
+:host ::ng-deep .dot-green{ background:#16a34a; }
+:host ::ng-deep .dot-blue{ background:#2563eb; }
+:host ::ng-deep .dot-orange{ background:#f59e0b; }
+:host ::ng-deep .dot-red{ background:#dc2626; }
+:host ::ng-deep .dot-teal{ background:#0d9488; }
+:host ::ng-deep .dot-gray{ background:#6b7280; }
+:host ::ng-deep .dot-violet{ background:#7c3aed; }
+
+
+
+
+
+
+
+
+
+
+
+/* ==== QUAND L’EFFECTUER ==== */
+:host ::ng-deep .when-intro h3{
+  margin:0 0 .3rem; font-weight:800; color:#1f2937;
+}
+:host ::ng-deep .when-intro p{ margin:.2rem 0 .8rem; color:#374151; }
+
+:host ::ng-deep .when-grid{
+  display:grid; gap:1rem; grid-template-columns:1fr;
+  margin:.5rem 0 1rem;
+}
+@media (min-width: 800px){
+  :host ::ng-deep .when-grid{ grid-template-columns:repeat(2,1fr); }
+}
+:host ::ng-deep .when-card{
+  background:#fff; border:1px solid #e5e7eb; border-radius:.8rem;
+  padding:.9rem; box-shadow:0 6px 16px rgba(0,0,0,.05);
+}
+:host ::ng-deep .when-card h4{
+  margin:0 0 .5rem; font-weight:800; color:#111827;
+  display:flex; gap:.4rem; align-items:center;
+}
+:host ::ng-deep .when-card h4 i{ color:#7c3aed; }
+
+:host ::ng-deep .when-table{
+  width:100%; border-collapse:collapse; font-size:.9rem;
+}
+:host ::ng-deep .when-table th,
+:host ::ng-deep .when-table td{
+  border:1px solid #e5e7eb; padding:.35rem .5rem; text-align:center;
+}
+:host ::ng-deep .when-table th{
+  background:#f9fafb; font-weight:700; color:#374151;
+}
+:host ::ng-deep .when-table td{ color:#374151; }
+
+/* pastilles pour fréquence */
+:host ::ng-deep .dot{ width:.55rem; height:.55rem; border-radius:50%; display:inline-block; }
+:host ::ng-deep .dot-green{ background:#16a34a; }
+:host ::ng-deep .dot-orange{ background:#f59e0b; }
+:host ::ng-deep .dot-red{ background:#dc2626; }
+
+/* frais */
+:host ::ng-deep .fees{ margin-top:1rem; }
+:host ::ng-deep .fees ul{ margin:.3rem 0 0 1.1rem; }
+:host ::ng-deep .fees li{ margin:.15rem 0; }
+
+
+
+
+
+

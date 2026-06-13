@@ -1,0 +1,77 @@
+<!-- Hero Section avec vidéo de fond -->
+<div class="hero-section relative min-h-screen flex items-center justify-center">
+
+  <!-- Vidéo de fond -->
+  <video
+    class="hero-video"
+    autoplay
+    muted
+    loop
+    playsinline
+    preload="auto"
+  >
+    <source src="/assets/vid.webm" type="video/webm" />
+    Votre navigateur ne supporte pas la vidéo.
+  </video>
+
+  <!-- Contenu -->
+  <div class="relative z-10 w-full">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <!-- Header -->
+      <div class="text-center mb-16">
+        <h1 class="text-5xl md:text-6xl font-bold text-white mb-6 text-glow">
+          <i class="fas fa-user-circle mr-4 text-purple-400"></i>
+          Mon Espace Personnel
+        </h1>
+        <p class="text-xl md:text-2xl text-gray-100 max-w-3xl mx-auto text-glow">
+          Gérez vos annonces, créez de nouveaux véhicules et explorez toutes les fonctionnalités de
+          <span class="text-purple-400 font-semibold">CarNova</span>
+        </p>
+      </div>
+
+      <!-- Grille d’actions (exemple) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div class="card">
+          <div class="text-center">
+            <div class="icon purple"><i class="fas fa-plus text-2xl text-white"></i></div>
+            <h3 class="title">Créer une annonce</h3>
+            <p class="desc">Partagez votre véhicule avec la communauté CarNova en créant une nouvelle annonce</p>
+            <button (click)="goToCreerAnnonce()" class="btn purple"><i class="fas fa-plus mr-2"></i> Commencer</button>
+          </div>
+        </div>
+        <div *ngIf="isProfessional" class="card">
+          <div class="text-center">
+            <div class="icon orange"><i class="fas fa-store text-2xl text-white"></i></div>
+            <h3 class="title">Créer un showroom</h3>
+            <p class="desc">Créez un showroom personnalisé pour présenter vos véhicules professionnels</p>
+            <button (click)="goToCreerShowroom()" class="btn orange"><i class="fas fa-store mr-2"></i> Créer mon showroom</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="text-center">
+            <div class="icon green"><i class="fas fa-list-alt text-2xl text-white"></i></div>
+            <h3 class="title">Mes annonces</h3>
+            <p class="desc">Consultez, modifiez et gérez toutes vos annonces publiées sur la plateforme</p>
+            <button (click)="goToMesAnnonces()" class="btn green"><i class="fas fa-eye mr-2"></i> Voir mes annonces</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+        <div class="stat blue text-glow"><i class="fas fa-car"></i><div class="label">Véhicules</div><div class="value">Disponibles</div></div>
+        <div class="stat green text-glow"><i class="fas fa-users"></i><div class="label">Utilisateurs</div><div class="value">Actifs</div></div>
+        <div class="stat purple text-glow"><i class="fas fa-star"></i><div class="label">Satisfaction</div><div class="value">Élevée</div></div>
+      </div>
+
+      <!-- Bienvenue -->
+      <div class="mt-12 text-center">
+        <div class="welcome-box">
+          <h3><i class="fas fa-heart text-red-500 mr-2"></i>Bienvenue sur CarNova !</h3>
+          <p>Votre espace personnel vous permet de gérer facilement vos annonces et de profiter de toutes les fonctionnalités de notre plateforme de vente de véhicules.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

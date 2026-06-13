@@ -1,0 +1,40 @@
+<div class="assistant">
+  <button class="fab" (click)="toggle()" title="Assistant automobile">
+    <i class="fas fa-comment-dots" aria-hidden="true"></i>
+    <span class="sr-only">Ouvrir l'assistant</span>
+  </button>
+
+  <div class="panel" *ngIf="open">
+    <div class="panel-header">
+      <div class="title"><i class="fas fa-robot" aria-hidden="true"></i> Assistant auto</div>
+      <button class="close" (click)="toggle()" aria-label="Fermer">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <div class="messages">
+      <div *ngFor="let m of messages" [class.me]="m.role==='user'" class="bubble">
+        <div class="msg">{{ m.text }}</div>
+      </div>
+      <div #msgEnd></div>
+      <div class="bubble" *ngIf="sending">
+        <div class="typing"><span></span><span></span><span></span></div>
+      </div>
+    </div>
+
+    <div class="quick" *ngIf="!sending && followUps?.length">
+      <button class="chip" *ngFor="let q of followUps" (click)="quickAsk(q)">{{ q }}</button>
+    </div>
+
+    <div class="input-row">
+      <input type="text"
+             [(ngModel)]="input"
+             (keyup.enter)="send()"
+             placeholder="Pose ta question..."
+             aria-label="Saisir votre question" />
+      <button class="send" [disabled]="sending || !input.trim()" (click)="send()" aria-label="Envoyer">
+        <i class="fas fa-paper-plane" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+</div>

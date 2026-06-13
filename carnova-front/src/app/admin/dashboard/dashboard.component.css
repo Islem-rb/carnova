@@ -1,0 +1,34 @@
+     body {
+        font-family: "Open Sans", sans-serif;
+      }
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-family: "Montserrat", sans-serif;
+      }
+      .sidebar {
+        scrollbar-width: thin;
+        scrollbar-color: #2563eb #f1f1f1;
+      }
+      .sidebar::-webkit-scrollbar {
+        width: 6px;
+      }
+      .sidebar::-webkit-scrollbar-thumb {
+        background-color: #2563eb;
+        border-radius: 3px;
+      }
+      .chat-messages {
+        height: calc(100vh - 220px);
+      }
+      @media (max-width: 768px) {
+        .sidebar {
+          transform: translateX(-100%);
+          transition: transform 0.3s ease;
+        }
+        .sidebar.active {
+          transform: translateX(0);
+        }
+      }

@@ -1,0 +1,49 @@
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: #f8fafc;
+      }
+
+      .car-illustration {
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 300"><path fill="%23e2e8f0" d="M50,150 Q150,50 250,150 Q350,250 450,150" stroke="%23334e68" stroke-width="2" fill-opacity="0.2"/><path fill="%23334e68" d="M100,170 L120,170 L130,150 L170,150 L180,170 L400,170 L410,150 L450,150 L460,170 L480,170 L470,190 L110,190 Z"/><circle cx="150" cy="190" r="20" fill="%23334e68"/><circle cx="350" cy="190" r="20" fill="%23334e68"/><circle cx="150" cy="190" r="10" fill="%23e2e8f0"/><circle cx="350" cy="190" r="10" fill="%23e2e8f0"/><rect x="130" y="130" width="40" height="20" fill="%23334e68"/><rect x="330" y="130" width="40" height="20" fill="%23334e68"/></svg>');
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+      }
+
+      .input-error {
+        border-color: #ef4444;
+      }
+
+      .error-message {
+        color: #ef4444;
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+        display: none;
+      }
+
+      @media (max-width: 768px) {
+        .split-layout {
+          flex-direction: column;
+        }
+        .welcome-section {
+          padding: 2rem 1rem;
+        }
+        .form-section {
+          padding: 2rem 1rem;
+        }
+      }
+.btn-gradient-purple {
+  background-color: transparent; /* 🔑 évite que la couleur par défaut masque ton dégradé */
+  background-image: linear-gradient(to right, #6d28d9, #8b5cf6); /* violet-700 → violet-500 */
+  color: #fff;
+  transition: background-image 0.3s ease;
+  border-radius: 0.5rem;
+  border: none; /* optionnel pour enlever le style natif */
+}
+
+.btn-gradient-purple:hover {
+  background-image: linear-gradient(to right, #5b21b6, #7c3aed); /* violet-800 → violet-600 */
+}
+
