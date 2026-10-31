@@ -83,7 +83,7 @@ jobs:
             -e PORT=10000 -e DATABASE_URL=jdbc:postgresql://db:5432/carnova -e DATABASE_USER=carnova \
             -e DATABASE_PASSWORD="$db_password" -e JWT_SECRET="$(openssl rand -base64 32)" \
             -e DEMO_DATA=true -e DEMO_ADMIN_PASSWORD="$admin_password" -e PAYMENTS_MODE=mock \
-            -e MAIL_ENABLED=false -e CLIENT_IP_HEADER=True-Client-IP -e MANAGEMENT_HEALTH_DB_ENABLED=false \
+            -e MAIL_ENABLED=false -e CLIENT_IP_HEADER=CF-Connecting-IP -e MANAGEMENT_HEALTH_DB_ENABLED=false \
             -e RENDER_EXTERNAL_URL=http://localhost:10000 carnova-render
           for i in $(seq 1 120); do curl -sf http://localhost:10000/actuator/health && break; sleep 2; done
           curl -sf http://localhost:10000/actuator/health

@@ -34,9 +34,10 @@ services:
       # No mail service on the free demo: account links are never sent, the UI says so.
       - key: MAIL_ENABLED
         value: "false"
-      # Set by Render's Cloudflare edge; clients cannot choose it like X-Forwarded-For entries.
+      # Set by Render's Cloudflare edge to the connecting address, replacing any client value
+      # (unlike X-Forwarded-For entries). Verify after deploy: docs/DEPLOY.md, step 4.
       - key: CLIENT_IP_HEADER
-        value: True-Client-IP
+        value: CF-Connecting-IP
       # Health checks must not query Neon, or its free compute never scales to zero.
       - key: MANAGEMENT_HEALTH_DB_ENABLED
         value: "false"

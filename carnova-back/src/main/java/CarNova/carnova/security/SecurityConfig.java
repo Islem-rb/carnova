@@ -16,6 +16,7 @@ import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.web.cors.*;
 
 @Configuration
@@ -28,13 +29,20 @@ public class SecurityConfig {
           + " https://js.stripe.com https://hooks.stripe.com; worker-src 'self' blob:; object-src"
           + " 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'";
 
-  /** Frontend files and client-side routes, when the Angular build is packaged in the jar. */
+  /**
+   * Server paths, matched like every other rule here: on the decoded, normalised path, so an
+   * encoded spelling such as /%61pi/… or /%61ctuator/… cannot pass for a frontend page.
+   */
+  public static final org.springframework.security.web.util.matcher.RequestMatcher SERVER_PATHS =
+      new org.springframework.security.web.util.matcher.OrRequestMatcher(
+          PathPatternRequestMatcher.withDefaults().matcher("/api/**"),
+          PathPatternRequestMatcher.withDefaults().matcher("/actuator/**"));
+
+  /** Frontend files and client-side routes, only when the Angular build is packaged in the jar. */
   static boolean publicPage(jakarta.servlet.http.HttpServletRequest r) {
-    String path = r.getRequestURI().substring(r.getContextPath().length());
-    return ("GET".equals(r.getMethod()) || "HEAD".equals(r.getMethod()))
-        && !path.startsWith("/api/")
-        && !path.equals("/api")
-        && !path.startsWith("/actuator");
+    return CarNova.carnova.config.SpaHosting.PACKAGED
+        && ("GET".equals(r.getMethod()) || "HEAD".equals(r.getMethod()))
+        && !SERVER_PATHS.matches(r);
   }
 
   @Bean

@@ -24,9 +24,9 @@ public class RateLimitFilter extends OncePerRequestFilter {
 
   /**
    * @param clientIpHeader a single header that the trusted proxy in front of the app overwrites
-   *     with the visitor's address (e.g. X-Real-IP from the bundled Nginx, True-Client-IP on
-   *     Render). Never a client-appendable list such as X-Forwarded-For. Empty means the socket
-   *     address, which is only correct without a proxy.
+   *     with the visitor's address (X-Real-IP from the bundled Nginx, CF-Connecting-IP on
+   *     Render's Cloudflare edge). Never a client-appendable list such as X-Forwarded-For. Empty
+   *     means the socket address, which is only correct without a proxy.
    */
   @Autowired
   public RateLimitFilter(@Value("${app.client-ip-header:}") String clientIpHeader) {

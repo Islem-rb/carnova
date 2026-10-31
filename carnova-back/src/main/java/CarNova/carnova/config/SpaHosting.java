@@ -4,10 +4,12 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.List;
+import java.util.stream.Stream;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.CacheControl;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
+import org.springframework.security.web.util.matcher.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.config.annotation.*;
@@ -19,9 +21,13 @@ import org.springframework.web.servlet.config.annotation.*;
  */
 @Configuration
 public class SpaHosting implements WebMvcConfigurer {
-  static final boolean PACKAGED = new ClassPathResource("static/index.html").exists();
-  private static final List<String> SERVER_PATHS =
-      List.of("/api/", "/uploads/", "/actuator", "/v3/api-docs", "/swagger-ui", "/error");
+  public static final boolean PACKAGED = new ClassPathResource("static/index.html").exists();
+  // Decoded, normalised path matching (same as Spring Security), never the raw request URI.
+  private static final RequestMatcher SERVER_PATHS =
+      new OrRequestMatcher(
+          Stream.of("/api/**", "/uploads/**", "/actuator/**", "/v3/api-docs/**", "/swagger-ui/**", "/error")
+              .map(p -> (RequestMatcher) PathPatternRequestMatcher.withDefaults().matcher(p))
+              .toList());
 
   @Override
   public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -43,11 +49,11 @@ public class SpaHosting implements WebMvcConfigurer {
   public static class Fallback extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest r) {
-      String path = r.getRequestURI().substring(r.getContextPath().length());
       String method = r.getMethod();
       if (!PACKAGED || !("GET".equals(method) || "HEAD".equals(method))) return true;
-      if (SERVER_PATHS.stream().anyMatch(path::startsWith)) return true;
+      if (SERVER_PATHS.matches(r) || r.getRequestURI().contains("%")) return true;
       // Files keep their real response, including 404 for a missing asset.
+      String path = r.getRequestURI();
       return path.substring(path.lastIndexOf('/') + 1).contains(".");
     }
 

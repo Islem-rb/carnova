@@ -47,4 +47,11 @@ class SpaHostingTests {
     mvc.perform(post("/studio")).andExpect(status().isUnauthorized());
     mvc.perform(get("/api/meta")).andExpect(status().isOk()).andExpect(jsonPath("$.mail").value(true));
   }
+
+  @Test
+  void encodedSpellingsOfServerPathsAreNotTreatedAsPublicPages() throws Exception {
+    // Security matches the decoded path (/actuator/info, /api/auth/me), like the MVC router does.
+    for (String raw : new String[] {"/%61ctuator/info", "/%61pi/auth/me", "/api/%61dmin/overview"})
+      mvc.perform(get(java.net.URI.create(raw))).andExpect(status().isUnauthorized());
+  }
 }

@@ -15,7 +15,7 @@ Local development is unchanged: `docker compose up --build --wait` still runs Ng
 - **Fast enough to wake on 0.1 CPU.** Render's free instance has 0.1 CPU and 512 MB. A plain Spring Boot start measured 233 s there; ahead-of-time processing (`-Paot`) plus a Class Data Sharing archive recorded at build time bring it to about 100 s, using ~175 MB of memory. Measured locally with `--cpus=0.1 --memory=512m`.
 - **No email.** There is no mail service on the free demo (`MAIL_ENABLED=false`): reset and verification links are never sent, and the account pages say so. Email confirmation never gates access, so every other flow works.
 - **Disposable uploads.** Free instances have no persistent disk. Photos and models uploaded by visitors disappear when the service restarts; the seeded demo listings use images bundled in the app and are unaffected.
-- **Rate limiting per visitor.** The limiter reads `True-Client-IP`, which Render's Cloudflare edge sets; clients cannot forge it the way they can prepend `X-Forwarded-For` entries. Without the header it falls back to the socket address.
+- **Rate limiting per visitor.** The limiter reads `CF-Connecting-IP`, which Render's Cloudflare edge sets to the connecting address, replacing any value a client sends; `X-Forwarded-For` is never trusted because clients can prepend entries to it. Without the header it falls back to the socket address. Step 4 verifies this on the live service.
 
 ## One-time setup (about 10 minutes)
 
@@ -57,6 +57,17 @@ From then on, every push to `main` deploys automatically once CI is green.
 - `/api/meta` returns `"demo":true` and `"mail":false`.
 - Sign in as `admin@carnova.local` and open `/admin`.
 - Open `/studio`, then **Conduire**.
+- **Check that visitors cannot forge their address** (it only uses up your own sign-in budget for one minute). Every request below claims a different fake IP. If the edge replaces the header, they all count as you and the last one is refused:
+
+  ```bash
+  url=https://<service>.onrender.com/api/auth/signin
+  for i in $(seq 1 31); do
+    curl -s -o /dev/null -w '%{http_code} ' -H "CF-Connecting-IP: 198.51.100.$i" \
+      -H 'Content-Type: application/json' -d '{"email":"nobody@example.com","password":"wrong-password"}' "$url"
+  done; echo
+  ```
+
+  Expected: thirty `401` then `429`. If all 31 are `401`, the header can be forged: set `CLIENT_IP_HEADER` to empty in Render (one shared budget, but not bypassable) and report it.
 
 ## Free-plan limits to keep in mind
 
