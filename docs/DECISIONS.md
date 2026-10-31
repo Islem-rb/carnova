@@ -1,0 +1,13 @@
+# Decisions
+
+- 2026-10-31: Continue the existing `redesign/v2` branch; preserve the untracked user prompt.
+- French-first Tunisia marketplace, TND listing prices. Original premium editorial direction: warm off-white, graphite, electric chartreuse, generous typography and restrained motion. Dark/light modes use semantic CSS tokens. No third-party design copying or new remote image dependency.
+- Angular registry latest stable 22.2.4 with CLI/build 22.2.5 and TypeScript 6; Node 22.23.1 meets the published engine requirement. Tailwind v4. Signals and typed reactive forms; no state library or chart library needed.
+- Spring Boot 3.5.16 keeps Spring 6 / Java 17 compatibility, with springdoc 2.8.17 per its compatibility matrix. Remove duplicate/unused dependencies and Lombok; explicit entities and record DTOs simplify maintenance.
+- Keep old API paths and French field names where practical; add JSON listing creation, detail/filter/pagination endpoints, PUT showroom, contact inbox and administrator overview. Legacy multipart listing creation remains. Public listing/showroom reads are intentional.
+- Breaking security fixes: signup always assigns ROLE_USER (a supplied role cannot grant privileges); public news mutation/debug routes are restricted/removed; payment confirmation validates ownership and provider status. Passwords and owner emails are never serialized in public listing/showroom output.
+- Default payment mode is explicitly local mock and displays simulation status. Stripe TEST keys only in optional test mode; listing fee is set server-side. No external paid requests during this run. No premium publishing requirement in default local mode; test checkout remains available.
+- Assistant works with a clearly identified offline automotive guide by default and optionally a user-managed local Ollama server, with timeouts and safe fallback. Hosted paid-provider requests are disabled in this autonomous run.
+- Flyway V1 creates the legacy-compatible core schema; existing installations baseline at V1 only after schema review. Replace the broken, never-configured legacy V2 with an additive V2 for marketplace fields and new inbox tables. Never automatically baseline an unknown populated database or use schema update.
+- Superdesign CLI preflight was unauthenticated. User boundaries prohibit account creation/paid services and require autonomous progress; proceed with repository-native original design and local context artifacts. No canvas or remote project created.
+- Preserve original uploads/models/assets. Only selected lightweight marketplace images and existing backend GLBs are copied/optimized into frontend public content; heavy original assets excluded from eager loading and unused videos excluded from build output.
