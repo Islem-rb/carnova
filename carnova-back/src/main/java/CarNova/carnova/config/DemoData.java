@@ -9,26 +9,29 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
+// Decided at runtime, not with @ConditionalOnProperty: the single-service image is processed
+// ahead of time, which would freeze a property condition to its build-time value.
 @Configuration
-@org.springframework.boot.autoconfigure.condition.ConditionalOnProperty(
-    name = "app.demo-data",
-    havingValue = "true")
 public class DemoData {
   @Bean
-  @Transactional
   CommandLineRunner seed(
       UserRepository users,
       AnnonceRepository listings,
       ShowroomRepository showrooms,
       NewsItemRepository news,
       PasswordEncoder passwords,
+      PlatformTransactionManager transactionManager,
+      @Value("${app.demo-data:false}") boolean enabled,
       @Value("${DEMO_ADMIN_PASSWORD:}") String adminPassword) {
-    return args -> {
+    // The whole seed is one transaction: a crash midway leaves an empty database to retry, not
+    // half a catalogue that the users.count() guard would then never complete.
+    return args -> new TransactionTemplate(transactionManager).executeWithoutResult(tx -> {
       // Seed a fresh, isolated portfolio database only. Never overwrite existing accounts or
       // listings.
-      if (users.count() > 0) return;
+      if (!enabled || users.count() > 0) return;
       var owner = new User();
       owner.nom = "Studio";
       owner.prenom = "CarNova";
@@ -203,6 +206,6 @@ public class DemoData {
         n.uniqueKey = n.id;
         news.save(n);
       }
-    };
+    });
   }
 }

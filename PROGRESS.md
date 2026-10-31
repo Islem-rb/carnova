@@ -1,3 +1,17 @@
+# Free deployment prepared — Render + Neon (branch `deploy/render`)
+
+**Goal:** a public demo at no cost. One Render free Docker service (root `Dockerfile`: Angular served by Spring Boot from one origin) and a Neon free Postgres. Compose stays the local setup. Guide: [docs/DEPLOY.md](docs/DEPLOY.md).
+
+**Measured locally at Render's 0.1 CPU / 512 MB:** cold start 233 s plain, ~100 s with Spring AOT + a build-time CDS archive, ~175 MB memory. The demo has email disabled (the UI says so), keeps visitor uploads only until a restart, and uses mock payments.
+
+**Fixed on the way:** rate limiting was shared by all visitors behind any proxy (now per visitor, via a proxy-overwritten header); unknown resources returned 500 (now 404/405); demo seeding was not atomic.
+
+**Verified:** backend 68 tests (Java 17 container), frontend 48 tests, formatting and production build; browser suite 10/10 on Compose and 9/10 on the Render image (the remaining test reads mail from Mailpit, disabled there by design); the new `render-image` CI smoke test passes locally.
+
+**Remaining (needs the owner's accounts):** unlink the old Netlify site (its failing checks would block `checksPass` deploys), create the Neon project and the Render Blueprint, set `DEMO_ADMIN_PASSWORD`. Demo video and portfolio section follow.
+
+---
+
 # 3D/driving failure fixed — hosted CI fully green
 
 **Root cause (measured):** under SwiftShader, the WebGL implementation headless CI uses, the drive scene rendered every frame even when parked, at **~850 ms per frame** on a 16-core machine. The ToyCar's transmission/clearcoat/sheen materials, MSAA and soft shadows made each frame expensive, which starved the main thread so every Playwright action waited. Pinning the browser to 2 cores reproduced the hosted 90 s timeout on the old code locally. Studio reset also coasted on OrbitControls damping momentum.

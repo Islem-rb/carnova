@@ -18,6 +18,7 @@ public class PlatformController {
   private final ContactMessageRepository contacts;
   private final NewsItemRepository news;
   private final boolean demo;
+  private final boolean mail;
 
   public PlatformController(
       UserRepository u,
@@ -25,18 +26,20 @@ public class PlatformController {
       ShowroomRepository s,
       ContactMessageRepository c,
       NewsItemRepository n,
-      @Value("${app.demo-data}") boolean demo) {
+      @Value("${app.demo-data}") boolean demo,
+      @Value("${app.mail-enabled:true}") boolean mail) {
     users = u;
     listings = a;
     showrooms = s;
     contacts = c;
     news = n;
     this.demo = demo;
+    this.mail = mail;
   }
 
   @GetMapping("/api/meta")
   public Map<String, Object> meta() {
-    return Map.of("demo", demo, "version", "2.0.0");
+    return Map.of("demo", demo, "mail", mail, "version", "2.0.0");
   }
 
   @PostMapping("/api/contact")

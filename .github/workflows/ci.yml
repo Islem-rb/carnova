@@ -64,3 +64,43 @@ jobs:
             carnova-front/test-results
       - run: docker compose down
         if: always()
+  render-image:
+    # Builds and boots the single-service image Render deploys (root Dockerfile, AOT + CDS),
+    # with Render's settings, so a broken image never reaches the checksPass deploy gate.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: docker build -t carnova-render .
+      - name: Boot with Render-like settings and smoke-test
+        run: |
+          set -euo pipefail
+          db_password=$(openssl rand -hex 16); admin_password=$(openssl rand -hex 12)
+          docker network create render-ci
+          docker run -d --name db --network render-ci -e POSTGRES_DB=carnova -e POSTGRES_USER=carnova \
+            -e POSTGRES_PASSWORD="$db_password" postgres:17-alpine
+          until docker exec db pg_isready -U carnova -d carnova; do sleep 1; done
+          docker run -d --name app --network render-ci --memory=512m -p 127.0.0.1:10000:10000 \
+            -e PORT=10000 -e DATABASE_URL=jdbc:postgresql://db:5432/carnova -e DATABASE_USER=carnova \
+            -e DATABASE_PASSWORD="$db_password" -e JWT_SECRET="$(openssl rand -base64 32)" \
+            -e DEMO_DATA=true -e DEMO_ADMIN_PASSWORD="$admin_password" -e PAYMENTS_MODE=mock \
+            -e MAIL_ENABLED=false -e CLIENT_IP_HEADER=CF-Connecting-IP -e MANAGEMENT_HEALTH_DB_ENABLED=false \
+            -e RENDER_EXTERNAL_URL=http://localhost:10000 carnova-render
+          for i in $(seq 1 120); do curl -sf http://localhost:10000/actuator/health && break; sleep 2; done
+          curl -sf http://localhost:10000/actuator/health
+          base=http://localhost:10000
+          # Responses are captured first: `curl | grep -q` fails under pipefail on large bodies.
+          page=$(curl -sf $base/studio); [[ $page == *'<app-root'* ]]
+          head=$(curl -sfI $base/annonces/1); grep -qi 'cache-control: no-cache' <<<"$head"
+          head=$(curl -sfI $base/); grep -qi "content-security-policy: default-src 'self'" <<<"$head"
+          test "$(curl -s -o /dev/null -w '%{http_code}' $base/assets/missing.webp)" = 404
+          test "$(curl -s -o /dev/null -w '%{http_code}' $base/actuator/info)" = 401
+          meta=$(curl -sf $base/api/meta); [[ $meta == *'"mail":false'* ]]
+          # Demo data is seeded just after the app reports healthy.
+          for i in $(seq 1 30); do listings=$(curl -sf $base/api/annonces || true); [[ $listings == *BMW* ]] && break; sleep 2; done
+          [[ $listings == *BMW* ]]
+          login=$(curl -sf -H 'Content-Type: application/json' \
+            -d "{\"email\":\"admin@carnova.local\",\"password\":\"$admin_password\"}" \
+            $base/api/auth/signin); [[ $login == *'"token"'* ]]
+          echo "Render image smoke test passed"
+      - if: failure()
+        run: docker logs app || true
