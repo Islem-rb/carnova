@@ -1,0 +1,49 @@
+<article class="car-card">
+  <div class="car-card-image">
+    <a [routerLink]="['/annonces', car().id]" [attr.aria-label]="'Découvrir ' + car().titre"
+      ><img
+        [src]="imageUrl(car().imageUrl)"
+        [alt]="car().titre"
+        width="640"
+        height="420"
+        loading="lazy"
+        (error)="fallback($event)" /></a
+    ><span class="badge badge-paper">{{ label(car().typeAnnonce) }}</span
+    ><button
+      class="icon-button save-button"
+      [class.saved]="ui.saved().includes(car().id)"
+      [attr.aria-label]="
+        (ui.saved().includes(car().id) ? 'Retirer des favoris : ' : 'Ajouter aux favoris : ') +
+        car().titre
+      "
+      [attr.aria-pressed]="ui.saved().includes(car().id)"
+      (click)="ui.toggleSave(car().id)"
+    >
+      <app-icon name="heart" />
+    </button>
+  </div>
+  <div class="car-card-body">
+    <div class="eyebrow subtle">
+      {{ car().marque || 'Collection' }} <span>· {{ car().annee || 'Année à préciser' }}</span>
+    </div>
+    <a class="car-title" [routerLink]="['/annonces', car().id]">{{ car().titre }}</a>
+    <p class="car-subtitle">{{ car().modele || 'Découvrez tous les détails' }}</p>
+    <div class="car-specs">
+      <span
+        ><app-icon name="gauge" />{{
+          car().kilometrage == null ? '—' : car().kilometrage?.toLocaleString('fr-FR')
+        }}
+        km</span
+      ><span><app-icon name="fuel" />{{ label(car().carburant) }}</span
+      ><span
+        ><app-icon name="gear" />{{
+          car().boiteVitesse === 'AUTOMATIQUE' ? 'Auto.' : label(car().boiteVitesse)
+        }}</span
+      >
+    </div>
+    <div class="car-card-bottom">
+      <strong>{{ price(car().prix) }}</strong
+      ><span><app-icon name="pin" />{{ car().ville || 'Tunisie' }}</span>
+    </div>
+  </div>
+</article>

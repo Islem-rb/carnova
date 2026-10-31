@@ -1,0 +1,63 @@
+<section class="wrap page-space">
+  <div class="section-head">
+    <div class="page-intro" style="margin-bottom: 0">
+      <span class="eyebrow subtle">Des collections, des personnalités</span>
+      <h1>Entrez, la passion se partage.</h1>
+      <p>Découvrez les espaces de nos vendeurs, leurs sélections et leurs histoires.</p>
+    </div>
+    <a class="button button-dark" routerLink="/espace/creer-showroom"
+      >Créer un showroom<app-icon name="plus"
+    /></a>
+  </div>
+  <div class="results-search">
+    <app-icon name="search" /><label class="sr-only" for="showroom-query"
+      >Rechercher un showroom</label
+    ><input id="showroom-query" [formControl]="search" placeholder="Un showroom, une ville…" />
+  </div>
+  @if (error()) {
+    <div class="error-box" role="alert">
+      {{ error() }}<br /><button class="button button-outline" (click)="load()">Réessayer</button>
+    </div>
+  }
+  <div class="showroom-grid">
+    @if (loading()) {
+      @for (i of [1, 2]; track i) {
+        <div class="skeleton" aria-label="Chargement des showrooms"></div>
+      }
+    } @else {
+      @for (s of filtered(); track s.id) {
+        <article class="showroom-card">
+          <img
+            [src]="imageUrl(s.images[0])"
+            [alt]="s.nom"
+            width="900"
+            height="450"
+            loading="lazy"
+          />
+          <div>
+            <span class="badge badge-soft"
+              ><app-icon name="store" />{{ s.voitures.length }} voiture(s) dans la collection</span
+            >
+            <h2>{{ s.nom }}</h2>
+            <p><app-icon name="pin" /> {{ s.ville || 'Tunisie' }}</p>
+            <p style="margin-top: 15px">
+              {{ s.description.slice(0, 200) }}{{ s.description.length > 200 ? '…' : '' }}
+            </p>
+            <a class="button button-dark" [routerLink]="['/showrooms', s.id]"
+              >Découvrir la collection<app-icon name="arrow"
+            /></a>
+          </div>
+        </article>
+      } @empty {
+        <div class="empty-state">
+          <div class="empty-icon"><app-icon name="store" /></div>
+          <h2>La prochaine collection sera peut-être la vôtre.</h2>
+          <p>Aucun showroom ne correspond à votre recherche.</p>
+          <a class="button button-dark" routerLink="/espace/creer-showroom"
+            >Créer mon showroom<app-icon name="plus"
+          /></a>
+        </div>
+      }
+    }
+  </div>
+</section>

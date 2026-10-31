@@ -1,0 +1,98 @@
+<section class="wrap page-space">
+  <div class="studio-heading">
+    <div>
+      <span class="eyebrow subtle"><app-icon name="cube" />Le studio CarNova</span>
+      <h1>{{ drive ? 'Le plaisir de prendre le volant.' : 'Une autre perspective.' }}</h1>
+      <p>
+        {{
+          drive
+            ? 'Un terrain de jeu pour découvrir la conduite en 3D. Choisissez votre modèle, sélectionnez la scène et laissez-vous guider.'
+            : 'Prenez le temps de faire le tour. Deux modèles de démonstration, autant d’angles que vous voulez.'
+        }}
+      </p>
+    </div>
+    <nav class="studio-mode-switch" aria-label="Mode du studio">
+      <a
+        class="button"
+        [class.button-dark]="!drive"
+        [class.button-outline]="drive"
+        routerLink="/studio"
+        ><app-icon name="cube" />Explorer</a
+      ><a
+        class="button"
+        [class.button-dark]="drive"
+        [class.button-outline]="!drive"
+        routerLink="/car-drive"
+        ><app-icon name="car" />Conduire</a
+      >
+    </nav>
+  </div>
+  <div class="studio-layout">
+    <app-viewer [url]="model()" [drive]="drive" [paint]="color()" />
+    <aside class="viewer-settings">
+      <span class="eyebrow subtle">À vous de choisir</span>
+      <h2>La collection 3D.</h2>
+      <button
+        class="model-option"
+        [class.selected]="model() === '/api/models/bmw.glb'"
+        [attr.aria-pressed]="model() === '/api/models/bmw.glb'"
+        (click)="select('/api/models/bmw.glb')"
+      >
+        <app-icon name="car" /><span>Concept ToyCar<small>Modèle CC0 · 5,8 Mo</small></span></button
+      ><button
+        class="model-option"
+        [class.selected]="model().includes('3d.glb')"
+        [attr.aria-pressed]="model().includes('3d.glb')"
+        (click)="select('/assets/original-models/3d.glb')"
+      >
+        <app-icon name="car" /><span>Datsun 240K GT<small>1972 · 71 Mo à charger</small></span>
+      </button>
+      <div class="viewer-setting-block">
+        <span class="field-label">Une touche de couleur</span>
+        <div class="color-swatches">
+          @for (c of colors; track c.value) {
+            <button
+              [style.background]="c.value"
+              [attr.aria-label]="'Peinture ' + c.name"
+              [attr.aria-pressed]="color() === c.value"
+              (click)="color.set(c.value)"
+            ></button>
+          }
+        </div>
+        <p style="font-size: 9px; margin-top: 13px">
+          Modifie les matériaux de carrosserie compatibles. Le résultat dépend du modèle.
+        </p>
+      </div>
+      <div class="viewer-setting-block">
+        <span class="eyebrow subtle">Petits repères</span>
+        <p style="font-size: 10px; line-height: 1.9; margin-top: 12px">
+          {{
+            drive
+              ? 'Flèches ou ZQSD pour conduire, espace pour freiner. Sur mobile, utilisez les boutons de la scène. Une simulation de loisir, sans reproduction de la conduite réelle.'
+              : 'Glissez pour faire le tour. Molette ou pincement pour les détails. Les commandes sous la scène permettent de lancer la rotation et de réinitialiser la vue.'
+          }}
+        </p>
+      </div>
+      <div class="notice" style="margin-top: 20px; font-size: 9px">
+        <app-icon name="info" />Les modèles 3D sont illustratifs et ne certifient pas l’état d’un
+        véhicule en vente.
+      </div>
+    </aside>
+  </div>
+  <p class="studio-attribution">
+    Concept ToyCar : Guido Odendahl, matériaux Eric Chadwick · domaine public CC0. Datsun 240K GT :
+    <a
+      href="https://sketchfab.com/3d-models/free-1972-datsun-240k-gt-b2303a552b444e5b8637fdf5169b41cb"
+      target="_blank"
+      rel="noopener noreferrer"
+      >Karol Miklas</a
+    >
+    ·
+    <a
+      href="https://creativecommons.org/licenses/by-sa/4.0/"
+      target="_blank"
+      rel="noopener noreferrer"
+      >CC BY-SA 4.0</a
+    >. <a routerLink="/about" fragment="credits">Tous les crédits.</a>
+  </p>
+</section>

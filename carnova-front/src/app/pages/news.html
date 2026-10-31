@@ -1,0 +1,96 @@
+<section class="wrap page-space">
+  <div class="page-intro">
+    <span class="eyebrow subtle">La passion ne s’arrête pas au volant</span>
+    <h1>Le Journal<span style="color: #718c23">.</span></h1>
+    <p>Des découvertes, des repères et un peu d’avance sur votre prochain départ.</p>
+    <div class="category-tabs">
+      @for (t of tabs; track t) {
+        <button
+          [class.selected]="tab() === t"
+          [attr.aria-pressed]="tab() === t"
+          (click)="tab.set(t)"
+        >
+          {{ t }}
+        </button>
+      }
+    </div>
+  </div>
+  @if (error()) {
+    <div class="error-box" role="alert">
+      {{ error() }}<br /><button class="button button-outline" (click)="load()">Réessayer</button>
+    </div>
+  }
+  <div class="news-grid">
+    @if (loading()) {
+      @for (i of [1, 2, 3]; track i) {
+        <div class="skeleton" aria-label="Chargement du journal"></div>
+      }
+    } @else {
+      @for (n of filtered(); track n.id) {
+        <article class="journal-card" [id]="'article-' + n.id">
+          <div class="journal-image">
+            <img
+              [src]="imageUrl(n.imageUrl)"
+              [alt]="n.title"
+              width="800"
+              height="450"
+              loading="lazy"
+            />
+          </div>
+          <span class="eyebrow"
+            >{{ n.sourceName }}<span>· {{ date(n.publishedAt) }}</span></span
+          >
+          <h2 style="font-size: 24px; line-height: 1.3; margin: 12px 0">{{ n.title }}</h2>
+          <p>{{ n.summary }}</p>
+          <button
+            class="text-link"
+            style="
+              border-top: 0;
+              border-left: 0;
+              border-right: 0;
+              background: none;
+              color: var(--ink);
+              margin-top: 20px;
+              cursor: pointer;
+            "
+            [attr.aria-expanded]="expanded() === n.id"
+            [attr.aria-controls]="'content-' + n.id"
+            (click)="expanded.set(expanded() === n.id ? '' : n.id)"
+          >
+            {{ expanded() === n.id ? 'Refermer' : 'Prendre le temps de lire'
+            }}<app-icon [name]="expanded() === n.id ? 'close' : 'diagonal'" />
+          </button>
+          @if (expanded() === n.id) {
+            <div class="article-expanded" [id]="'content-' + n.id">
+              <p>{{ body(n) }}</p>
+              @if (source(n)) {
+                <a [href]="source(n)" target="_blank" rel="noopener noreferrer"
+                  >{{
+                    n.sourceName === 'CarNova Journal'
+                      ? 'Poursuivre avec le guide'
+                      : 'Lire chez la source'
+                  }}<app-icon name="diagonal"
+                /></a>
+              }
+              <div class="notice">
+                <app-icon name="info" />Des pistes pour préparer votre projet. Confirmez les
+                informations propres à votre véhicule et votre situation.
+              </div>
+            </div>
+          }
+        </article>
+      } @empty {
+        <div class="empty-state">
+          <div class="empty-icon"><app-icon name="book" /></div>
+          <h2>La prochaine histoire se prépare.</h2>
+          <p>
+            Le Journal n’a pas encore d’article dans cette sélection. Notre guide reste disponible.
+          </p>
+          <a class="button button-dark" routerLink="/guide"
+            >Ouvrir le guide<app-icon name="arrow"
+          /></a>
+        </div>
+      }
+    }
+  </div>
+</section>

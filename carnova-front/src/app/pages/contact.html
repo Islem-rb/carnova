@@ -1,0 +1,116 @@
+<section class="wrap page-space">
+  <div class="contact-layout">
+    <div class="contact-copy">
+      <span class="eyebrow subtle" style="margin-bottom: 18px">La conversation commence ici</span>
+      <h1>Parlons de la suite.</h1>
+      <p>
+        Une question sur la plateforme, un retour ou une idée ? Laissez-nous un message, nous sommes
+        à l’écoute.
+      </p>
+      <div class="contact-detail">
+        <app-icon name="mail" />
+        <div>
+          <h2>Un message, tout simplement.</h2>
+          <p>Votre demande rejoint la boîte de réception CarNova.</p>
+        </div>
+      </div>
+      <div class="contact-detail">
+        <app-icon name="spark" />
+        <div>
+          <h2>Besoin d’un repère automobile ?</h2>
+          <p>Le copilote peut vous aider à préparer votre projet.</p>
+          <button
+            class="text-link"
+            style="
+              background: none;
+              color: var(--ink);
+              border-top: 0;
+              border-left: 0;
+              border-right: 0;
+              margin-top: 12px;
+              font-size: 11px;
+            "
+            (click)="ui.openAssistant()"
+          >
+            Ouvrir l’assistant<app-icon name="arrow" />
+          </button>
+        </div>
+      </div>
+      <div class="contact-detail">
+        <app-icon name="book" />
+        <div>
+          <h2>Les questions pratiques.</h2>
+          <p>
+            <a routerLink="/guide" style="text-decoration: underline"
+              >Explorez les repères de notre guide.</a
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="wizard-card">
+      @if (sent()) {
+        <div class="success-box" role="status">
+          <app-icon name="check" />
+          <h2>Message bien arrivé.</h2>
+          <p>
+            Votre demande a été enregistrée dans la boîte de réception de l’équipe. Merci pour votre
+            retour.
+          </p>
+          <button class="button button-dark" (click)="sent.set(false); form.reset()">
+            Écrire un autre message<app-icon name="arrow" />
+          </button>
+        </div>
+      } @else {
+        <h2>On vous écoute.</h2>
+        <p>Tous les champs sont nécessaires.</p>
+        @if (error()) {
+          <div class="error-box" role="alert">{{ error() }}</div>
+        }
+        <form [formGroup]="form" (ngSubmit)="submit()" class="form-grid">
+          <div class="field full-width">
+            <label for="contact-name">Votre nom</label
+            ><input id="contact-name" formControlName="name" autocomplete="name" maxlength="100" />
+            @if (invalid('name')) {
+              <span class="field-error">Indiquez votre nom.</span>
+            }
+          </div>
+          <div class="field full-width">
+            <label for="contact-email">Votre adresse e-mail</label
+            ><input
+              id="contact-email"
+              type="email"
+              formControlName="email"
+              autocomplete="email"
+              maxlength="254"
+            />
+            @if (invalid('email')) {
+              <span class="field-error">Indiquez une adresse e-mail valide.</span>
+            }
+          </div>
+          <div class="field full-width">
+            <label for="contact-message">Votre message</label
+            ><textarea
+              id="contact-message"
+              formControlName="message"
+              rows="5"
+              minlength="10"
+              maxlength="3000"
+              placeholder="Dites-nous ce que vous avez en tête…"
+            ></textarea>
+            @if (invalid('message')) {
+              <span class="field-error">Ajoutez entre 10 et 3 000 caractères.</span>
+            }
+          </div>
+          <button class="button button-dark full-width" type="submit" [disabled]="busy()">
+            {{ busy() ? 'Envoi en cours…' : 'Envoyer mon message' }}<app-icon name="arrow" />
+          </button>
+          <p class="full-width" style="font-size: 10px">
+            Vos coordonnées sont utilisées pour traiter votre demande. Ne partagez pas de données
+            sensibles.
+          </p>
+        </form>
+      }
+    </div>
+  </div>
+</section>

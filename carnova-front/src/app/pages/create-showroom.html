@@ -1,0 +1,191 @@
+<section class="wrap page-space" style="max-width: 1000px">
+  <a class="back-link" routerLink="/espace"><app-icon name="back" />Mon espace</a>
+  <div class="page-intro">
+    <span class="eyebrow subtle">Un écrin pour votre sélection</span>
+    <h1>{{ editId ? 'Votre showroom, à votre image.' : 'Ouvrez les portes.' }}</h1>
+    <p>Un lieu pour présenter votre collection et donner envie de vous rencontrer.</p>
+  </div>
+  @if (loading()) {
+    <div class="skeleton" role="status" aria-label="Chargement du showroom"></div>
+  } @else {
+    <form class="wizard-card" [formGroup]="form" (ngSubmit)="submit()">
+      @if (error()) {
+        <div class="error-box" role="alert">{{ error() }}</div>
+      }
+      <h2>Les présentations.</h2>
+      <p>Les coordonnées qui faciliteront la prochaine rencontre.</p>
+      <div class="form-grid">
+        <div class="field full-width">
+          <label for="showroom-name">Nom du showroom *</label
+          ><input
+            id="showroom-name"
+            formControlName="nom"
+            maxlength="120"
+            placeholder="Ex. Garage Collection Tunis"
+          />
+          @if (invalid('nom')) {
+            <span class="field-error">Indiquez un nom de showroom.</span>
+          }
+        </div>
+        <div class="field">
+          <label for="showroom-city">Ville & adresse *</label
+          ><input
+            id="showroom-city"
+            formControlName="ville"
+            maxlength="80"
+            placeholder="Ex. Les Berges du Lac, Tunis"
+          />
+          @if (invalid('ville')) {
+            <span class="field-error">Indiquez votre localisation.</span>
+          }
+        </div>
+        <div class="field">
+          <label for="showroom-phone">Téléphone *</label
+          ><input
+            id="showroom-phone"
+            type="tel"
+            formControlName="telephone"
+            autocomplete="tel"
+            maxlength="25"
+            placeholder="+216 71 000 000"
+          />
+          @if (invalid('telephone')) {
+            <span class="field-error">Indiquez un numéro valide.</span>
+          }
+        </div>
+        <div class="field full-width">
+          <label for="showroom-description">Votre histoire *</label
+          ><textarea
+            id="showroom-description"
+            formControlName="description"
+            rows="4"
+            maxlength="4000"
+            placeholder="Votre passion, votre sélection, ce qui rend votre showroom unique…"
+          ></textarea>
+          @if (invalid('description')) {
+            <span class="field-error">Ajoutez une description.</span>
+          }
+        </div>
+        <div class="full-width">
+          <label class="upload-area" for="showroom-photos"
+            ><app-icon name="upload" /><strong>{{
+              uploading() ? 'Envoi des photos…' : 'Présentez votre espace en images'
+            }}</strong
+            ><small>JPEG ou PNG · 8 Mo par photo · 8 photos maximum</small
+            ><input
+              id="showroom-photos"
+              type="file"
+              accept="image/jpeg,image/png"
+              multiple
+              [disabled]="uploading()"
+              (change)="photos($event)"
+          /></label>
+          <div class="upload-preview">
+            @for (img of images(); track img) {
+              <div>
+                <img
+                  [src]="imageUrl(img)"
+                  alt="Photo de votre showroom"
+                  width="150"
+                  height="100"
+                /><button
+                  type="button"
+                  class="icon-button"
+                  aria-label="Retirer cette photo"
+                  (click)="remove(img)"
+                >
+                  <app-icon name="close" />
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+      <div class="section-head section-divider">
+        <div>
+          <h2 style="font-size: 25px">Votre collection.</h2>
+          <p>Ajoutez les voitures que vous souhaitez présenter.</p>
+        </div>
+        <button
+          type="button"
+          class="button button-outline button-small"
+          [disabled]="vehicles.length >= 50"
+          (click)="addVehicle()"
+        >
+          <app-icon name="plus" />Une voiture
+        </button>
+      </div>
+      <div formArrayName="voitures">
+        @for (v of vehicles.controls; track v; let i = $index) {
+          <div class="panel" style="margin-bottom: 18px" [formGroupName]="i">
+            <div class="section-head" style="margin-bottom: 18px">
+              <h3 style="font-size: 18px">Voiture {{ i + 1 }}</h3>
+              <button
+                type="button"
+                class="icon-button danger"
+                [attr.aria-label]="'Retirer la voiture ' + (i + 1)"
+                (click)="vehicles.removeAt(i)"
+              >
+                <app-icon name="trash" />
+              </button>
+            </div>
+            <div class="form-grid">
+              <div class="field">
+                <label [for]="'vehicle-brand-' + i">Marque *</label
+                ><input [id]="'vehicle-brand-' + i" formControlName="marque" maxlength="50" />
+              </div>
+              <div class="field">
+                <label [for]="'vehicle-model-' + i">Modèle *</label
+                ><input [id]="'vehicle-model-' + i" formControlName="modele" maxlength="80" />
+              </div>
+              <div class="field">
+                <label [for]="'vehicle-year-' + i">Année *</label
+                ><input
+                  [id]="'vehicle-year-' + i"
+                  type="number"
+                  min="1900"
+                  max="2028"
+                  formControlName="annee"
+                />
+              </div>
+              <div class="field">
+                <label [for]="'vehicle-price-' + i">Prix (TND) *</label
+                ><input [id]="'vehicle-price-' + i" type="number" min="1" formControlName="prix" />
+              </div>
+              <div class="field full-width">
+                <label [for]="'vehicle-color-' + i">Couleur</label
+                ><input [id]="'vehicle-color-' + i" formControlName="couleur" maxlength="40" />
+              </div>
+            </div>
+            @if (v.invalid && v.touched) {
+              <p class="field-error" style="margin-top: 15px">
+                Vérifiez la marque, le modèle, l’année et le prix de cette voiture.
+              </p>
+            }
+          </div>
+        } @empty {
+          <div class="notice">
+            <app-icon name="car" />Vous pouvez ouvrir votre showroom maintenant et ajouter votre
+            collection plus tard.
+          </div>
+        }
+      </div>
+      <div class="notice" style="margin-top: 24px">
+        <app-icon name="info" />Vos coordonnées, vos photos et les informations des véhicules seront
+        publiques.
+      </div>
+      <div class="wizard-actions">
+        <a class="button button-outline" routerLink="/espace">Annuler</a
+        ><button type="submit" class="button button-dark" [disabled]="busy() || uploading()">
+          {{
+            busy()
+              ? 'Enregistrement…'
+              : editId
+                ? 'Enregistrer les changements'
+                : 'Ouvrir mon showroom'
+          }}<app-icon name="arrow" />
+        </button>
+      </div>
+    </form>
+  }
+</section>

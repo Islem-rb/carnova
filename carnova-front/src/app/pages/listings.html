@@ -1,0 +1,199 @@
+<section class="wrap page-space">
+  <div class="page-intro">
+    <span class="eyebrow subtle">Trouvons la vôtre</span>
+    <h1>À chaque envie, sa route.</h1>
+    <p>Affinez votre recherche. Votre prochain chapitre commence peut-être ici.</p>
+  </div>
+  <form [formGroup]="filters" (ngSubmit)="apply()">
+    <div class="results-search">
+      <app-icon name="search" /><label class="sr-only" for="listing-query"
+        >Rechercher une voiture</label
+      ><input id="listing-query" formControlName="q" placeholder="Un modèle, une envie…" /><button
+        type="submit"
+        class="button button-dark"
+      >
+        Rechercher<app-icon name="arrow" />
+      </button>
+    </div>
+    <div class="results-layout">
+      <aside
+        class="filters"
+        [class.mobile-open]="mobileFilters()"
+        aria-label="Filtres de recherche"
+      >
+        <div class="filter-title">
+          Votre recherche<button type="button" class="text-button" (click)="reset()">
+            Tout effacer
+          </button>
+        </div>
+        <div class="field">
+          <label for="filter-type">Votre projet</label
+          ><select id="filter-type" formControlName="typeAnnonce">
+            <option value="">Tous les projets</option>
+            <option value="VENTE">Acheter</option>
+            <option value="LOCATION">Louer</option>
+            <option value="ACHAT">Demandes d’achat</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="filter-brand">Marque</label
+          ><select id="filter-brand" formControlName="marque">
+            <option value="">Toutes les marques</option>
+            @for (b of brands; track b) {
+              <option>{{ b }}</option>
+            }
+          </select>
+        </div>
+        <div class="field">
+          <label for="filter-category">Carrosserie</label
+          ><select id="filter-category" formControlName="typeVehicule">
+            <option value="">Toutes les carrosseries</option>
+            <option value="BERLINE">Berline</option>
+            <option value="SUV">SUV & 4×4</option>
+            <option value="COUPE">Coupé</option>
+            <option value="CITADINE">Citadine</option>
+            <option value="PICKUP">Pick-up</option>
+            <option value="MOTO">Moto</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="filter-price">Budget maximum (TND)</label
+          ><input
+            id="filter-price"
+            type="number"
+            min="1"
+            max="100000000"
+            formControlName="maxPrice"
+            placeholder="Sans limite"
+          />
+        </div>
+        <div class="field">
+          <label for="filter-fuel">Énergie</label
+          ><select id="filter-fuel" formControlName="carburant">
+            <option value="">Toutes les énergies</option>
+            <option value="ESSENCE">Essence</option>
+            <option value="DIESEL">Diesel</option>
+            <option value="ELECTRIQUE">Électrique</option>
+            <option value="HYBRIDE">Hybride</option>
+            <option value="GPL">GPL</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="filter-city">Localisation</label
+          ><select id="filter-city" formControlName="ville">
+            <option value="">Toute la Tunisie</option>
+            @for (c of cities; track c) {
+              <option>{{ c }}</option>
+            }
+          </select>
+        </div>
+        <div class="field">
+          <label for="filter-year">Année à partir de</label
+          ><input
+            id="filter-year"
+            type="number"
+            min="1900"
+            max="2028"
+            formControlName="minYear"
+            placeholder="Toutes les années"
+          />
+        </div>
+        <div class="field">
+          <label for="filter-km">Kilométrage maximum</label
+          ><input
+            id="filter-km"
+            type="number"
+            min="0"
+            max="3000000"
+            formControlName="maxKm"
+            placeholder="Sans limite"
+          />
+        </div>
+        <button type="submit" class="button button-dark w-full">
+          Afficher les résultats<app-icon name="arrow" />
+        </button>
+      </aside>
+      <div>
+        <div class="results-toolbar">
+          <strong role="status">{{
+            loading()
+              ? 'Recherche en cours…'
+              : result().total + ' voiture' + (result().total > 1 ? 's' : '') + ' à découvrir'
+          }}</strong>
+          <div>
+            <button
+              type="button"
+              class="button button-outline button-small mobile-filter-button"
+              [attr.aria-expanded]="mobileFilters()"
+              (click)="mobileFilters.set(!mobileFilters())"
+            >
+              <app-icon name="filter" />Filtres</button
+            ><label class="sr-only" for="filter-sort">Trier les annonces</label
+            ><select id="filter-sort" formControlName="sort" (change)="apply()">
+              <option value="recent">Les plus récentes</option>
+              <option value="price-asc">Prix croissant</option>
+              <option value="price-desc">Prix décroissant</option>
+              <option value="year">Année récente</option>
+            </select>
+          </div>
+        </div>
+        @if (error()) {
+          <div class="error-box" role="alert">
+            {{ error() }}<br /><button
+              type="button"
+              class="button button-outline"
+              (click)="apply()"
+            >
+              Réessayer
+            </button>
+          </div>
+        }
+        <div class="car-grid">
+          @if (loading()) {
+            @for (i of [1, 2, 3, 4]; track i) {
+              <div class="skeleton" aria-label="Chargement des annonces"></div>
+            }
+          } @else {
+            @for (car of result().items; track car.id) {
+              <app-car-card [car]="car" />
+            } @empty {
+              @if (!error()) {
+                <div class="empty-state">
+                  <div class="empty-icon"><app-icon name="search" /></div>
+                  <h2>Élargissons l’horizon.</h2>
+                  <p>
+                    Aucune voiture ne correspond à ces critères pour le moment. Essayez une autre
+                    marque ou un budget différent.
+                  </p>
+                  <button type="button" class="button button-dark" (click)="reset()">
+                    Réinitialiser les filtres<app-icon name="rotate" />
+                  </button>
+                </div>
+              }
+            }
+          }
+        </div>
+        @if (result().pages > 1 && !loading()) {
+          <nav class="pagination" aria-label="Pagination">
+            <button
+              type="button"
+              class="button button-outline button-small"
+              [disabled]="result().page === 0"
+              (click)="page(result().page - 1)"
+            >
+              <app-icon name="back" />Précédent</button
+            ><span>Page {{ result().page + 1 }} sur {{ result().pages }}</span
+            ><button
+              type="button"
+              class="button button-outline button-small"
+              [disabled]="result().page + 1 >= result().pages"
+              (click)="page(result().page + 1)"
+            >
+              Suivant<app-icon name="arrow" />
+            </button>
+          </nav>
+        }
+      </div>
+    </div>
+  </form>
+</section>
