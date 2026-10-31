@@ -34,6 +34,10 @@ docker compose down
 
 The original `carnova-back/uploads/` and `models/` folders remain intact. New container uploads, models and PostgreSQL data live in separate named volumes. Existing database adoption is an explicit, reviewed procedure in [docs/DATABASE.md](docs/DATABASE.md).
 
+## Live demo hosting
+
+The public demo runs for free on Render (one Docker service built from the root `Dockerfile`) with its database on Neon. Setup, limits and the reasons behind each setting: [docs/DEPLOY.md](docs/DEPLOY.md).
+
 ## Account essentials
 
 Open **Mon espace → Mon compte** to edit your name, confirm your email, or change your password. **Mot de passe oublié ?** on sign-in starts recovery. Signup sends a verification link to the local capture inbox; reset links arrive there too. Existing users can keep signing in. Successful password changes/resets close every old session.
