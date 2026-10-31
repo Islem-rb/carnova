@@ -17,16 +17,23 @@ export async function createScene(
   onSpeed: (n: number) => void,
   abort: AbortSignal,
 ): Promise<SceneHandle> {
+  // Without GPU acceleration (SwiftShader, llvmpipe…) every fragment is shaded on the CPU:
+  // MSAA, transmission, soft shadows and full resolution drop the scene to about one frame per
+  // second. Antialiasing is fixed at context creation, so probe on a throwaway context first.
+  const software = probeSoftwareRenderer();
   const renderer = new T.WebGLRenderer({
-    antialias: true,
+    antialias: !software,
     alpha: false,
     powerPreference: 'default',
   });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.6));
+  // On software renderers, motion is drawn at reduced resolution and the settled view sharp.
+  const sharpRatio = Math.min(devicePixelRatio, 1.6);
+  const motionRatio = software ? 0.6 : sharpRatio;
+  renderer.setPixelRatio(sharpRatio);
   renderer.outputColorSpace = T.SRGBColorSpace;
   renderer.toneMapping = T.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.3;
-  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.enabled = !software;
   renderer.shadowMap.type = T.PCFSoftShadowMap;
   const canvas = renderer.domElement;
   canvas.tabIndex = 0;
@@ -108,6 +115,7 @@ export async function createScene(
   let yaw = 0;
   let lastTime = performance.now();
   let needsRender = true;
+  let cameraSettled = false;
   const keys = new Set<string>();
   const paintMaterials: T.MeshStandardMaterial[] = [];
   function reset() {
@@ -117,10 +125,18 @@ export async function createScene(
     }
     speed = 0;
     yaw = 0;
-    camera.position.set(5, 2.4, 6);
+    // Without damping, OrbitControls applies and clears leftover rotation/pan momentum at once,
+    // so a reset snaps instead of coasting for dozens of frames.
+    controls.enableDamping = false;
+    controls.update();
+    controls.enableDamping = true;
+    // Driving starts directly behind the car, where the chase camera settles.
+    if (drive) camera.position.set(0, 3.5, 8);
+    else camera.position.set(5, 2.4, 6);
     controls.target.set(0, 0.8, 0);
     controls.update();
     needsRender = true;
+    cameraSettled = false;
     onSpeed(0);
   }
   reset();
@@ -221,7 +237,7 @@ export async function createScene(
     const dt = Math.min((now - lastTime) / 1000, 0.05);
     lastTime = now;
     let changed = false;
-    if (drive && car) {
+    if (drive && car && (keys.size > 0 || speed !== 0 || !cameraSettled)) {
       changed = true;
       const forward = keys.has('ArrowUp') || keys.has('w') || keys.has('z');
       const back = keys.has('ArrowDown') || keys.has('s');
@@ -230,6 +246,7 @@ export async function createScene(
       speed += (forward ? 11 : back ? -13 : 0) * dt;
       speed *= Math.exp(-(keys.has(' ') ? 5 : forward || back ? 0.25 : 1.8) * dt);
       speed = T.MathUtils.clamp(speed, -6, 23);
+      if (keys.size === 0 && Math.abs(speed) < 0.05) speed = 0;
       if (Math.abs(speed) > 0.1)
         yaw += ((left ? 1 : 0) - (right ? 1 : 0)) * dt * 1.7 * Math.sign(speed);
       car.rotation.y = yaw;
@@ -242,14 +259,18 @@ export async function createScene(
         car.position.z + Math.cos(yaw) * 8,
       );
       camera.position.lerp(target, 1 - Math.exp(-4 * dt));
+      cameraSettled = camera.position.distanceToSquared(target) < 1e-4;
       camera.lookAt(car.position.clone().add(new T.Vector3(0, 0.7, 0)));
       light.position.set(car.position.x + 5, 8, car.position.z + 4);
       onSpeed(Math.round(Math.abs(speed) * 3.6));
-    } else changed = controls.update();
-    // OrbitControls reports camera changes, including damping and auto-rotation.
-    // Static scenes and paint-only changes do not need continuous GPU work or shader recompilation.
-    if (changed || needsRender) {
+    } else if (!drive) changed = controls.update();
+    // Only render when something moved: OrbitControls reports damping/auto-rotation, driving
+    // reports held keys, remaining speed or a camera still catching up. A parked car or a static
+    // model costs no GPU work, which keeps the page responsive on software renderers.
+    const ratio = changed ? motionRatio : sharpRatio;
+    if (changed || needsRender || renderer.getPixelRatio() !== ratio) {
       needsRender = false;
+      if (renderer.getPixelRatio() !== ratio) renderer.setPixelRatio(ratio);
       renderer.render(scene, camera);
     }
   }
@@ -308,6 +329,12 @@ export async function createScene(
         node.castShadow = true;
         node.receiveShadow = true;
         for (const m of Array.isArray(node.material) ? node.material : [node.material]) {
+          if (software && m instanceof T.MeshPhysicalMaterial && m.transmission > 0) {
+            // Transmission re-renders the whole scene each frame; plain transparency keeps glass readable.
+            m.opacity = Math.min(m.opacity, 1 - 0.7 * m.transmission);
+            m.transmission = 0;
+            m.transparent = true;
+          }
           if (
             m instanceof T.MeshStandardMaterial &&
             (/paint|body|chassis/i.test(m.name) || /body|paint/i.test(node.name)) &&
@@ -325,4 +352,16 @@ export async function createScene(
     handle.dispose();
     throw e;
   }
+}
+export function isSoftwareRenderer(gl: WebGLRenderingContext | WebGL2RenderingContext): boolean {
+  const info = gl.getExtension('WEBGL_debug_renderer_info');
+  const name = String(gl.getParameter(info ? info.UNMASKED_RENDERER_WEBGL : gl.RENDERER) ?? '');
+  return /swiftshader|llvmpipe|softpipe|software/i.test(name);
+}
+function probeSoftwareRenderer(): boolean {
+  const gl = document.createElement('canvas').getContext('webgl2');
+  if (!gl) return false;
+  const software = isSoftwareRenderer(gl);
+  gl.getExtension('WEBGL_lose_context')?.loseContext();
+  return software;
 }
