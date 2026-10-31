@@ -48,6 +48,16 @@ public class ApiErrors {
     return ResponseEntity.status(413).body(Map.of("message", "Fichier trop volumineux."));
   }
 
+  @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
+  ResponseEntity<?> notFound() {
+    return ResponseEntity.status(404).body(Map.of("message", "Ressource introuvable."));
+  }
+
+  @ExceptionHandler(org.springframework.web.HttpRequestMethodNotSupportedException.class)
+  ResponseEntity<?> method() {
+    return ResponseEntity.status(405).body(Map.of("message", "Méthode non prise en charge."));
+  }
+
   @ExceptionHandler(Exception.class)
   ResponseEntity<?> failure(Exception e) {
     org.slf4j.LoggerFactory.getLogger(ApiErrors.class)

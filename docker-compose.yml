@@ -41,6 +41,7 @@ services:
       OLLAMA_MODEL: ${OLLAMA_MODEL:-llama3.2}
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost:8080}
       MAILPIT_URL: http://mailpit:8025
+      CLIENT_IP_HEADER: X-Real-IP
       MAIL_FROM: ${MAIL_FROM:-bonjour@carnova.test}
       JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=75.0
     ports:
