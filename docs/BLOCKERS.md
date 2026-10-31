@@ -1,3 +1,11 @@
+# Connected GitHub write gate — latest retry, 31 October 2026
+
+GitHub access is now confirmed; repository metadata grants push permission and Actions reads work. The remote head remains `c1cfe48`. However, the connector source-tree upload was automatically rejected before mutation with: `MCP tool call requires approval, but approval policy is never`. No remote content/ref or new workflow run was created. The task cannot publish through this session's write gate; terminal Git DNS and local Docker remain blocked independently. No alternate write tool or permission change was used to bypass this decision.
+
+The old hosted run has backend/frontend success and one 3D interaction timeout among seven browser tests. A rendering/reset correction is committed locally and passes 43 frontend tests, production build and formatting; hosted browser confirmation remains pending. See [connected-ci.json](reports/connected-ci.json). Artifact transfer to the local filesystem also fails under the current network restrictions, so no screenshot review is claimed from that artifact.
+
+---
+
 # Publication/verification retry — 31 October 2026
 
 A fresh push failed with `Could not resolve host: github.com`; the repository Actions API/page were unavailable. Docker socket access and local frontend/API HTTP were denied. The desktop/mobile browser attempt failed before page navigation because project-local Chromium is absent. No live flow, screenshot or hosted CI result is inferred. See [PUBLISH_VERIFY.md](PUBLISH_VERIFY.md) for observed results and exact completion commands. Both viewport cases are now authored, type-checked, formatted and discoverable; publication/live verification remains blocked.

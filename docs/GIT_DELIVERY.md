@@ -43,3 +43,7 @@ git -C /tmp/carnova-review push origin redesign/v2
 ```
 
 Use the authenticated transport already configured on your machine. No force push, main-branch update, history rewrite, account creation or system SSH/Git configuration change is required.
+
+## Connected-plugin retry
+
+The installed GitHub connector confirms read access and repository push permission. Remote `redesign/v2` remains `c1cfe48`; source-tree upload was rejected before mutation because the tool requires approval while the session policy is `never`. No API commit/ref update occurred. Local correction `cc4151d` and later evidence commits remain in the normal checkout and bundle. Use the ordinary non-forced push command above when Git transport is available, or an allowed connector append-and-merge publication without resetting/rebasing local history.

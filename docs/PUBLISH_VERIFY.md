@@ -1,3 +1,15 @@
+# Latest retry: connected GitHub, publication rejected by session approval policy
+
+The GitHub plugin is installed and repository/Actions reads now work. The remote branch is still at `c1cfe48`; its [run 41159293499](https://github.com/Islem-rb/carnova/actions/runs/41159293499) passed backend/frontend and six of seven browser tests. The 3D-to-driving case timed out while waiting for the link to become stable after rotation and repainting.
+
+Local correction `cc4151d` renders static scenes when content/camera changes, avoids shader recompilation for color uniforms, and stops rotation on reset. The browser test asserts reset's paused state. All 43 frontend tests, production build and formatting pass; this does not replace the pending hosted browser run.
+
+A 70-file reviewed UTF-8 publication manifest was prepared against the remote base tree, preserving original media and excluding real environment files. The connector's source-tree upload was rejected before mutation: `MCP tool call requires approval, but approval policy is never`. Repository push permission is present; the blocker is this session's tool-approval policy. No commit/ref was created or moved, no new Actions run exists, and existing local/remote history was not rewritten. Latest evidence: [connected-ci.json](reports/connected-ci.json).
+
+The completion commands below still apply in a session with an allowed Git transport. Connector publication is another option only when its write gate permits it; that API route produces a new publication SHA and must preserve/merge the original local history as described in [DECISIONS.md](DECISIONS.md). Local Docker/browser restrictions remain separate from the GitHub connection.
+
+---
+
 # Publish and verify — blocked attempt, 31 October 2026
 
 The request refers to `1916572`; the current local branch also contains the completed account milestone `c8c3ac6`. Both belong in the next fast-forward push of `redesign/v2`. No main-branch change, force push, history rewrite or deployment is involved.

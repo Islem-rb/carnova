@@ -1,3 +1,15 @@
+# GitHub connected — hosted CI inspected; publication blocked by tool approval
+
+**Confirmed:** the GitHub plugin can read CarNova and reports repository push permission. Remote `redesign/v2` still points to `c1cfe48`. Its [hosted run](https://github.com/Islem-rb/carnova/actions/runs/41159293499) passed backend/frontend and six browser tests; the 3D-to-driving case timed out. This is the older revision, not validation of the new account/mobile work.
+
+**Prepared correction:** local commit `cc4151d` stops unnecessary idle rendering and paint shader recompilation, and makes viewer reset stop rotation. All 43 frontend tests, production build without warnings, and formatting pass. The updated real browser assertion and both desktop/mobile publishing variants remain pending a hosted run.
+
+**Publication result:** the connector source-tree upload was rejected before mutation: “MCP tool call requires approval, but approval policy is never.” No remote commit/ref was changed and no new CI run was created. Ordinary terminal push still fails DNS; local Docker access remains denied. This is a session tool-approval block, not missing repository push permission. No attempt was made to change permissions, bypass the rejection or rewrite history.
+
+Current evidence: [connected-ci.json](docs/reports/connected-ci.json). Original local history and reviewed workspace changes are preserved in `redesign-v2.bundle`. Resume publication/CI when an allowed write transport is available; [PUBLISH_VERIFY.md](docs/PUBLISH_VERIFY.md) retains the full walkthrough commands.
+
+---
+
 # GitHub connection available — publication and hosted verification in progress
 
 The installed GitHub connector can now read the repository and Actions. The old hosted run at `c1cfe48` passed backend/frontend and six of seven browser tests; its 3D-to-driving interaction timed out. Static rendering/paint/reset corrections pass 43 frontend tests, production build without warnings and formatting. Connector publication and exact-revision CI are next. Terminal DNS and local Docker remain blocked; hosted Actions can provide the full stack/browser run.

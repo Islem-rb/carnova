@@ -1,5 +1,5 @@
 {
-  "recordedAt": "2026-10-31T14:37:19.440916+00:00",
+  "recordedAt": "2026-10-31T14:40:48.450039+00:00",
   "githubConnection": "confirmed: repository read/write and Actions reads available",
   "terminalGit": "DNS blocked",
   "localDocker": "socket denied",
@@ -26,6 +26,14 @@
     "transferKB": 109.68,
     "format": "passed"
   },
-  "publication": "pending connector append commit; original local history retained",
-  "newHostedRun": "pending"
+  "publication": "blocked before mutation: connector source-tree upload requires approval, session approval policy is never",
+  "newHostedRun": "not created; latest source could not be published",
+  "publicationAttempt": {
+    "repositoryPushPermission": true,
+    "toolApproval": "required but unavailable under never policy",
+    "remoteMutation": false,
+    "remoteHead": "c1cfe482d9edf2c81b9ed3b0dbb4e2effeda6b19",
+    "localCorrectionCommit": "cc4151d391eee3d0110ebdc126d60e54a67436d6"
+  },
+  "artifactReview": "download reference obtained through connector, but local artifact transfer failed under network restrictions; no fresh visual review claimed"
 }
