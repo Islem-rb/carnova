@@ -1,0 +1,10 @@
+{
+  "changedTextFilesScanned": 140,
+  "credentialPatternMatches": [],
+  "originalMediaChanges": [],
+  "notes": [
+    "Only newly changed working-tree text was scanned; original credential values and historical logs were not displayed.",
+    "Original uploads, backend models and frontend source assets match the baseline.",
+    "Temporary browser crash dump removed; runtime logs, caches, traces, environments and Git bundle ignored."
+  ]
+}

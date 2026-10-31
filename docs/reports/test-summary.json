@@ -1,0 +1,49 @@
+{
+  "verifiedAt": "2026-10-31T02:12:53.362226+00:00",
+  "backend": {
+    "tests": 24,
+    "failures": 0,
+    "localMaven": "passed, Java 17 bytecode target",
+    "java17DockerBuild": "passed",
+    "database": "PostgreSQL 17, Flyway V1/V2, healthy"
+  },
+  "frontend": {
+    "unitTests": 11,
+    "productionBuild": "passed without warnings",
+    "initialBundleRawKB": 419,
+    "estimatedInitialTransferKB": 109,
+    "bundleWarningKB": 420,
+    "bundleErrorKB": 500,
+    "noUnusedLocalsAndParameters": true,
+    "formatCheck": "passed",
+    "runtimeDependencyAudit": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    }
+  },
+  "browser": {
+    "platformTests": 5,
+    "accessibilityAndVisualTests": 2,
+    "automatedWcagAuditViews": 39,
+    "additional320pxReflowRoutes": 16,
+    "mainPageConsoleErrors": 0,
+    "screenshots": 33,
+    "optionalDatsunModel": "rendered successfully"
+  },
+  "lighthouse": {
+    "performance": 96,
+    "accessibility": 100,
+    "best-practices": 100,
+    "seo": 100
+  },
+  "limits": [
+    "No hosted paid AI, real payments, cloud resources or deployments used.",
+    "Optional configured Stripe TEST/Ollama providers were not exercised.",
+    "Original Git metadata is read-only; delivery uses a writable metadata copy and incremental recovery bundle.",
+    "Original uploaded media/models/source assets preserved."
+  ]
+}

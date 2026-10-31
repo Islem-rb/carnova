@@ -3732,3 +3732,21 @@ main {
     padding: 6px;
   }
 }
+
+h1,
+h2,
+h3,
+.car-title {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 760px) {
+  .section-head {
+    flex-wrap: wrap;
+  }
+  .section-head > div {
+    max-width: 100%;
+  }
+  .account-actions {
+    max-width: 100%;
+  }
+}

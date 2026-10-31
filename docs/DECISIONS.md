@@ -20,3 +20,5 @@
 - Serve responsive hero variants (640/960/full width) with matching early image hints on the landing route only. Uploaded photos are decoded, metadata stripped, resized within 1920×1440 and re-encoded as JPEG (or PNG when transparency is present); no shell process or paid image service is used.
 - Add explicit focusable, labelled regions around horizontally scrolling data tables after mobile keyboard accessibility checks.
 - Verification uses new local demo data and synthetic accounts; only records created by these tests are cleaned up. Original user data/media and any external database remain untouched.
+
+- A final 320-pixel reflow pass supplements the standard desktop/mobile audit. Showroom headers wrap and data-table scroll regions are keyboard-focusable. Search q matches structured brand/model fields as well as titles, with literal SQL wildcard escaping. Both corrections have regression coverage.

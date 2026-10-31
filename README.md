@@ -119,7 +119,7 @@ Start with the landing page, a listing, the publishing wizard and the 3D studio.
 | Desktop | Mobile |
 | --- | --- |
 | ![Listings](docs/screenshots/listings-desktop.png) | ![Mobile landing](docs/screenshots/home-mobile-fold.png) |
-| ![Studio](docs/screenshots/studio-desktop.png) | ![Mobile studio](docs/screenshots/studio-mobile.png) |
+| ![Studio](docs/screenshots/studio-datsun-desktop.png) | ![Mobile studio](docs/screenshots/studio-mobile.png) |
 
 More desktop/mobile captures are in [docs/screenshots](docs/screenshots). A locally generated [Lighthouse report](docs/reports/lighthouse-mobile.html) and [machine-readable summary](docs/reports/lighthouse-summary.json) accompany the verification notes. Scores describe this local run, rather than a production service guarantee.
 

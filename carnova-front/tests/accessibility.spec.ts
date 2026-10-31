@@ -6,7 +6,7 @@ test('accessibility: main desktop and mobile pages meet automated WCAG AA checks
   page,
   request,
 }) => {
-  test.setTimeout(240000);
+  test.setTimeout(300000);
   await adminSession(page, request);
   const pages = [
     '/',
@@ -69,6 +69,15 @@ test('accessibility: main desktop and mobile pages meet automated WCAG AA checks
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
       .analyze();
     expect(results.violations, path + ' dark mode').toEqual([]);
+  }
+  await page.setViewportSize({ width: 320, height: 740 });
+  for (const path of pages) {
+    await page.goto(path);
+    await expect(page.locator('main h1').first()).toBeVisible();
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1),
+      path + ' at 320px',
+    ).toBe(true);
   }
   await page.getByRole('button', { name: /Ouvrir l’assistant CarNova/ }).click();
   await expect(page.getByRole('dialog')).toBeVisible();

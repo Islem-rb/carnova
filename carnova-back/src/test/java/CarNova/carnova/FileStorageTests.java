@@ -88,11 +88,18 @@ class FileStorageTests {
     assertThatThrownBy(() -> files.resolve("link.png", false))
         .isInstanceOf(ResponseStatusException.class);
   }
-  @Test void largePhotosAreResizedAndReencodedForMarketplaceDisplay() throws Exception {
-    var files=storage();var bytes=new ByteArrayOutputStream();
-    ImageIO.write(new BufferedImage(3000,1500,BufferedImage.TYPE_INT_RGB),"png",bytes);
-    String url=files.image(new MockMultipartFile("image","large.png","image/png",bytes.toByteArray()));
-    var path=files.resolve(url.substring("/uploads/".length()),false);
-    var image=ImageIO.read(path.toFile());assertThat(image.getWidth()).isEqualTo(1920);assertThat(image.getHeight()).isEqualTo(960);assertThat(url).endsWith(".jpg");
+
+  @Test
+  void largePhotosAreResizedAndReencodedForMarketplaceDisplay() throws Exception {
+    var files = storage();
+    var bytes = new ByteArrayOutputStream();
+    ImageIO.write(new BufferedImage(3000, 1500, BufferedImage.TYPE_INT_RGB), "png", bytes);
+    String url =
+        files.image(new MockMultipartFile("image", "large.png", "image/png", bytes.toByteArray()));
+    var path = files.resolve(url.substring("/uploads/".length()), false);
+    var image = ImageIO.read(path.toFile());
+    assertThat(image.getWidth()).isEqualTo(1920);
+    assertThat(image.getHeight()).isEqualTo(960);
+    assertThat(url).endsWith(".jpg");
   }
 }

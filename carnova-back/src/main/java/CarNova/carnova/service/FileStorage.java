@@ -43,26 +43,42 @@ public class FileStorage {
         int sample = Math.max(1, Math.max(w / 1920, h / 1440));
         parameters.setSourceSubsampling(sample, sample, 0, 0);
         var decoded = reader.read(0, parameters);
-        double scale = Math.min(1.0, Math.min(1920.0 / decoded.getWidth(), 1440.0 / decoded.getHeight()));
+        double scale =
+            Math.min(1.0, Math.min(1920.0 / decoded.getWidth(), 1440.0 / decoded.getHeight()));
         int width = Math.max(1, (int) Math.round(decoded.getWidth() * scale));
         int height = Math.max(1, (int) Math.round(decoded.getHeight() * scale));
         boolean alpha = decoded.getColorModel().hasAlpha();
-        var image = new java.awt.image.BufferedImage(width, height, alpha ? java.awt.image.BufferedImage.TYPE_INT_ARGB : java.awt.image.BufferedImage.TYPE_INT_RGB);
+        var image =
+            new java.awt.image.BufferedImage(
+                width,
+                height,
+                alpha
+                    ? java.awt.image.BufferedImage.TYPE_INT_ARGB
+                    : java.awt.image.BufferedImage.TYPE_INT_RGB);
         var graphics = image.createGraphics();
         try {
-          graphics.setRenderingHint(java.awt.RenderingHints.KEY_INTERPOLATION, java.awt.RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+          graphics.setRenderingHint(
+              java.awt.RenderingHints.KEY_INTERPOLATION,
+              java.awt.RenderingHints.VALUE_INTERPOLATION_BICUBIC);
           graphics.drawImage(decoded, 0, 0, width, height, null);
-        } finally { graphics.dispose(); decoded.flush(); }
+        } finally {
+          graphics.dispose();
+          decoded.flush();
+        }
         String name = UUID.randomUUID() + (alpha ? ".png" : ".jpg");
-        if (alpha) { ImageIO.write(image, "png", uploads.resolve(name).toFile()); }
-        else {
+        if (alpha) {
+          ImageIO.write(image, "png", uploads.resolve(name).toFile());
+        } else {
           var writer = ImageIO.getImageWritersByFormatName("jpeg").next();
           try (var output = ImageIO.createImageOutputStream(uploads.resolve(name).toFile())) {
             writer.setOutput(output);
             var quality = writer.getDefaultWriteParam();
-            quality.setCompressionMode(javax.imageio.ImageWriteParam.MODE_EXPLICIT); quality.setCompressionQuality(0.86f);
+            quality.setCompressionMode(javax.imageio.ImageWriteParam.MODE_EXPLICIT);
+            quality.setCompressionQuality(0.86f);
             writer.write(null, new javax.imageio.IIOImage(image, null, null), quality);
-          } finally { writer.dispose(); }
+          } finally {
+            writer.dispose();
+          }
         }
         image.flush();
         return "/uploads/" + name;

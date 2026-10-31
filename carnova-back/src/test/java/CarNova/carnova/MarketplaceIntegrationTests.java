@@ -354,4 +354,23 @@ class MarketplaceIntegrationTests {
                 .header("Authorization", "Bearer " + signedToken("claims@example.com", false)))
         .andExpect(status().isForbidden());
   }
+
+  @Test
+  void modelSearchMatchesStructuredSpecsEvenWhenTitleOmitsThem() throws Exception {
+    var a = car(owner("model-search@example.com"));
+    a.titre = "Une voiture bien entretenue";
+    a.modele = "RareQuattro";
+    listings.save(a);
+    entityManager.flush();
+    entityManager.clear();
+    mvc.perform(get("/api/annonces/search").param("q", "rarequattro"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.total").value(1));
+    mvc.perform(get("/api/annonces/search").param("q", "BMW"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.total").value(1));
+    mvc.perform(get("/api/annonces/search").param("q", "%_"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.total").value(0));
+  }
 }

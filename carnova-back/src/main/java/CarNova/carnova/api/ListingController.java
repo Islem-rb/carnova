@@ -61,7 +61,12 @@ public class ListingController {
     if (!q.isBlank()) {
       String escaped =
           q.toLowerCase(Locale.ROOT).replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_");
-      spec = spec.and((r, query, b) -> b.like(b.lower(r.get("titre")), "%" + escaped + "%", '\\'));
+      spec =
+          spec.and((r, query, b) ->
+              b.or(
+                  b.like(b.lower(r.get("titre")), "%" + escaped + "%", '\\'),
+                  b.like(b.lower(r.get("marque")), "%" + escaped + "%", '\\'),
+                  b.like(b.lower(r.get("modele")), "%" + escaped + "%", '\\')));
     }
     for (var entry :
         Map.of(
