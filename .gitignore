@@ -12,5 +12,7 @@ test-results/
 .cache/
 *.bundle
 carnova-redesign-prompt.md
-core
-core.*
+/core
+/carnova-front/core
+/carnova-back/core
+core.[0-9]*

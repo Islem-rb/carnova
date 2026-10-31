@@ -1,3 +1,15 @@
+# Follow-up review — local fixes verified, remote/live checks pending
+
+**Review baseline:** pushed redesign/v2 commit `c1cfe48`. A normal writable checkout is available at `/tmp/carnova-review`; changed source files are mirrored into this shared workspace. The original `.git` remains read-only and unchanged.
+
+**Done:** fixed stale search retries and stale related-listing requests, added seven regression tests, corrected crash-dump ignore rules, and added the frontend formatting gate to CI.
+
+**Verified now:** 18 frontend tests; production build without warnings (~419 KB raw / ~109 KB transfer); formatting and dependency-tree checks; Java 17-target compilation of all 32 production Java files using the delivered JAR's runtime libraries. See [follow-up review](docs/FOLLOWUP_REVIEW.md).
+
+**Not verified now:** the actual hosted CI conclusion, a fresh Compose/browser run, and a fresh Maven integration test run. This session cannot access GitHub, the local HTTP stack or Docker; pinned Maven test dependencies are not cached. The earlier results below are historical and have not been presented as reruns. Follow-up publication remains pending network access; the updated local bundle carries the new commits.
+
+---
+
 # CarNova v2 — final summary
 
 Rebuilt the platform on **redesign/v2**: Angular 22/Tailwind premium marketplace, complete account/showroom/news/admin flows, deferred 3D studio and driving, offline/local assistant, secured Spring Boot 3.5/Java 17 API, migrations, containers and CI.

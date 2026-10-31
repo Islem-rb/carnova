@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { switchMap, catchError, of } from 'rxjs';
+import { switchMap, catchError, map, of, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Api } from '../core/api';
 import { Ui } from '../core/ui';
@@ -23,28 +23,36 @@ export class Detail {
   constructor() {
     inject(ActivatedRoute)
       .paramMap.pipe(
-        takeUntilDestroyed(),
-        switchMap((p) => {
+        tap(() => {
           this.loading.set(true);
           this.activeImage.set('');
           this.error.set('');
-          return this.api.get<Listing>('/annonces/' + p.get('id')).pipe(
+          this.car.set(null);
+          this.related.set([]);
+        }),
+        switchMap((params) =>
+          this.api.get<Listing>('/annonces/' + params.get('id')).pipe(
             catchError((e) => {
               this.error.set(errorMessage(e));
               return of(null);
             }),
-          );
-        }),
+            tap((car) => {
+              this.car.set(car);
+              this.loading.set(false);
+            }),
+            switchMap((car) =>
+              car
+                ? this.api.get<ListingPage>('/annonces/search', { size: 4 }).pipe(
+                    map((result) => result.items.filter((item) => item.id !== car.id).slice(0, 3)),
+                    catchError(() => of([] as Listing[])),
+                  )
+                : of([] as Listing[]),
+            ),
+          ),
+        ),
+        takeUntilDestroyed(),
       )
-      .subscribe((c) => {
-        this.car.set(c);
-        this.loading.set(false);
-        if (c)
-          this.api.get<ListingPage>('/annonces/search', { size: 4 }).subscribe({
-            next: (r) => this.related.set(r.items.filter((x) => x.id !== c.id).slice(0, 3)),
-            error: () => {},
-          });
-      });
+      .subscribe((related) => this.related.set(related));
   }
   specs(c: Listing) {
     return [

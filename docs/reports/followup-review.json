@@ -1,0 +1,38 @@
+{
+  "reviewedAt": "2026-10-31T13:18:18.398132+00:00",
+  "baseCommit": "c1cfe482d9edf2c81b9ed3b0dbb4e2effeda6b19",
+  "cleanCheckout": "/tmp/carnova-review",
+  "remoteCi": {
+    "status": "unverified",
+    "reason": "GitHub API/page unavailable through browsing; shell network cannot resolve remote hosts."
+  },
+  "liveWalkthrough": {
+    "status": "not rerun",
+    "reason": "Local HTTP connections are forbidden and the Docker socket is inaccessible in this session."
+  },
+  "checks": {
+    "frontendTests": 18,
+    "productionBuild": "passed without warnings",
+    "initialBundleRawKB": 418.96,
+    "estimatedInitialTransferKB": 109.21,
+    "format": "passed",
+    "installedDependencyTree": "passed using existing project dependencies",
+    "productionJavaSources": 32,
+    "javaTarget": 17,
+    "javaCompile": "passed using exact runtime libraries extracted from the delivered JAR",
+    "mavenVerify": "not rerun: the pinned Spring Boot 3.5.16 parent/test dependencies are not cached and network access is unavailable"
+  },
+  "fixes": [
+    "Search retries and URL changes share one cancellable stream.",
+    "Listing detail and related suggestions cancel together on route changes/destruction.",
+    "Crash-dump patterns no longer hide new Angular core source files.",
+    "CI frontend job checks formatting before tests/build."
+  ],
+  "regressions": {
+    "search": 2,
+    "detail": 5,
+    "beforeFix": "Both original search regressions and both original detail regressions failed before changes.",
+    "afterFix": "All 18 frontend tests pass."
+  },
+  "priorEvidence": "The original Docker/browser/Lighthouse records remain in docs/VERIFICATION.md and docs/reports/test-summary.json; those are earlier measurements, not reruns in this session."
+}

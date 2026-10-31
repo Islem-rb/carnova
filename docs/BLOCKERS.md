@@ -1,3 +1,14 @@
+# Current follow-up access limits
+
+- GitHub API/page access is unavailable; shell DNS/network access is restricted. Actual hosted CI status and follow-up push are unverified/pending.
+- Docker socket access is denied and localhost HTTP connections are forbidden. A fresh live browser/Compose review cannot be performed in this session.
+- The pinned Spring Boot 3.5.16 Maven parent/test dependencies are not cached. Maven verify cannot be rerun offline. Production Java source compilation with the delivered runtime libraries passed; versions were not changed.
+- A normal writable checkout was recovered at `/tmp/carnova-review`; its commits are preserved in the updated workspace delivery bundle. See GIT_DELIVERY.md and FOLLOWUP_REVIEW.md.
+
+The entries below describe the earlier redesign environment, rather than current successful access.
+
+---
+
 # Blockers and safe fallbacks
 
 - Superdesign remote design is unavailable without login. Local design context and original source implementation are used; no account or credits required.

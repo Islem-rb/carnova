@@ -1,33 +1,45 @@
 # Git delivery in this environment
 
-The workspace was already on `redesign/v2`, but its original `.git` directory is mounted read-only. Application files are writable. Commits therefore use a writable Git metadata copy at `/tmp/carnova-v2.git`, with this repository as the worktree. No commit, force-push, history rewrite or modification was made to `main`.
+## Current follow-up checkout
 
-To inspect this run's commits while the session's temporary directory exists:
+The original workspace is on `redesign/v2`, but its `.git` is read-only and still describes baseline `b91de95`. The original redesign was committed through temporary metadata and pushed as `c1cfe48`. That old `/tmp/carnova-v2.git` directory is no longer available in this session.
 
-```bash
-git --git-dir=/tmp/carnova-v2.git log --oneline redesign/v2
-```
-
-An incremental `redesign-v2.bundle` is left in the repository root as a local delivery artifact. It is intentionally ignored, rather than committed into its own history. It contains the new commits after `b91de95` and requires that baseline history, which this checkout already has. It can be verified without changing the original checkout:
+The verified root `redesign-v2.bundle` was used to create a **normal writable checkout** at `/tmp/carnova-review`, on the same `redesign/v2` branch. Follow-up commits use that checkout. Only reviewed changed files are mirrored into the shared workspace; original media, uploads and main are untouched.
 
 ```bash
-git bundle verify redesign-v2.bundle
+git -C /tmp/carnova-review status
+git -C /tmp/carnova-review log --oneline -5
 ```
 
-If importing into a different writable local checkout that contains `b91de95`:
+The updated `redesign-v2.bundle` is an ignored local delivery artifact containing the redesign and follow-up commits after `b91de95`. The temporary checkout can disappear between sessions, while the bundle remains with this project.
+
+## Recover into a clean checkout
+
+When network access is available, clone the pushed redesign branch into a **new, empty destination**, then import and fast-forward to the bundled follow-up commits:
 
 ```bash
-git fetch /path/to/carnova/redesign-v2.bundle redesign/v2:review/redesign-v2
-git switch review/redesign-v2
+git clone --branch redesign/v2 https://github.com/Islem-rb/carnova /path/to/new-carnova
+git -C /path/to/new-carnova fetch /path/to/original-carnova/redesign-v2.bundle redesign/v2
+git -C /path/to/new-carnova merge --ff-only FETCH_HEAD
 ```
 
-Use a separate clean checkout for this import. The original read-only checkout already contains the final application files, while its original Git index still describes the starting commit; preserve these files before any later Git operation. This avoids resets, forced branch updates or accidental loss of the delivered files.
-
-Push status and the final commit are recorded in PROGRESS.md. HTTPS requires an existing GitHub credential helper, and SSH requires an existing usable identity. No credentials were read or printed, and no login/account-creation flow was initiated in this run.
-
-The push preflight succeeded using the existing SSH identity with this session-only command prefix, which bypasses a host SSH configuration permissions issue without modifying any system files:
+Offline recovery, using the existing baseline checkout as the object source:
 
 ```bash
-GIT_SSH_COMMAND='ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes' \
-  git --git-dir=/tmp/carnova-v2.git push git@github.com:Islem-rb/carnova.git redesign/v2
+git clone --bare --no-hardlinks /path/to/original-carnova /tmp/carnova-seed.git
+git --git-dir=/tmp/carnova-seed.git fetch /path/to/original-carnova/redesign-v2.bundle refs/heads/redesign/v2:refs/heads/redesign/v2
+git clone --branch redesign/v2 /tmp/carnova-seed.git /path/to/new-carnova
+git -C /path/to/new-carnova remote set-url origin https://github.com/Islem-rb/carnova
 ```
+
+Use fresh destination paths for these commands. Do not reset or replace the original read-only checkout: its files are preserved, and its Git index intentionally remains unchanged.
+
+## Publication
+
+The original redesign push succeeded using the existing SSH identity with a session-scoped configuration override; no credential values were read or printed. The current follow-up session has restricted network access, so the new review commits are local until a network-enabled session can run:
+
+```bash
+git -C /tmp/carnova-review push origin redesign/v2
+```
+
+Use the authenticated transport already configured on your machine. No force push, main-branch update, history rewrite, account creation or system SSH/Git configuration change is required.

@@ -114,6 +114,8 @@ Docker also builds and runs the backend tests on Java 17. CI builds/tests both a
 
 ## Review and evidence
 
+The [follow-up review](docs/FOLLOWUP_REVIEW.md) records the latest request-lifecycle fixes and 18 passing frontend tests. It separates current offline checks from the earlier live Docker/browser/Lighthouse measurements and lists the hosted CI check still pending access.
+
 Start with the landing page, a listing, the publishing wizard and the 3D studio. Then open the administrator view to inspect actual metrics and the inbox. [PROGRESS.md](PROGRESS.md) records completed phases and remaining limits; [docs/VERIFICATION.md](docs/VERIFICATION.md) records measured checks.
 
 | Desktop | Mobile |

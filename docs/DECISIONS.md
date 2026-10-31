@@ -22,3 +22,6 @@
 - Verification uses new local demo data and synthetic accounts; only records created by these tests are cleaned up. Original user data/media and any external database remain untouched.
 
 - A final 320-pixel reflow pass supplements the standard desktop/mobile audit. Showroom headers wrap and data-table scroll regions are keyboard-focusable. Search q matches structured brand/model fields as well as titles, with literal SQL wildcard escaping. Both corrections have regression coverage.
+
+- Follow-up review: reconstruct a normal writable redesign/v2 checkout from the verified delivery bundle when original Git metadata remains read-only. Reuse existing dependencies for offline checks; do not downgrade the pinned backend stack. Hosted CI status, live browser checks and remote follow-up publication remain explicitly unverified while network/Docker access is denied.
+- Search retries and route changes use one cancellable RxJS pipeline. Detail and related requests share route-level cancellation. Regression tests exercise late responses, component destruction and recoverable error states without requiring live external services.

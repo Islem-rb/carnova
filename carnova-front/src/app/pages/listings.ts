@@ -6,7 +6,7 @@ import { Api } from '../core/api';
 import { brands, cities, ListingPage, errorMessage } from '../core/models';
 import { CarCard } from '../shared/card';
 import { Icon } from '../shared/icon';
-import { switchMap, tap, catchError, of } from 'rxjs';
+import { combineLatest, Subject, startWith, switchMap, tap, catchError, of } from 'rxjs';
 @Component({ imports: [ReactiveFormsModule, CarCard, Icon], templateUrl: './listings.html' })
 export class Listings {
   private readonly api = inject(Api);
@@ -14,6 +14,7 @@ export class Listings {
   private readonly router = inject(Router);
   readonly brands = brands;
   readonly cities = cities;
+  private readonly refresh = new Subject<void>();
   readonly mobileFilters = signal(false);
   readonly loading = signal(true);
   readonly error = signal('');
@@ -31,10 +32,9 @@ export class Listings {
     typeAnnonce: '',
   });
   constructor() {
-    this.route.queryParamMap
+    combineLatest([this.route.queryParamMap, this.refresh.pipe(startWith(undefined))])
       .pipe(
-        takeUntilDestroyed(),
-        tap((params) => {
+        tap(([params]) => {
           const value: Record<string, string> = {};
           for (const key of Object.keys(this.filters.controls))
             value[key] = params.get(key) ?? (key === 'sort' ? 'recent' : '');
@@ -42,7 +42,7 @@ export class Listings {
           this.loading.set(true);
           this.error.set('');
         }),
-        switchMap((params) => {
+        switchMap(([params]) => {
           const query: Record<string, string> = {};
           params.keys.forEach((k) => {
             const v = params.get(k);
@@ -55,6 +55,7 @@ export class Listings {
             }),
           );
         }),
+        takeUntilDestroyed(),
       )
       .subscribe((r) => {
         this.result.set(r);
@@ -72,18 +73,7 @@ export class Listings {
       });
   }
   private reload() {
-    this.loading.set(true);
-    this.error.set('');
-    this.api.get<ListingPage>('/annonces/search', this.values()).subscribe({
-      next: (r) => {
-        this.result.set(r);
-        this.loading.set(false);
-      },
-      error: (e) => {
-        this.error.set(errorMessage(e));
-        this.loading.set(false);
-      },
-    });
+    this.refresh.next();
   }
   private values(): Record<string, string> {
     const query: Record<string, string> = {};
