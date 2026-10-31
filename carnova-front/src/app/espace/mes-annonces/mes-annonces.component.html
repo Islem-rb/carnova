@@ -1,0 +1,350 @@
+<div class="mes-annonces-container">
+
+  <!-- Header -->
+  <section class="page-header">
+    <div class="header-content">
+      <div class="title-wrap">
+        <div class="title-icon">
+          <i class="fas fa-layer-group"></i>
+        </div>
+        <div>
+          <h1>Mon Espace</h1>
+          <p class="subtitle">Gérez vos annonces et showrooms dans une interface raffinée</p>
+        </div>
+      </div>
+
+      <div class="actions">
+
+        <button class="btn action primary" routerLink="/espace/creer-annonce">
+          <i class="fas fa-plus"></i>
+          Nouvelle Annonce
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Messages -->
+  <div *ngIf="successMessage" class="alert success glass">
+    <i class="fas fa-check-circle"></i>
+    <span>{{ successMessage }}</span>
+    <button type="button" class="close" (click)="successMessage = ''">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div *ngIf="error" class="alert danger glass">
+    <i class="fas fa-exclamation-triangle"></i>
+    <span>{{ error }}</span>
+    <button type="button" class="close" (click)="error = ''">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-wrap">
+    <div class="spinner"></div>
+    <p>Chargement de vos données...</p>
+  </div>
+
+  <!-- Showrooms -->
+  <section *ngIf="!loading && (showrooms?.length ?? 0) > 0" class="panel">
+    <div class="panel-header">
+      <h2><i class="fas fa-store"></i> Mes Showrooms</h2>
+      <p class="muted">Aperçu de vos showrooms et de leurs véhicules</p>
+    </div>
+
+    <div class="grid">
+      <article
+        *ngFor="let showroom of showrooms"
+        class="card glass showroom-card"
+        [routerLink]="['/espace/showroom', showroom.id]"
+        style="cursor: pointer;"
+      >
+        <div class="card-cover">
+          <img
+            [src]="(showroom.images?.length ?? 0) > 0 ? getShowroomImage(showroom.images![0]) : getDefaultImage()"
+            alt="showroom cover"
+            (error)="onImageError($event)"
+          />
+          <div class="cover-overlay"></div>
+          <div class="chips">
+            <span class="chip chip-violet"><i class="fas fa-building"></i> Showroom</span>
+          </div>
+
+          <!-- Actions -->
+          <div class="cover-actions">
+            <button class="icon-btn" title="Modifier" (click)="openEditShowroom(showroom, $event)">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="icon-btn danger" title="Supprimer" (click)="openConfirmDeleteShowroom(showroom, $event)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="title-row">
+            <h3>{{ showroom.nom }}</h3>
+          </div>
+          <p class="muted one-line-2">{{ showroom.description }}</p>
+
+          <div class="thumbs" *ngIf="(showroom.images?.length ?? 0) > 0">
+            <img *ngFor="let img of (showroom.images || []) | slice:0:5"
+                 [src]="getShowroomImage(img)" alt="thumb" (error)="onImageError($event)" />
+            <span *ngIf="(showroom.images?.length ?? 0) > 5" class="more">
+              +{{ (showroom.images?.length ?? 0) - 5 }}
+            </span>
+          </div>
+
+          <div class="cars" *ngIf="(showroom.voitures?.length ?? 0) > 0" style="max-height:none;overflow:visible;">
+            <div *ngFor="let v of (showroom.voitures || [])" class="car-item glass-2">
+              <div class="car-img">
+                <img [src]="getVehiculePrimaryImage(v, showroom)" [alt]="v.marque" (error)="onImageError($event)" />
+                <div class="car-meta">
+                  <span><i class="fas fa-calendar"></i> {{ v.annee || '—' }}</span>
+                  <span><i class="fas fa-palette"></i> {{ v.couleur || '—' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Annonces -->
+  <section *ngIf="!loading && (annonces?.length ?? 0) > 0" class="panel mt-24">
+    <div class="panel-header">
+      <h2><i class="fas fa-list"></i> Mes Annonces</h2>
+      <p class="muted">Gérez vos annonces: modification, suppression et suivi</p>
+    </div>
+
+    <div class="grid">
+      <article *ngFor="let annonce of annonces" class="card glass annonce-card">
+        <div class="card-cover">
+          <img [src]="getImageUrl(annonce.imageUrl)" [alt]="annonce.titre" (error)="onImageError($event)" />
+          <div class="cover-overlay"></div>
+
+          <div class="chips">
+            <span [class]="'chip ' + getTypeAnnonceClass(annonce.typeAnnonce)">{{ annonce.typeAnnonce }}</span>
+            <span [class]="'chip ' + getStatutClass(annonce.statut)">{{ annonce.statut }}</span>
+          </div>
+
+          <div class="floating-title">
+            <i class="fas fa-car-side"></i>
+            <span>{{ annonce.titre }}</span>
+          </div>
+
+          <div class="cover-actions">
+            <button class="icon-btn" (click)="editAnnonce(annonce.id)" title="Modifier">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="icon-btn danger" (click)="openConfirmDelete(annonce)" title="Supprimer">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <p class="muted one-line-3">{{ annonce.description }}</p>
+          <div class="meta-row">
+            <span class="muted"><i class="fas fa-calendar"></i> {{ annonce.createdAt | date:'dd/MM/yyyy' }}</span>
+            <span class="muted"><i class="fas fa-user"></i> {{ annonce.user?.email || 'Utilisateur' }}</span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Empty state -->
+  <section *ngIf="!loading && (annonces?.length ?? 0) === 0 && (showrooms?.length ?? 0) === 0" class="empty glass">
+    <div class="empty-icon"><i class="fas fa-inbox"></i></div>
+    <h3>Aucune donnée pour l’instant</h3>
+    <p class="muted">Créez votre première annonce ou votre showroom pour commencer.</p>
+    <div class="actions">
+      <button class="btn action ghost" routerLink="/espace/creer-showroom"><i class="fas fa-store"></i> Créer un showroom</button>
+      <button class="btn action primary" routerLink="/espace/creer-annonce"><i class="fas fa-plus"></i> Créer une annonce</button>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section *ngIf="!loading && (annonces?.length ?? 0) > 0" class="stats">
+    <div class="stat glass-2">
+      <div class="stat-icon primary"><i class="fas fa-layer-group"></i></div>
+      <div class="stat-content"><strong>{{ totalAnnonces }}</strong><span class="muted">Total annonces</span></div>
+    </div>
+    <div class="stat glass-2">
+      <div class="stat-icon success"><i class="fas fa-check-circle"></i></div>
+      <div class="stat-content"><strong>{{ totalDisponibles }}</strong><span class="muted">Disponibles</span></div>
+    </div>
+    <div class="stat glass-2">
+      <div class="stat-icon warning"><i class="fas fa-clock"></i></div>
+      <div class="stat-content"><strong>{{ totalReservees }}</strong><span class="muted">Réservées</span></div>
+    </div>
+    <div class="stat glass-2">
+      <div class="stat-icon danger"><i class="fas fa-times-circle"></i></div>
+      <div class="stat-content"><strong>{{ totalVendues }}</strong><span class="muted">Vendues</span></div>
+    </div>
+  </section>
+
+  <!-- Modale confirmation suppression Annonce -->
+  <div class="cn-modal-backdrop" *ngIf="confirmDialog.open" (click)="cancelDelete()">
+    <div class="cn-modal" (click)="$event.stopPropagation()">
+      <div class="cn-modal-header">
+        <h3 class="cn-modal-title"><i class="fas fa-trash text-danger"></i> Supprimer l’annonce</h3>
+        <button class="cn-modal-close" type="button" (click)="cancelDelete()" aria-label="Fermer"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="cn-modal-body">
+        Voulez-vous vraiment supprimer l’annonce « {{ confirmDialog.titre }} » ? Cette action est irréversible.
+      </div>
+      <div class="cn-modal-actions">
+        <button class="cn-btn ghost" type="button" (click)="cancelDelete()">Annuler</button>
+        <button class="cn-btn danger" type="button" [disabled]="confirmDialog.loading" (click)="confirmDelete()">
+          <i class="fas" [class.fa-spinner]="confirmDialog.loading" [class.fa-spin]="confirmDialog.loading" [class.fa-check]="!confirmDialog.loading"></i>
+          {{ confirmDialog.loading ? 'Suppression...' : 'Supprimer' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modale confirmation suppression Showroom -->
+  <div class="cn-modal-backdrop" *ngIf="confirmSR.open" (click)="cancelDeleteShowroom()">
+    <div class="cn-modal" (click)="$event.stopPropagation()">
+      <div class="cn-modal-header">
+        <h3 class="cn-modal-title"><i class="fas fa-trash text-danger"></i> Supprimer le showroom</h3>
+        <button class="cn-modal-close" type="button" (click)="cancelDeleteShowroom()" aria-label="Fermer"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="cn-modal-body">
+        Voulez-vous vraiment supprimer le showroom « {{ confirmSR.nom }} » ? Cette action est irréversible.
+      </div>
+      <div class="cn-modal-actions">
+        <button class="cn-btn ghost" type="button" (click)="cancelDeleteShowroom()">Annuler</button>
+        <button class="cn-btn danger" type="button" [disabled]="confirmSR.loading" (click)="confirmDeleteShowroom()">
+          <i class="fas" [class.fa-spinner]="confirmSR.loading" [class.fa-spin]="confirmSR.loading" [class.fa-check]="!confirmSR.loading"></i>
+          {{ confirmSR.loading ? 'Suppression...' : 'Supprimer' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modale UPDATE Showroom: plein écran flou + formulaire complet -->
+  <div class="cn-modal-backdrop" *ngIf="editSR.open" (click)="cancelEditShowroom()">
+    <!-- grille 3 lignes: header / body scrollable / footer sticky -->
+    <div class="cn-modal" (click)="$event.stopPropagation()"
+         style="width:min(1100px,96vw); max-height:90vh; display:grid; grid-template-rows:auto 1fr auto;">
+      <div class="cn-modal-header">
+        <h3 class="cn-modal-title"><i class="fas fa-pen-to-square"></i> Mettre à jour le showroom</h3>
+        <button class="cn-modal-close" type="button" (click)="cancelEditShowroom()" aria-label="Fermer">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <!-- BODY scrollable -->
+      <div class="cn-modal-body" style="overflow:auto; padding-bottom:6px;">
+        <!-- Formulaire complet -->
+        <!-- Section infos showroom -->
+        <div class="row g-3">
+          <div class="col-12 col-md-6">
+            <label class="form-label">Nom du showroom</label>
+            <input type="text" class="form-control" [(ngModel)]="editSR.nom" name="edit_nom" required />
+          </div>
+          <div class="col-12">
+            <label class="form-label">Description</label>
+            <textarea rows="3" class="form-control" [(ngModel)]="editSR.description" name="edit_description" required></textarea>
+          </div>
+        </div>
+
+        <!-- Images showroom -->
+        <div class="mt-3">
+          <label class="form-label">Images du showroom (PNG/JPG/WEBP)</label>
+          <input type="file" accept="image/*" multiple class="form-control" (change)="onEditShowroomFilesChange($event)" />
+          <div class="d-flex flex-wrap gap-2 mt-2">
+            <div *ngFor="let p of editSR.generalPreviews; let i = index" class="position-relative">
+              <img [src]="p" class="image-preview" style="width:120px;height:90px;object-fit:cover;border-radius:10px;border:1px solid rgba(148,163,184,.18);" />
+              <button type="button" class="cn-modal-close" style="position:absolute;top:4px;right:4px;width:28px;height:28px;" (click)="removeEditShowroomImage(i)">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="muted mt-1" *ngIf="!editSR.generalPreviews.length">Si vous n’ajoutez rien, les images actuelles seront conservées.</div>
+        </div>
+
+        <!-- Voitures -->
+        <div class="mt-4">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <label class="form-label m-0"><i class="fas fa-car"></i> Véhicules</label>
+            <button type="button" class="cn-btn" (click)="addEditCar()"><i class="fas fa-plus"></i> Ajouter un véhicule</button>
+          </div>
+
+          <div class="card mb-2 glass-2" *ngFor="let car of editSR.voitures; let i = index" style="border:1px solid rgba(148,163,184,.18); border-radius:12px;">
+            <div class="card-body row g-2">
+              <div class="col-12 col-md-3">
+                <label class="form-label">Marque</label>
+                <input type="text" class="form-control" [(ngModel)]="editSR.voitures[i].marque" name="edit_marque_{{i}}" required />
+              </div>
+              <div class="col-12 col-md-3">
+                <label class="form-label">Modèle</label>
+                <input type="text" class="form-control" [(ngModel)]="editSR.voitures[i].modele" name="edit_modele_{{i}}" required />
+              </div>
+              <div class="col-6 col-md-2">
+                <label class="form-label">Année</label>
+                <input type="number" class="form-control" [(ngModel)]="editSR.voitures[i].annee" name="edit_annee_{{i}}" min="1900" max="2100" />
+              </div>
+              <div class="col-6 col-md-2">
+                <label class="form-label">Prix (€)</label>
+                <input type="number" class="form-control" [(ngModel)]="editSR.voitures[i].prix" name="edit_prix_{{i}}" min="0" />
+              </div>
+              <div class="col-12 col-md-2">
+                <label class="form-label">Couleur</label>
+                <input type="text" class="form-control" [(ngModel)]="editSR.voitures[i].couleur" name="edit_couleur_{{i}}" />
+              </div>
+
+              <!-- Image voiture -->
+              <div class="col-12 col-md-6 mt-2">
+                <label class="form-label">Image de la voiture (optionnel)</label>
+                <input type="file" accept="image/*" class="form-control" (change)="onEditCarFileChange(i, $event)" />
+                <div class="d-flex align-items-center gap-2 mt-2">
+                  <div *ngIf="editSR.voitures[i].preview">
+                    <img [src]="editSR.voitures[i].preview!" style="width:120px;height:90px;object-fit:cover;border-radius:10px;border:1px solid rgba(148,163,184,.18);" />
+                  </div>
+                  <div *ngIf="!editSR.voitures[i].preview && editSR.voitures[i].currentImage">
+                    <img [src]="editSR.voitures[i].currentImage!" style="width:120px;height:90px;object-fit:cover;border-radius:10px;border:1px solid rgba(148,163,184,.18);" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 text-end mt-2" *ngIf="editSR.voitures.length > 1">
+                <button type="button" class="cn-btn danger" (click)="removeEditCar(i)">
+                  <i class="fas fa-trash"></i> Retirer ce véhicule
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- FOOTER sticky: toujours visible -->
+      <div class="cn-modal-actions"
+           style="position:sticky; bottom:0; background:linear-gradient(180deg, rgba(13,21,37,.85), rgba(13,21,37,.75)); backdrop-filter: blur(6px);">
+        <button class="cn-btn ghost" type="button" (click)="cancelEditShowroom()">Annuler</button>
+        <button class="cn-btn primary" type="button" [disabled]="editSR.loading || !isEditFormValid()" (click)="saveEditShowroom()">
+          <i class="fas" [class.fa-spinner]="editSR.loading" [class.fa-spin]="editSR.loading" [class.fa-save]="!editSR.loading"></i>
+          {{ editSR.loading ? 'Enregistrement...' : 'Enregistrer' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="cn-toast" [class.open]="popup.open" [class.success]="popup.type==='success'" [class.error]="popup.type==='error'" [class.info]="popup.type==='info'">
+    <span class="cn-check" *ngIf="popup.type==='success'"></span>
+    <div>
+      <strong style="display:block; margin-bottom:2px;">{{ popup.title }}</strong>
+      <span>{{ popup.message }}</span>
+    </div>
+    <button class="cn-modal-close" style="margin-left:auto;" (click)="closeToast()" aria-label="Fermer">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+</div>

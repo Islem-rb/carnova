@@ -1,0 +1,199 @@
+<div class="neo-details" [class.modal-open]="isCarModalOpen">
+
+  <!-- Background animé "rain" (Uiverse) - plein écran, sous le contenu -->
+  <div class="container" aria-hidden="true" style="position: fixed; inset: 0; z-index: 0;"></div>
+
+  <!-- Contenu (au-dessus du background) -->
+  <div class="content-shell" style="position: relative; z-index: 1;">
+    <!-- Barre de navigation -->
+    <header class="neo-nav glassy fade-in">
+      <button class="btn" (click)="back()">
+        <i class="fas fa-arrow-left"></i>
+        <span>Retour</span>
+      </button>
+
+      <div class="nav-title">
+        <div class="icon-badge">
+          <i class="fas fa-store"></i>
+        </div>
+        <div class="title-text">
+          <h1 class="title-gradient">{{ showroom?.nom || 'Showroom' }}</h1>
+          <div class="subtitle">
+            <span class="chip"><i class="fas fa-hashtag"></i> {{ showroom?.id || '—' }}</span>
+            <span class="chip"><i class="fas fa-car-side"></i> {{ showroom?.voitures?.length || 0 }} véhicules</span>
+            <span class="chip"><i class="fas fa-images"></i> {{ (gallery?.length || 0) }} photos</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <div class="pulse-dot"></div>
+      </div>
+    </header>
+
+    <!-- Loading / Error -->
+    <div *ngIf="loading" class="loading">
+      <div class="spinner"></div>
+      <p>Chargement du showroom...</p>
+    </div>
+    <div *ngIf="!loading && error" class="alert danger glassy">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span>{{ error }}</span>
+    </div>
+
+    <ng-container *ngIf="!loading && !error && showroom">
+      <!-- HERO -->
+      <section class="neo-hero fade-in-delay">
+        <div class="hero-left">
+          <div class="neo-frame">
+            <!-- Bordure subtile -->
+            <div class="frame-border"></div>
+
+            <!-- Image principale avec pan/zoom -->
+            <img class="hero-img kenburns-pan" [src]="selectedImage" alt="cover" (error)="onImageError($event)" />
+
+            <!-- Overlay sombre -->
+            <div class="hero-overlay"></div>
+
+            <!-- Sheen discret au survol -->
+            <span class="hero-sheen"></span>
+
+            <!-- Badges -->
+            <div class="hero-badges">
+              <span class="badge neon"><i class="fas fa-building"></i> Showroom</span>
+              <span class="badge dim"><i class="fas fa-hashtag"></i> {{ showroom?.id || '—' }}</span>
+            </div>
+
+            <!-- Ligne d’accent animée lente -->
+            <div class="frame-accent"></div>
+          </div>
+
+          <!-- Miniatures -->
+          <div class="thumb-strip" *ngIf="(gallery?.length || 0) > 0">
+            <div
+              class="thumb-card"
+              *ngFor="let img of gallery; let i = index"
+              [class.active]="i === selectedIndex"
+              (click)="selectImage(i)"
+              [style.animationDelay]="(i * 60) + 'ms'"
+            >
+              <div class="thumb-border"></div>
+              <img [src]="img" alt="thumb" (error)="onImageError($event)" />
+              <span class="thumb-glow"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-right glassy">
+          <h2 class="section-title">
+            <i class="fas fa-circle-info"></i> À propos
+          </h2>
+          <p class="muted mt-6">{{ showroom?.description }}</p>
+
+          <div class="stats-row">
+            <div class="stat-card">
+              <div class="stat-icon violet"><i class="fas fa-car"></i></div>
+              <div class="stat-val">{{ showroom?.voitures?.length || 0 }}</div>
+              <div class="stat-label">Véhicules</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon cyan"><i class="fas fa-image"></i></div>
+              <div class="stat-val">{{ (gallery?.length || 0) }}</div>
+              <div class="stat-label">Photos</div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="tips">
+            <div class="tip">
+              <i class="fas fa-sparkles"></i>
+              <span>Design dark et animations subtiles</span>
+            </div>
+            <div class="tip">
+              <i class="fas fa-mouse-pointer"></i>
+              <span>Cliquez une miniature pour changer l’image principale</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Véhicules -->
+      <section class="cars-section fade-in-later">
+        <div class="cars-head">
+          <h2><i class="fas fa-car-burst"></i> Véhicules du showroom</h2>
+          <span class="muted">{{ showroom?.voitures?.length || 0 }} au total</span>
+        </div>
+
+        <div class="cars-grid">
+          <article
+            class="car-tilt"
+            role="button"
+            tabindex="0"
+            *ngFor="let v of (showroom?.voitures || []); let idx = index"
+            [style.animationDelay]="(idx * 80) + 'ms'"
+            (click)="openCarModal(v)"
+            (keyup.enter)="openCarModal(v)"
+          >
+            <div class="tilt-border"></div>
+            <div class="img-wrap">
+              <img [src]="getVehiculePrimaryImage(v)" [alt]="v.marque" (error)="onImageError($event)" />
+              <div class="img-overlay"></div>
+              <div class="car-badge">
+                <i class="fas fa-car-side"></i>
+                <span>{{ v.marque }} {{ v.modele }}</span>
+              </div>
+              <div class="pulse-ring"></div>
+            </div>
+            <div class="car-meta">
+              <div class="meta-left">
+                <span class="muted"><i class="fas fa-calendar"></i> {{ v.annee || '—' }}</span>
+                <span class="muted"><i class="fas fa-palette"></i> {{ v.couleur || '—' }}</span>
+              </div>
+              <div class="meta-right" *ngIf="v.prix != null">
+                <span class="price">{{ v.prix | number:'1.0-0' }} €</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </ng-container>
+  </div>
+
+  <!-- MODALE VOITURE: overlay flou + carte -->
+  <div class="car-modal" *ngIf="isCarModalOpen" (click)="closeCarModal()">
+    <div class="car-modal-card glassy" (click)="$event.stopPropagation()">
+      <button class="modal-close" type="button" (click)="closeCarModal()" aria-label="Fermer">
+        <i class="fas fa-times"></i>
+      </button>
+
+      <div class="modal-media">
+        <img [src]="getVehiculePrimaryImage(selectedCar)" alt="voiture" (error)="onImageError($event)" />
+      </div>
+
+      <div class="modal-info">
+        <h3 class="modal-title">
+          <i class="fas fa-car-side"></i>
+          {{ selectedCar?.marque }} {{ selectedCar?.modele }}
+        </h3>
+
+        <div class="modal-meta">
+          <span><i class="fas fa-calendar"></i> Année: {{ selectedCar?.annee || '—' }}</span>
+          <span><i class="fas fa-palette"></i> Couleur: {{ selectedCar?.couleur || '—' }}</span>
+          <span *ngIf="selectedCar?.prix != null" class="price"><i class="fas fa-tag"></i> {{ selectedCar?.prix | number:'1.0-0' }} €</span>
+        </div>
+
+        <p class="muted">
+          Découvrez plus de détails sur ce véhicule dans votre espace ou contactez le showroom pour plus d’informations.
+        </p>
+
+        <div class="modal-actions">
+          <button class="btn primary" type="button" (click)="closeCarModal()">
+            <i class="fas fa-check"></i> Fermer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

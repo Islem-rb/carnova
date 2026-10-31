@@ -1,0 +1,223 @@
+/* ===== THEME DARK VIOLET ===== */
+.darkviolet {
+  --bg0: #0b0714;
+  --bg1: #140e26;
+  --violet: #7c3aed;
+  --violet-2: #9a5bff;
+  --text: #e6e1f5;
+  --muted: #b8b2d9;
+  --card: rgba(22,16,40,0.65);
+  --stroke: rgba(154,91,255,0.25);
+  --shadow: 0 20px 60px rgba(0,0,0,0.45);
+
+  /* Vitesse & twinkle (pour le champ d'étoiles) */
+  --speed-layer1: 18s;
+  --speed-layer2: 28s;
+  --speed-layer3: 42s;
+  --twinkle1: 2.2s;
+  --twinkle2: 3s;
+  --twinkle3: 3.8s;
+
+  background:
+    radial-gradient(1400px 700px at 10% -10%, rgba(124,58,237,0.25), transparent 60%),
+    radial-gradient(1000px 600px at 110% 20%, rgba(154,91,255,0.20), transparent 60%),
+    linear-gradient(180deg, var(--bg1), var(--bg0));
+  color: var(--text);
+  padding: clamp(2rem, 4vw, 4rem) 1rem;
+  min-height: calc(100dvh); /* laisse respirer sous la navbar */
+  position: relative; /* nécessaire pour le starfield */
+  overflow: hidden;   /* masque le défilement */
+}
+
+/* ===== STARFIELD — version fluide (GPU) ===== */
+.starfield{
+  position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden;
+  contain: paint;
+}
+.stars{
+  position:absolute; inset:0;
+  opacity: 1;
+  will-change: transform;
+  transform: translate3d(0,0,0);
+  overflow:hidden;
+  backface-visibility: hidden;
+}
+.stars::before,
+.stars::after{
+  content:"";
+  position:absolute; left:0; right:0;
+  top:-100%;           /* 200% de hauteur totale */
+  height:200%;
+  background-repeat: repeat;
+  will-change: transform, opacity;
+  transform: translate3d(0,0,0);
+}
+
+/* Motifs par couche (densité / taille) */
+.layer1::before{
+  background-size: 220px 220px;
+  background-image:
+    radial-gradient(2px 2px at 20px  30px, #fff, transparent 60%),
+    radial-gradient(2.2px 2.2px at 80px  120px,#fff, transparent 60%),
+    radial-gradient(2.4px 2.4px at 150px 40px,#fff, transparent 60%),
+    radial-gradient(2px 2px at 200px 180px,#fff, transparent 60%),
+    radial-gradient(2.6px 2.6px at 60px  200px,#fff, transparent 60%),
+    radial-gradient(2px 2px at 120px 70px,#fff, transparent 60%),
+    radial-gradient(1.8px 1.8px at 30px  170px,#fff, transparent 60%),
+    radial-gradient(1.8px 1.8px at 190px 110px,#fff, transparent 60%);
+}
+.layer2::before{
+  background-size: 340px 340px;
+  background-image:
+    radial-gradient(2.2px 2.2px at 35px  60px, #fff, transparent 60%),
+    radial-gradient(2.4px 2.4px at 120px  200px,#fff, transparent 60%),
+    radial-gradient(2px 2px at 210px 100px,#fff, transparent 60%),
+    radial-gradient(1.8px 1.8px at 280px 260px,#fff, transparent 60%),
+    radial-gradient(2.6px 2.6px at 60px  220px,#fff, transparent 60%);
+  opacity:.95;
+}
+.layer3::before{
+  background-size: 520px 520px;
+  background-image:
+    radial-gradient(2.4px 2.4px at 50px  90px, #fff, transparent 60%),
+    radial-gradient(2px 2px at 180px  260px,#fff, transparent 60%),
+    radial-gradient(1.8px 1.8px at 360px 140px,#fff, transparent 60%),
+    radial-gradient(2.6px 2.6px at 440px 320px,#fff, transparent 60%);
+  opacity:.9;
+}
+
+/* Défilement vertical via transform (GPU) */
+.layer1::before{ animation: drift var(--speed-layer1) linear infinite; }
+.layer2::before{ animation: drift var(--speed-layer2) linear infinite; }
+.layer3::before{ animation: drift var(--speed-layer3) linear infinite; }
+@keyframes drift { to { transform: translate3d(0,100%,0); } }
+
+/* Twinkle léger (opacité seulement) */
+.layer1::after,
+.layer2::after,
+.layer3::after{
+  top:-100%; height:200%;
+  background: radial-gradient(1.5px 1.5px at 40% 30%, rgba(255,255,255,.9) 40%, transparent 60%),
+              radial-gradient(1.5px 1.5px at 70% 60%, rgba(255,255,255,.9) 40%, transparent 60%);
+  mix-blend-mode: screen;
+  opacity:.0;
+}
+.layer1::after{ animation: tw1 var(--twinkle1) ease-in-out infinite alternate; }
+.layer2::after{ animation: tw2 var(--twinkle2) ease-in-out infinite alternate; }
+.layer3::after{ animation: tw3 var(--twinkle3) ease-in-out infinite alternate; }
+@keyframes tw1 { 0%{opacity:.0} 100%{opacity:.15} }
+@keyframes tw2 { 0%{opacity:.0} 100%{opacity:.12} }
+@keyframes tw3 { 0%{opacity:.0} 100%{opacity:.10} }
+
+/* ===== layout ===== */
+.wrap { max-width: 860px; margin: 0 auto; position: relative; z-index: 2; }
+
+/* header */
+.head {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 1.25rem;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+.logo {
+  width: 96px; height: 96px;
+  border-radius: 20px;
+  box-shadow: 0 0 0 3px rgba(124,58,237,0.25), 0 10px 30px rgba(0,0,0,.35);
+}
+h1 {
+  margin: 0 0 .25rem 0;
+  font-size: clamp(1.6rem, 2.2vw, 2.2rem);
+  letter-spacing: .3px;
+}
+.head p { margin: 0; color: var(--muted); }
+
+/* card */
+.card {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  background: var(--card);
+  border: 1px solid var(--stroke);
+  border-radius: 18px;
+  padding: clamp(1rem, 3vw, 1.5rem);
+  box-shadow: var(--shadow);
+  position: relative; z-index: 2;
+}
+
+/* list */
+.info {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: .85rem;
+}
+.info li {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  align-items: center;
+  gap: .75rem;
+  padding: .85rem 1rem;
+  border-radius: 12px;
+  background: rgba(124,58,237,0.06);
+  border: 1px solid rgba(124,58,237,0.18);
+  transition: transform .2s ease, background .2s ease, border-color .2s ease;
+}
+.info li:hover {
+  transform: translateY(-1px);
+  background: rgba(154,91,255,0.10);
+  border-color: rgba(154,91,255,0.35);
+}
+.info i {
+  color: var(--violet-2);
+  font-size: 1.1rem;
+  filter: drop-shadow(0 0 6px rgba(154,91,255,0.45));
+}
+.info a, .info span {
+  color: var(--text);
+  text-decoration: none;
+  word-break: break-word;
+}
+.info a { border-bottom: 1px dotted rgba(154,91,255,0.4); }
+.info a:hover {
+  color: #ffffff;
+  border-bottom-color: rgba(154,91,255,0.9);
+}
+
+/* footer */
+.foot { text-align: center; margin-top: 1rem; position: relative; z-index: 2; }
+.foot a {
+  color: var(--muted);
+  text-decoration: none;
+  border-bottom: 1px dotted rgba(154,91,255,0.35);
+}
+.foot a:hover {
+  color: var(--text);
+  border-bottom-color: rgba(154,91,255,0.85);
+}
+
+/* ===== Scroll reveal ===== */
+.reveal{ opacity:0; transform: translateY(14px); }
+.reveal.reveal-visible{ opacity:1; transform: translateY(0); transition: opacity .7s ease, transform .7s ease; }
+.reveal-stagger > *{ opacity:0; transform: translateY(14px); }
+.reveal-stagger.reveal-visible > *{
+  opacity:1; transform: translateY(0);
+  transition: opacity .6s ease, transform .6s ease;
+}
+.reveal-stagger.reveal-visible > *:nth-child(1){ transition-delay:.05s }
+.reveal-stagger.reveal-visible > *:nth-child(2){ transition-delay:.12s }
+.reveal-stagger.reveal-visible > *:nth-child(3){ transition-delay:.18s }
+.reveal-stagger.reveal-visible > *:nth-child(4){ transition-delay:.24s }
+.reveal-stagger.reveal-visible > *:nth-child(5){ transition-delay:.30s }
+
+/* responsive */
+@media (max-width: 640px) {
+  .head { grid-template-columns: 72px 1fr; }
+  .logo { width: 72px; height: 72px; border-radius: 16px; }
+}
+
+/* Accessibilité: réduire le mouvement si demandé */
+@media (prefers-reduced-motion: reduce){
+  .layer1::before, .layer2::before, .layer3::before { animation-duration: 120s !important; }
+  .layer1::after, .layer2::after, .layer3::after { animation: none !important; opacity:.08; }
+}

@@ -1,0 +1,11 @@
+.guide-container { max-width: 1000px; margin: 0 auto; padding: 1.5rem; }
+.guide-header { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+.guide-header h1 { margin: 0; font-size: 1.75rem; font-weight: 800; color: #4c1d95; }
+
+.guide-tabs { display: flex; gap: .5rem; flex-wrap: wrap; }
+.guide-tabs a {
+  text-decoration: none; padding: .5rem .75rem; border-radius: .5rem;
+  background: #f3e8ff; color: #4c1d95; font-weight: 600;
+}
+.guide-tabs a.active { background: #5b21b6; color: #fff; }
+.guide-content { background: #fff; border-radius: .75rem; box-shadow: 0 8px 24px rgba(0,0,0,.08); padding: 1rem; }

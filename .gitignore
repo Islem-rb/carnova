@@ -1,0 +1,14 @@
+node_modules/
+.angular/
+dist/
+target/
+.env
+.env.*
+!.env.example
+*.log
+logs/
+playwright-report/
+test-results/
+.cache/
+*.bundle
+carnova-redesign-prompt.md

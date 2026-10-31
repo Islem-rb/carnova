@@ -1,0 +1,128 @@
+/* You can add global styles to this file, and also import other style files */
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+/* Global styles */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8f9fa;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* ===== CarNova Popups - dark / glass ===== */
+
+/* Backdrop modal */
+.cn-modal-backdrop {
+  position: fixed; inset: 0; z-index: 9999;
+  display: grid; place-items: center;
+  background: rgba(8,12,20,.55);
+  backdrop-filter: blur(12px) saturate(110%);
+  -webkit-backdrop-filter: blur(12px) saturate(110%);
+  animation: cn-fade-in .18s ease-out both;
+}
+
+/* Fenêtre */
+.cn-modal {
+  width: min(540px, 94vw);
+  border-radius: 18px;
+  border: 1px solid rgba(148,163,184,0.18);
+  background: linear-gradient(180deg, rgba(13,21,37,.65), rgba(13,21,37,.45));
+  box-shadow: 0 28px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.03) inset;
+  color: #e5e7eb;
+  overflow: hidden;
+  transform: translateY(8px) scale(.98);
+  opacity: 0;
+  animation: cn-pop .22s cubic-bezier(.2,.8,.2,1) .05s both;
+}
+
+.cn-modal-header {
+  padding: 14px 16px; border-bottom: 1px solid rgba(148,163,184,0.18);
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+}
+.cn-modal-title { margin: 0; font-size: 18px; letter-spacing: .2px; }
+.cn-modal-body  { padding: 14px 16px; color: #9ca3af; }
+.cn-modal-actions {
+  padding: 12px 16px; display: flex; gap: 10px; justify-content: flex-end;
+  border-top: 1px solid rgba(148,163,184,0.18);
+}
+
+/* Boutons */
+.cn-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(148,163,184,0.18);
+  background: rgba(255,255,255,.06); color: #e5e7eb; cursor: pointer;
+  transition: all .2s ease;
+}
+.cn-btn:hover { transform: translateY(-1px); border-color: rgba(124,58,237,.45); box-shadow: 0 10px 24px rgba(124,58,237,.18); }
+.cn-btn.primary {
+  background: linear-gradient(135deg, rgba(124,58,237,.35), rgba(34,211,238,.25));
+  border-color: rgba(124,58,237,.45); font-weight: 600;
+}
+.cn-btn.danger {
+  border-color: rgba(239,68,68,.45);
+  background: rgba(239,68,68,.12); color: #fecaca;
+}
+.cn-btn.ghost { background: rgba(255,255,255,.06); }
+
+/* Bouton close X */
+.cn-modal-close {
+  width: 38px; height: 38px; border-radius: 12px; border: 1px solid rgba(148,163,184,0.18);
+  background: rgba(255,255,255,.06); color: #e5e7eb; display: grid; place-items: center; cursor: pointer;
+}
+.cn-modal-close:hover { transform: translateY(-1px); border-color: rgba(124,58,237,.45); color: #d8b4fe; }
+
+/* Toast (succès/erreur/info) */
+.cn-toast {
+  position: fixed; top: 18px; right: 18px; z-index: 9999;
+  min-width: 280px; max-width: 92vw;
+  padding: 12px 14px; border-radius: 14px;
+  border: 1px solid rgba(148,163,184,0.18);
+  background: linear-gradient(180deg, rgba(13,21,37,.75), rgba(13,21,37,.55));
+  box-shadow: 0 20px 50px rgba(0,0,0,.45);
+  color: #e5e7eb; display: flex; align-items: flex-start; gap: 10px;
+  transform: translateY(-12px); opacity: 0; pointer-events: none;
+  transition: transform .2s ease, opacity .2s ease;
+}
+.cn-toast.open { transform: translateY(0); opacity: 1; pointer-events: auto; }
+.cn-toast.success { border-color: rgba(16,185,129,.38); }
+.cn-toast.error   { border-color: rgba(239,68,68,.38); }
+.cn-toast.info    { border-color: rgba(59,130,246,.38); }
+
+.cn-toast .cn-check {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 2px solid #34d399; display: inline-block; position: relative; flex: none; margin-top: 2px;
+}
+.cn-toast.success .cn-check::after {
+  content: ""; position: absolute; left: 5px; top: 2px; width: 6px; height: 12px; border-right: 2px solid #34d399; border-bottom: 2px solid #34d399;
+  transform: rotate(45deg) scale(0); transform-origin: left top; animation: cn-tick .25s .1s ease forwards;
+}
+
+/* Keyframes */
+@keyframes cn-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes cn-pop { 0% { opacity: 0; transform: translateY(10px) scale(.96); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes cn-tick { to { transform: rotate(45deg) scale(1); } }
+
+/* Option accessibilité */
+@media (prefers-reduced-motion: reduce) {
+  .cn-modal-backdrop, .cn-modal, .cn-toast { animation: none !important; transition: none !important; }
+}
+
+
+
+

@@ -1,0 +1,253 @@
+/* ================= Thème ================= */
+:host {
+  --bg: #070a12;
+  --text: #e5e7eb;
+  --muted: #9ca3af;
+  --border: rgba(148,163,184,0.18);
+  --glass-1: rgba(13,21,37,.65);
+  --glass-2: rgba(13,21,37,.45);
+  --violet: #7c3aed;
+  --cyan: #22d3ee;
+  --accent: #a78bfa; /* #c4b5fd */
+  --radius: 16px;
+  --shadow: 0 28px 80px rgba(0,0,0,.6);
+}
+
+/* ================= Fond & structure ================= */
+/* Racine de la page (ton 1er div) */
+.min-h-screen {
+  position: relative;
+  min-height: 100vh;
+  color: var(--text);
+  background: var(--bg);
+  overflow-x: hidden;
+}
+
+/* Aurora plein écran, derrière le contenu */
+.min-h-screen::before,
+.min-h-screen::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;               /* derrière le contenu (qui passera en z:1) */
+  pointer-events: none;
+}
+
+/* Couche “aurora” ondulante */
+.min-h-screen::before {
+  mix-blend-mode: screen;
+  background:
+    radial-gradient(60vmax 60vmax at -10% 10%, rgba(124,58,237,.18), transparent 60%),
+    radial-gradient(60vmax 60vmax at 110% 0%, rgba(34,211,238,.16), transparent 60%),
+    radial-gradient(50vmax 50vmax at 50% 120%, rgba(99,102,241,.14), transparent 60%);
+  animation: auroraFloat 18s ease-in-out infinite alternate;
+}
+
+/* Grain/blend léger + voiles */
+.min-h-screen::after {
+  background:
+    radial-gradient(1200px 700px at 50% -20%, rgba(124,58,237,.10), transparent 60%),
+    repeating-linear-gradient(180deg, rgba(255,255,255,.02) 0 2px, transparent 2px 4px);
+  mix-blend-mode: soft-light;
+  opacity: .35;
+}
+
+/* Assure que header + main soient au-dessus de l’aurora */
+.min-h-screen > div {
+  position: relative;
+  z-index: 1;
+}
+
+/* Le background image inline que tu as mis est conservé et combiné à l’aurora */
+
+/* ================= Header (bandeau du haut) ================= */
+.bg-gray-950.bg-opacity-60.backdrop-blur-md {
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) + 6px);
+  box-shadow: var(--shadow);
+  background: linear-gradient(180deg, var(--glass-1), var(--glass-2));
+  position: relative;
+  overflow: hidden;
+}
+
+.bg-gray-950.bg-opacity-60.backdrop-blur-md::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0));
+  opacity: .35;
+}
+
+/* Titre animé (shimmer subtil) */
+.text-center h1 {
+  background: linear-gradient(90deg, #e5e7eb 0%, #c4b5fd 45%, #67e8f9 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 7s ease-in-out infinite;
+}
+
+/* ================= Panneaux (form & paiement) ================= */
+.bg-gray-950.bg-opacity-60.rounded-3xl.shadow-2xl.p-8.backdrop-blur-lg {
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  box-shadow: var(--shadow);
+  background: linear-gradient(180deg, var(--glass-1), var(--glass-2));
+  position: relative;
+  overflow: hidden;
+}
+
+/* Liseré d’accent animé en bas du panneau */
+.bg-gray-950.bg-opacity-60.rounded-3xl.shadow-2xl.p-8.backdrop-blur-lg::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0; height: 2px;
+  background: linear-gradient(90deg, rgba(124,58,237,.8), rgba(34,211,238,.8), rgba(124,58,237,.8));
+  background-size: 200% 100%;
+  animation: panAccent 16s linear infinite;
+  opacity: .85;
+}
+
+/* ================= Animations utilitaires ================= */
+.animate-pulse-in { animation: pulseIn .5s ease-out both; }
+.animate-slide-in { animation: slideInUp .45s ease-out both; }
+
+/* ================= Form elements ================= */
+#annonceForm label {
+  color: var(--text);
+  letter-spacing: .2px;
+}
+
+#annonceForm input[type="text"],
+#annonceForm textarea,
+#annonceForm select {
+  border-radius: 14px !important;
+  border: 1px solid var(--border) !important;
+  background: rgba(255,255,255,.06) !important;
+  color: var(--text) !important;
+  transition: border-color .2s ease, box-shadow .2s ease, transform .1s ease;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.03);
+}
+
+#annonceForm input::placeholder,
+#annonceForm textarea::placeholder {
+  color: #94a3b8;
+  opacity: .7;
+}
+
+#annonceForm input[type="text"]:focus,
+#annonceForm textarea:focus,
+#annonceForm select:focus {
+  border-color: rgba(124,58,237,.45) !important;
+  box-shadow: 0 0 0 3px rgba(124,58,237,.18);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+/* File input (style moderne) */
+#annonceForm input[type="file"] {
+  color: var(--text);
+}
+#annonceForm input[type="file"]::-webkit-file-upload-button {
+  background: linear-gradient(135deg, rgba(124,58,237,.55), rgba(34,211,238,.45));
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 14px;
+  margin-right: 10px;
+  cursor: pointer;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+#annonceForm input[type="file"]::-webkit-file-upload-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(124,58,237,.25);
+}
+
+/* Preview image */
+.image-preview {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 18px 40px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.03) inset;
+  object-fit: cover;
+  max-height: 220px;
+}
+
+/* ================= Boutons ================= */
+button[type="submit"],
+button.w-full {
+  border-radius: 14px !important;
+  border: 1px solid rgba(124,58,237,.45) !important;
+  background: linear-gradient(135deg, rgba(124,58,237,.55), rgba(34,211,238,.45)) !important;
+  box-shadow: 0 14px 32px rgba(124,58,237,.25);
+  transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+}
+button[type="submit"]:hover,
+button.w-full:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 22px 46px rgba(124,58,237,.28);
+  filter: brightness(1.05);
+}
+
+/* ================= Stripe card-element ================= */
+#card-element {
+  border-radius: 12px !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.03), 0 8px 22px rgba(0,0,0,.25);
+}
+
+/* ================= Keyframes ================= */
+@keyframes shimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes auroraFloat {
+  0%   { transform: translate3d(0,0,0); opacity: .25; }
+  50%  { transform: translate3d(2%, -1%, 0); opacity: .32; }
+  100% { transform: translate3d(-2%, 1%, 0); opacity: .27; }
+}
+@keyframes panAccent {
+  from { background-position: 0% 50%; }
+  to   { background-position: 200% 50%; }
+}
+@keyframes pulseIn {
+  from { opacity: 0; transform: scale(.98); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ================= Détails visuels ================= */
+.max-w-4xl.mx-auto > .mb-6 { /* bloc erreur */
+  border-radius: 14px;
+  box-shadow: 0 10px 26px rgba(239,68,68,.18);
+}
+
+/* Accent sur les labels d’icônes */
+label i, .section-title i {
+  color: #a78bfa;
+}
+
+/* ================= Scrollbar discrète (WebKit) ================= */
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-thumb {
+  background: rgba(124,58,237,.35);
+  border-radius: 8px;
+}
+
+/* ================= Accessibilité (préférence réduction animations) ================= */
+@media (prefers-reduced-motion: reduce) {
+  .min-h-screen::before,
+  .min-h-screen::after,
+  .text-center h1,
+  .bg-gray-950.bg-opacity-60.rounded-3xl.shadow-2xl.p-8.backdrop-blur-lg::after,
+  .animate-pulse-in,
+  .animate-slide-in,
+  .kenburns-pan {
+    animation: none !important;
+    transition: none !important;
+  }
+}

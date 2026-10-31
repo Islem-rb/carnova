@@ -1,0 +1,28 @@
+<div class="stage" #rendererContainer>
+  <ng-container *ngFor="let m of markers">
+    <!-- Cercle -->
+    <div
+      class="marker"
+      *ngIf="showMarkers"
+      [style.left.px]="screen(m.position).x"
+      [style.top.px]="screen(m.position).y"
+      (click)="toggleBubble(m)"
+      [title]="m.label"
+    >{{ m.id }}</div>
+
+    <!-- Bulle -->
+    <div
+      class="marker-bubble"
+      *ngIf="showMarkers && m.show"
+      [style.left.px]="screen(m.position).x + 18"
+      [style.top.px]="screen(m.position).y - 12"
+    >
+      <strong>{{ m.label }}</strong><br />
+      {{ m.desc }}
+    </div>
+  </ng-container>
+</div>
+
+<button class="info-btn" (click)="showMarkers = !showMarkers">
+  {{ showMarkers ? 'Masquer infos' : 'Afficher infos' }}
+</button>

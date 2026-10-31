@@ -1,0 +1,143 @@
+<div
+  class="min-h-screen bg-gray-900 bg-opacity-75 flex flex-col"
+  style="
+    background-image: url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+    background-size: cover;
+    background-position: center;
+  "
+>
+  <!-- Header -->
+  <div class="bg-gray-950 bg-opacity-60 text-indigo-100 py-16 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center">
+        <h1 class="text-4xl font-extrabold mb-4 animate-pulse-in">
+          <i class="fas fa-plus-circle mr-3"></i> Créer une annonce
+        </h1>
+        <p class="text-xl opacity-90">Partagez votre véhicule avec la communauté CarNova</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Erreur -->
+    <div
+      *ngIf="error"
+      class="mb-6 bg-red-900 bg-opacity-80 border border-red-600 text-red-300 px-4 py-3 rounded-lg animate-slide-in"
+    >
+      <i class="fas fa-exclamation-triangle mr-2"></i> {{ error }}
+    </div>
+
+    <!-- Formulaire d'annonce -->
+    <div *ngIf="!showPaymentForm" class="bg-gray-950 bg-opacity-60 rounded-3xl shadow-2xl p-8 backdrop-blur-lg">
+      <form id="annonceForm" (ngSubmit)="onSubmit()" class="space-y-8">
+        <!-- Titre -->
+        <div>
+          <label class="block text-indigo-100 font-medium mb-2">
+            <i class="fas fa-heading mr-2"></i> Titre
+          </label>
+          <input
+            type="text"
+            [(ngModel)]="titre"
+            name="titre"
+            required
+            class="w-full px-5 py-3 rounded-xl bg-gray-900 bg-opacity-80 text-indigo-100 border border-gray-600 focus:ring-2 focus:ring-indigo-400"
+          />
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label class="block text-indigo-100 font-medium mb-2">
+            <i class="fas fa-align-left mr-2"></i> Description
+          </label>
+          <textarea
+            [(ngModel)]="description"
+            name="description"
+            required
+            rows="5"
+            class="w-full px-5 py-3 rounded-xl bg-gray-900 bg-opacity-80 text-indigo-100 border border-gray-600 focus:ring-2 focus:ring-indigo-400 resize-none"
+          ></textarea>
+        </div>
+
+        <!-- Type -->
+        <div>
+          <label class="block text-indigo-100 font-medium mb-2">
+            <i class="fas fa-tags mr-2"></i> Type d’annonce
+          </label>
+          <select
+            [(ngModel)]="typeAnnonce"
+            name="typeAnnonce"
+            required
+            class="w-full px-5 py-3 rounded-xl bg-gray-900 bg-opacity-80 text-indigo-100 border border-gray-600 focus:ring-2 focus:ring-indigo-400"
+          >
+            <option value="VENTE">🚗 Vente</option>
+            <option value="LOCATION">🔑 Location</option>
+            <option value="ACHAT">💰 Achat</option>
+          </select>
+        </div>
+
+        <!-- Image -->
+        <div>
+          <label class="block text-indigo-100 font-medium mb-2">
+            <i class="fas fa-image mr-2"></i> Image
+          </label>
+          <input
+            type="file"
+            (change)="onFileSelected($event)"
+            accept="image/*"
+            class="w-full text-sm text-indigo-200 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-500 file:text-white hover:file:bg-indigo-600"
+          />
+          <img
+            *ngIf="imagePreview"
+            [src]="imagePreview"
+            alt="Preview"
+            class="image-preview mt-4 max-w-xs rounded-xl shadow-md"
+          />
+        </div>
+
+        <!-- Bouton -->
+        <div class="text-center">
+          <button
+            type="submit"
+            class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 px-8 rounded-xl transition-transform hover:scale-105 flex items-center mx-auto"
+          >
+            <i class="fas fa-plus mr-2"></i> Créer l’annonce
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Formulaire de paiement Stripe -->
+    <div
+      *ngIf="showPaymentForm"
+      class="bg-gray-950 bg-opacity-60 rounded-3xl shadow-2xl p-8 backdrop-blur-lg"
+    >
+      <h3 class="text-2xl font-bold text-white mb-6 text-center">
+        <i class="fas fa-credit-card mr-2"></i> 💳 Paiement sécurisé
+      </h3>
+      <form (ngSubmit)="confirmPaymentAndCreateAnnonce()" class="space-y-6">
+        <!-- Carte -->
+        <div id="card-element" class="bg-white p-4 rounded-xl"></div>
+
+        <!-- Bouton -->
+        <button
+          type="submit"
+          class="w-full bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 font-semibold"
+        >
+          Payer 5DT et créer l’annonce
+        </button>
+
+      </form>
+      <div class="cn-toast" [class.open]="popup.open" [class.success]="popup.type==='success'" [class.error]="popup.type==='error'" [class.info]="popup.type==='info'">
+  <span class="cn-check" *ngIf="popup.type==='success'"></span>
+  <div>
+    <strong style="display:block; margin-bottom:2px;">{{ popup.title }}</strong>
+    <span>{{ popup.message }}</span>
+  </div>
+  <button class="cn-modal-close" style="margin-left:auto;" (click)="closeToast()" aria-label="Fermer">
+    <i class="fas fa-times"></i>
+  </button>
+</div>
+    </div>
+  </div>
+</div>

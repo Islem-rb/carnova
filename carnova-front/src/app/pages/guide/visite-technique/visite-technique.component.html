@@ -1,0 +1,57 @@
+<section class="vt-page">
+  <!-- contenu flouté quand modale ouverte -->
+  <div class="wrap" [class.blurred]="isModalOpen">
+    <header class="page-header">
+      <h1>VISITE TECHNIQUE</h1>
+      <div class="underline">
+        <span></span>
+      </div>
+    </header>
+
+    <!-- grille de cartes -->
+    <div class="grid">
+      <button
+        *ngFor="let b of blocks"
+        type="button"
+        class="tile"
+        (click)="open(b)"
+        [attr.aria-controls]="'dialog-'+b.id"
+        aria-haspopup="dialog">
+        <span>{{ b.title }}</span>
+        <i class="fas fa-chevron-right" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- overlay + modale -->
+  <div
+    class="overlay"
+    *ngIf="isModalOpen"
+    (click)="close()"
+    aria-hidden="true">
+  </div>
+
+  <section
+    *ngIf="isModalOpen && active"
+    class="modal"
+    role="dialog"
+    [attr.id]="'dialog-'+active.id"
+    aria-modal="true"
+    [attr.aria-label]="active.title"
+  >
+    <header class="modal-head">
+      <h2>{{ active.title }}</h2>
+      <button class="close" type="button" (click)="close()" aria-label="Fermer">
+        <i class="fas fa-times"></i>
+      </button>
+    </header>
+
+    <div class="modal-body">
+  <div [innerHTML]="active.content"></div>
+    </div>
+
+    <footer class="modal-foot">
+      <button class="btn" type="button" (click)="close()">Fermer</button>
+    </footer>
+  </section>
+</section>

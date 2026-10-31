@@ -1,0 +1,183 @@
+<div class="create-page">
+
+  <!-- Background plein écran -->
+  <div class="page-bg"></div>
+  <div class="page-overlay"></div>
+
+  <div class="container">
+    <!-- Header / Hero -->
+    <header class="hero">
+      <div class="hero-title">
+        <div class="hero-icon">
+          <i class="fas fa-store"></i>
+        </div>
+        <div>
+          <h1>Créer un Showroom</h1>
+          <p class="subtitle">Renseignez les informations du showroom, ajoutez des images et vos véhicules</p>
+        </div>
+      </div>
+
+      <div class="hero-actions">
+        <button class="btn ghost" [routerLink]="['/espace/mes-annonces']">
+          <i class="fas fa-arrow-left"></i> Retour
+        </button>
+      </div>
+    </header>
+
+    <!-- Messages -->
+    <div *ngIf="success" class="alert success glass">
+      <i class="fas fa-check-circle"></i>
+      <span>{{ success }}</span>
+      <button type="button" class="close" (click)="success = ''"><i class="fas fa-times"></i></button>
+    </div>
+    <div *ngIf="error" class="alert danger glass">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span>{{ error }}</span>
+      <button type="button" class="close" (click)="error = ''"><i class="fas fa-times"></i></button>
+    </div>
+
+    <!-- Formulaire -->
+    <form id="showroomForm" class="form-shell glass animate-field" (ngSubmit)="onSubmit()">
+
+      <!-- Section infos showroom -->
+      <div class="section">
+        <div class="section-head">
+          <h2><i class="fas fa-building"></i> Informations du showroom</h2>
+          <span class="hint">Indiquez un nom clair et une description précise</span>
+        </div>
+
+        <div class="form-grid">
+          <div class="field animate-field">
+            <label>Nom du showroom</label>
+            <input type="text" [(ngModel)]="showroomName" name="nom" placeholder="Ex: Luxury Motors Casablanca" required />
+          </div>
+
+          <div class="field full animate-field">
+            <label>Description</label>
+            <textarea rows="4" [(ngModel)]="description" name="description" placeholder="Décrivez votre showroom, services, localisation..." required></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section images showroom -->
+      <div class="section">
+        <div class="section-head">
+          <h2><i class="fas fa-images"></i> Images du showroom</h2>
+          <span class="hint">Ajoutez quelques photos qui représentent votre showroom</span>
+        </div>
+
+        <div class="upload-zone animate-field">
+          <div class="upload-left">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <div>
+              <strong>Glissez-déposez vos images ici</strong>
+              <div class="muted">Ou cliquez pour sélectionner (PNG, JPG, WEBP • max 8MB)</div>
+            </div>
+          </div>
+          <label class="btn primary">
+            <i class="fas fa-plus"></i> Ajouter des images
+            <input type="file" accept="image/*" multiple (change)="onFileChange($event)" />
+          </label>
+        </div>
+
+        <div class="thumbs" *ngIf="imagePreviews.length">
+          <div class="thumb" *ngFor="let img of imagePreviews; let i = index">
+            <img [src]="img" alt="preview showroom" class="image-preview" />
+            <button type="button" class="thumb-remove" (click)="removeImage(i)">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section voitures -->
+      <div class="section">
+        <div class="section-head">
+          <h2><i class="fas fa-car"></i> Véhicules</h2>
+          <div class="section-actions">
+            <span class="badge">{{ voitures.length }} véhicule(s)</span>
+            <button type="button" class="btn ghost" (click)="addVoiture()">
+              <i class="fas fa-plus"></i> Ajouter un véhicule
+            </button>
+          </div>
+        </div>
+
+        <div class="cars-grid">
+          <div class="car-card glass-2 animate-field" *ngFor="let v of voitures; let i = index">
+            <div class="car-head">
+              <strong>Véhicule #{{ i + 1 }}</strong>
+              <button type="button" class="icon-btn danger" *ngIf="voitures.length > 1" (click)="removeVoiture(i)" title="Retirer">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+
+            <div class="car-body">
+              <div class="form-grid">
+                <div class="field">
+                  <label>Marque</label>
+                  <input type="text" [(ngModel)]="voitures[i].marque" name="marque-{{i}}" placeholder="Ex: BMW" required />
+                </div>
+                <div class="field">
+                  <label>Modèle</label>
+                  <input type="text" [(ngModel)]="voitures[i].modele" name="modele-{{i}}" placeholder="Ex: M4" required />
+                </div>
+                <div class="field">
+                  <label>Année</label>
+                  <input type="number" [(ngModel)]="voitures[i].annee" name="annee-{{i}}" min="1900" max="2100" placeholder="Ex: 2022" />
+                </div>
+                <div class="field">
+                  <label>Prix (€)</label>
+                  <input type="number" [(ngModel)]="voitures[i].prix" name="prix-{{i}}" min="0" placeholder="Ex: 68000" />
+                </div>
+                <div class="field">
+                  <label>Couleur</label>
+                  <input type="text" [(ngModel)]="voitures[i].couleur" name="couleur-{{i}}" placeholder="Ex: Noir" />
+                </div>
+              </div>
+
+              <div class="car-upload">
+                <div class="upload-zone compact">
+                  <div class="upload-left">
+                    <i class="fas fa-camera"></i>
+                    <div>
+                      <strong>Image de la voiture</strong>
+                      <div class="muted">PNG, JPG, WEBP • max 8MB</div>
+                    </div>
+                  </div>
+                  <label class="btn ghost">
+                    <i class="fas fa-upload"></i> Télécharger
+                    <input type="file" accept="image/*" (change)="onCarFileChange(i, $event)" />
+                  </label>
+                </div>
+                <div class="car-preview" *ngIf="carImagePreviews[i]">
+                  <img [src]="carImagePreviews[i]!" alt="preview voiture" class="image-preview" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <button class="btn primary xl" type="submit" [disabled]="loading || !isFormValid()">
+          <span *ngIf="!loading"><i class="fas fa-save"></i> Créer le showroom</span>
+          <span *ngIf="loading"><i class="fas fa-spinner fa-spin"></i> En cours...</span>
+        </button>
+        <button class="btn ghost xl" type="button" [routerLink]="['/espace/mes-annonces']">
+          Annuler
+        </button>
+        <div class="cn-toast" [class.open]="popup.open" [class.success]="popup.type==='success'" [class.error]="popup.type==='error'" [class.info]="popup.type==='info'">
+  <span class="cn-check" *ngIf="popup.type==='success'"></span>
+  <div>
+    <strong style="display:block; margin-bottom:2px;">{{ popup.title }}</strong>
+    <span>{{ popup.message }}</span>
+  </div>
+  <button class="cn-modal-close" style="margin-left:auto;" (click)="closeToast()" aria-label="Fermer">
+    <i class="fas fa-times"></i>
+  </button>
+</div>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,86 @@
+/* ====== Style du titre principal (même que VISITE TECHNIQUE / FCR) ====== */
+.page-header{
+  text-align:center;
+  margin-bottom: 1.5rem;
+}
+.page-header h1{
+  margin:0;
+  font-size:2rem;
+  font-weight:800;
+  color:#1f2937;
+  letter-spacing:.03em;
+  text-transform: uppercase;
+}
+.underline{
+  width:220px; height:22px; margin:.35rem auto 0; position:relative;
+}
+.underline::before{
+  content:""; display:block; height:2px; background:#e5e7eb; margin:10px 20px 0;
+}
+.underline span{
+  position:absolute; left:50%; top:8px; transform:translateX(-50%);
+  width:12px; height:6px; background:#e11d2e; border-radius:2px;
+}
+
+/* ====== Général ====== */
+.vignette-page{
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,.08);
+}
+
+.vignette-page p, .vignette-page li{
+  color:#374151;
+  line-height:1.6;
+}
+
+/* ====== Cartes ====== */
+.card{
+  background:#fafafa;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  padding:1rem 1.2rem;
+  margin-bottom:1rem;
+}
+.card h2{
+  margin-top:0;
+  color:#4c1d95;
+  font-size:1.2rem;
+}
+
+/* ====== Table ====== */
+.vignette-table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:1rem;
+  font-size:.95rem;
+}
+.vignette-table th{
+  background:#5b21b6;
+  color:#fff;
+  text-align:center;
+  padding:.6rem;
+  border:1px solid #4c1d95;
+}
+.vignette-table td{
+  border:1px solid #e5e7eb;
+  padding:.55rem;
+  text-align:center;
+}
+.vignette-table td:first-child{
+  font-weight:600;
+  text-align:left;
+}
+.vignette-table tr:nth-child(even){
+  background:#faf5ff;
+}
+
+/* ====== Note ====== */
+.note{
+  margin-top:.75rem;
+  font-size:.9rem;
+  color:#6b7280;
+}

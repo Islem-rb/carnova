@@ -1,0 +1,74 @@
+<section class="news-wrap">
+
+
+  <!-- Bannière vidéo décorative -->
+  <div class="video-banner reveal" aria-hidden="true">
+    <video #heroVideo
+           class="banner-video"
+           muted playsinline autoplay loop
+           preload="metadata"
+           [attr.src]="'assets/auto.mp4'"
+           poster="assets/auto-poster.jpg"
+           (error)="onVideoError($event)"></video>
+
+    <div class="video-overlay">
+      <h2>Les tendances auto</h2>
+      <p>Essais, modèles, mobilité… tout ce qui bouge.</p>
+    </div>
+  </div>
+
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <!-- Skeletons -->
+  <div *ngIf="loading" class="grid">
+    <div class="card skeleton" *ngFor="let _ of [1,2,3,4,5,6,7,8]"></div>
+  </div>
+
+  <ng-container *ngIf="!loading">
+    <!-- HERO -->
+    <a *ngIf="hero" class="hero reveal" [href]="hero.sourceUrl" target="_blank" rel="noopener">
+      <img [src]="hero.imageUrl || 'assets/news-fallback.jpg'" (error)="onImgError($event)" alt="">
+      <div class="hero-overlay">
+        <span class="badge">{{ hero.sourceName }}</span>
+        <h2 class="hero-title">{{ hero.title }}</h2>
+        <!-- ✅ plus de innerHTML : on affiche du texte nettoyé -->
+        <p class="hero-summary" *ngIf="hero.summary">{{ summaryText(hero.summary, 320) }}</p>
+        <div class="meta">
+          <span>{{ fromNow(hero.publishedAt) }}</span>
+          <span class="dot">•</span>
+          <span>{{ domain(hero.sourceUrl) }}</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- EMPTY -->
+    <div *ngIf="!hero && rest.length===0" class="empty reveal">
+      <img src="assets/news-fallback.jpg" alt="">
+      <p>Aucune nouveauté pour l’instant.</p>
+    </div>
+
+    <!-- GRID -->
+    <div class="grid" *ngIf="rest.length">
+      <article class="card reveal"
+               *ngFor="let n of rest; let i = index; trackBy: trackById"
+               [style.--delay]="(i * 70) + 'ms'">
+        <a [href]="n.sourceUrl" target="_blank" rel="noopener">
+          <div class="media">
+            <img [src]="n.imageUrl || 'assets/news-fallback.jpg'" (error)="onImgError($event)" alt="">
+            <span class="badge">{{ n.sourceName }}</span>
+          </div>
+          <div class="body">
+            <h3 class="title">{{ n.title }}</h3>
+            <!-- ✅ résumé en texte, sans balises/images -->
+            <p class="summary" *ngIf="n.summary">{{ summaryText(n.summary) }}</p>
+            <div class="meta">
+              <span>{{ fromNow(n.publishedAt) }}</span>
+              <span class="dot">•</span>
+              <span>{{ domain(n.sourceUrl) }}</span>
+            </div>
+          </div>
+        </a>
+      </article>
+    </div>
+  </ng-container>
+</section>
