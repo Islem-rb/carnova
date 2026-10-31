@@ -1,3 +1,13 @@
+# Publication and live verification — blocked by current access
+
+**Attempted:** publish the latest account milestone (which includes requested commit `1916572`), retrieve GitHub Actions, connect to Docker/frontend/API, and launch the requested desktop/mobile browser cases. Push failed on GitHub DNS; hosted CI is unknown; Docker/local HTTP access is denied; Chromium is unavailable. **No application walkthrough or fresh screenshots were produced.**
+
+**Prepared and verified locally:** the complete publishing workflow now has desktop and touch-mobile variants, actual form-based search, overflow/console checks and four screenshot checkpoints per viewport. TypeScript, formatting and discovery of all ten browser tests pass. This prepares verification; it does not complete the blocked live checks.
+
+**Next:** publish from the normal writable checkout and inspect exact-head CI, then execute/review the two viewport cases in a session with access. Commands and evidence: [PUBLISH_VERIFY.md](docs/PUBLISH_VERIFY.md). Changes remain on `redesign/v2`, mirrored into this workspace and preserved in the delivery bundle.
+
+---
+
 # Account essentials — implementation complete, full live verification pending
 
 **Added:** password recovery, email confirmation/resend, editable name settings, and authenticated password changes. Open **Mon espace → Mon compte**. Account emails are captured locally at `http://localhost:8025`; start all four services with `docker compose up --build --wait` when Docker is available. See [account guide](docs/ACCOUNTS.md).

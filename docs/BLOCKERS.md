@@ -1,3 +1,9 @@
+# Publication/verification retry — 31 October 2026
+
+A fresh push failed with `Could not resolve host: github.com`; the repository Actions API/page were unavailable. Docker socket access and local frontend/API HTTP were denied. The desktop/mobile browser attempt failed before page navigation because project-local Chromium is absent. No live flow, screenshot or hosted CI result is inferred. See [PUBLISH_VERIFY.md](PUBLISH_VERIFY.md) for observed results and exact completion commands. Both viewport cases are now authored, type-checked, formatted and discoverable; publication/live verification remains blocked.
+
+---
+
 # Account milestone verification limits (31 October 2026)
 
 Implementation and offline checks are complete; see [ACCOUNTS.md](ACCOUNTS.md). The new Maven persistence tests/browser workflows have been added but cannot be run with the current restricted network, inaccessible Docker socket and forbidden local HTTP access. Offline Maven confirms the pinned Spring Boot 3.5.16 parent is absent. Production/test Java compilation and 34 account JUnit tests were run using delivered runtime libraries, cached test libraries, Java 17 target and the available Java 25 JVM. A temporary interface-only Mockito configuration addresses this sandbox's restricted agent attachment.

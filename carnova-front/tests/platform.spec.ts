@@ -2,97 +2,134 @@ import { test, expect } from '@playwright/test';
 import { resolve } from 'node:path';
 import { adminSession } from './support';
 
-test('signup, login, publish with photos and GLB, search, assistant and account management', async ({
-  page,
-}) => {
-  const errors: string[] = [];
-  page.on('pageerror', (e) => errors.push(e.message));
-  const email = `browser-${Date.now()}@example.com`;
-  const title = `BMW parcours ${Date.now()}`;
-  await page.goto('/espace/creer-annonce');
-  await expect(page).toHaveURL(/login/);
-  await page.getByRole('link', { name: 'Créer mon compte', exact: true }).click();
-  await page.getByLabel('Prénom', { exact: true }).fill('Camille');
-  await page.getByLabel('Nom', { exact: true }).fill('Test');
-  await page.getByLabel('Adresse e-mail', { exact: true }).fill(email);
-  await page.getByLabel('Mot de passe', { exact: true }).fill('PortfolioTest123!');
-  await page.getByRole('button', { name: 'Créer mon compte', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Votre compte est prêt.' })).toBeVisible();
-  await page.getByRole('link', { name: 'Me connecter', exact: true }).click();
-  await page.getByLabel('Adresse e-mail', { exact: true }).fill(email);
-  await page.getByLabel('Mot de passe', { exact: true }).fill('PortfolioTest123!');
-  await page.getByRole('button', { name: 'Me connecter', exact: true }).click();
-  await expect(page).toHaveURL(/espace\/creer-annonce/);
-  await page.getByLabel('Titre de votre annonce').fill(title);
-  await page.getByLabel('Marque *', { exact: true }).fill('BMW');
-  await page.getByLabel('Modèle & finition').fill('320i M Sport');
-  await page.getByLabel('Année *', { exact: true }).fill('2022');
-  await page.getByRole('button', { name: 'Continuer', exact: true }).click();
-  await page.getByLabel('Prix (TND)').fill('123456');
-  await page.getByLabel('Kilométrage').fill('23000');
-  await page.getByLabel('Ville *', { exact: true }).fill('Tunis');
-  await page.getByLabel('Téléphone de contact').fill('+216 71 123 456');
-  await page
-    .getByLabel('Racontez votre voiture')
-    .fill('Annonce de vérification du parcours complet. Entretien documenté et véhicule de test.');
-  await page.getByRole('button', { name: 'Continuer', exact: true }).click();
-  await page.locator('#car-photos').setInputFiles(resolve('tests/fixtures/listing.png'));
-  await expect(page.getByAltText('Photo de votre annonce')).toBeVisible();
-  await page.locator('#car-glb').setInputFiles(resolve('../carnova-back/models/bmw.glb'));
-  await expect(page.getByText('Modèle 3D ajouté', { exact: false })).toBeVisible();
-  await page.getByRole('button', { name: 'Continuer', exact: true }).click();
-  await page.getByRole('button', { name: 'Simuler le paiement de 5 €' }).click();
-  await expect(page.getByText('Paiement test confirmé', { exact: false })).toBeVisible();
-  await page.getByRole('button', { name: 'Publier mon annonce', exact: true }).click();
-  await expect(page.getByRole('heading', { name: title, exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Enregistrer', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Enregistrée', exact: true })).toBeVisible();
-  await page.goto('/annonces?q=' + encodeURIComponent(title));
-  await expect(page.getByRole('link', { name: title, exact: true })).toBeVisible();
-  await page.getByRole('button', { name: /Ouvrir l’assistant CarNova/ }).click();
-  await expect(page.getByRole('dialog', { name: 'Votre copilote CarNova' })).toBeVisible();
-  await page.getByLabel('Votre question').fill('Quels documents vérifier ?');
-  await page.getByRole('button', { name: 'Envoyer le message' }).click();
-  await expect(page.locator('.chat-message.bot').last()).toContainText('carte grise');
-  await page.getByRole('button', { name: 'Fermer l’assistant' }).click();
-  await page.goto('/espace');
-  await expect(page.getByRole('heading', { name: title })).toBeVisible();
-  await page.getByRole('combobox', { name: 'Statut de ' + title }).selectOption('RESERVE');
-  await expect(
-    page.getByRole('status').filter({ hasText: 'Statut de l’annonce mis à jour.' }),
-  ).toBeVisible();
-  await page.getByRole('button', { name: /Mes favoris/ }).click();
-  await expect(page.getByRole('link', { name: title, exact: true })).toBeVisible();
-  await page.goto('/espace/creer-showroom');
-  await page.getByLabel('Nom du showroom').fill('Collection du parcours');
-  await page.getByLabel('Ville & adresse').fill('Tunis');
-  await page.getByLabel('Téléphone *', { exact: true }).fill('+216 71 123 456');
-  await page
-    .getByLabel('Votre histoire')
-    .fill('Une collection créée pour vérifier le parcours showroom de CarNova.');
-  await page.getByRole('button', { name: 'Une voiture', exact: true }).click();
-  await page.getByLabel('Marque *', { exact: true }).fill('BMW');
-  await page.getByLabel('Modèle *', { exact: true }).fill('320i');
-  await page.getByLabel('Prix (TND)').fill('123456');
-  await page.getByRole('button', { name: 'Ouvrir mon showroom' }).click();
-  await expect(
-    page.getByRole('heading', { name: 'Collection du parcours', exact: true }),
-  ).toBeVisible();
-  await expect(page.getByRole('cell', { name: 'BMW 320i', exact: true })).toBeVisible();
-  await page.goto('/espace');
-  await page.getByRole('button', { name: /Mes showrooms/ }).click();
-  await page.getByRole('link', { name: 'Modifier', exact: true }).click();
-  await page.getByLabel('Nom du showroom').fill('Collection mise à jour');
-  await page.getByRole('button', { name: 'Enregistrer les changements', exact: true }).click();
-  await expect(
-    page.getByRole('heading', { name: 'Collection mise à jour', exact: true }),
-  ).toBeVisible();
-  await page.goto('/espace');
-  await page.getByRole('button', { name: 'Supprimer ' + title, exact: true }).click();
-  await page.getByRole('button', { name: 'Confirmer la suppression', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Votre première annonce ?' })).toBeVisible();
-  expect(errors).toEqual([]);
-});
+for (const variant of [
+  { name: 'desktop', viewport: { width: 1440, height: 1000 }, isMobile: false },
+  { name: 'mobile', viewport: { width: 390, height: 844 }, isMobile: true },
+]) {
+  test.describe(variant.name, () => {
+    test.use({
+      viewport: variant.viewport,
+      isMobile: variant.isMobile,
+      hasTouch: variant.isMobile,
+    });
+    test('signup, login, publish with photos and GLB, search, assistant and account management', async ({
+      page,
+    }, testInfo) => {
+      const errors: string[] = [];
+      page.on('pageerror', (e) => errors.push(e.message));
+      page.on('console', (message) => {
+        if (message.type() === 'error') errors.push(message.text());
+      });
+      const capture = async (step: string) => {
+        await page.evaluate(() => document.fonts.ready);
+        expect(
+          await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1),
+          variant.name + ': ' + step,
+        ).toBe(true);
+        await page.screenshot({
+          path: testInfo.outputPath(`${step}-${variant.name}.png`),
+          fullPage: true,
+          animations: 'disabled',
+        });
+      };
+      const email = `browser-${variant.name}-${Date.now()}@example.com`;
+      const title = `BMW parcours ${variant.name} ${Date.now()}`;
+      await page.goto('/espace/creer-annonce');
+      await expect(page).toHaveURL(/login/);
+      await page.getByRole('link', { name: 'Créer mon compte', exact: true }).click();
+      await page.getByLabel('Prénom', { exact: true }).fill('Camille');
+      await page.getByLabel('Nom', { exact: true }).fill('Test');
+      await page.getByLabel('Adresse e-mail', { exact: true }).fill(email);
+      await page.getByLabel('Mot de passe', { exact: true }).fill('PortfolioTest123!');
+      await page.getByRole('button', { name: 'Créer mon compte', exact: true }).click();
+      await expect(page.getByRole('heading', { name: 'Votre compte est prêt.' })).toBeVisible();
+      await capture('signup');
+      await page.getByRole('link', { name: 'Me connecter', exact: true }).click();
+      await page.getByLabel('Adresse e-mail', { exact: true }).fill(email);
+      await page.getByLabel('Mot de passe', { exact: true }).fill('PortfolioTest123!');
+      await page.getByRole('button', { name: 'Me connecter', exact: true }).click();
+      await expect(page).toHaveURL(/espace\/creer-annonce/);
+      await expect(page.getByLabel('Titre de votre annonce')).toBeVisible();
+      await capture('login');
+      await page.getByLabel('Titre de votre annonce').fill(title);
+      await page.getByLabel('Marque *', { exact: true }).fill('BMW');
+      await page.getByLabel('Modèle & finition').fill('320i M Sport');
+      await page.getByLabel('Année *', { exact: true }).fill('2022');
+      await page.getByRole('button', { name: 'Continuer', exact: true }).click();
+      await page.getByLabel('Prix (TND)').fill('123456');
+      await page.getByLabel('Kilométrage').fill('23000');
+      await page.getByLabel('Ville *', { exact: true }).fill('Tunis');
+      await page.getByLabel('Téléphone de contact').fill('+216 71 123 456');
+      await page
+        .getByLabel('Racontez votre voiture')
+        .fill(
+          'Annonce de vérification du parcours complet. Entretien documenté et véhicule de test.',
+        );
+      await page.getByRole('button', { name: 'Continuer', exact: true }).click();
+      await page.locator('#car-photos').setInputFiles(resolve('tests/fixtures/listing.png'));
+      await expect(page.getByAltText('Photo de votre annonce')).toBeVisible();
+      await page.locator('#car-glb').setInputFiles(resolve('../carnova-back/models/bmw.glb'));
+      await expect(page.getByText('Modèle 3D ajouté', { exact: false })).toBeVisible();
+      await page.getByRole('button', { name: 'Continuer', exact: true }).click();
+      await page.getByRole('button', { name: 'Simuler le paiement de 5 €' }).click();
+      await expect(page.getByText('Paiement test confirmé', { exact: false })).toBeVisible();
+      await page.getByRole('button', { name: 'Publier mon annonce', exact: true }).click();
+      await expect(page.getByRole('heading', { name: title, exact: true })).toBeVisible();
+      await capture('published-listing');
+      await page.getByRole('button', { name: 'Enregistrer', exact: true }).click();
+      await expect(page.getByRole('button', { name: 'Enregistrée', exact: true })).toBeVisible();
+      await page.goto('/annonces');
+      await page.getByRole('textbox', { name: 'Rechercher une voiture', exact: true }).fill(title);
+      await page.getByRole('button', { name: 'Rechercher', exact: true }).click();
+      await expect(page).toHaveURL((url) => url.searchParams.get('q') === title);
+      await expect(page.getByRole('link', { name: title, exact: true })).toBeVisible();
+      await capture('search');
+      await page.getByRole('button', { name: /Ouvrir l’assistant CarNova/ }).click();
+      await expect(page.getByRole('dialog', { name: 'Votre copilote CarNova' })).toBeVisible();
+      await page.getByLabel('Votre question').fill('Quels documents vérifier ?');
+      await page.getByRole('button', { name: 'Envoyer le message' }).click();
+      await expect(page.locator('.chat-message.bot').last()).toContainText('carte grise');
+      await page.getByRole('button', { name: 'Fermer l’assistant' }).click();
+      await page.goto('/espace');
+      await expect(page.getByRole('heading', { name: title })).toBeVisible();
+      await page.getByRole('combobox', { name: 'Statut de ' + title }).selectOption('RESERVE');
+      await expect(
+        page.getByRole('status').filter({ hasText: 'Statut de l’annonce mis à jour.' }),
+      ).toBeVisible();
+      await page.getByRole('button', { name: /Mes favoris/ }).click();
+      await expect(page.getByRole('link', { name: title, exact: true })).toBeVisible();
+      await page.goto('/espace/creer-showroom');
+      await page.getByLabel('Nom du showroom').fill('Collection du parcours');
+      await page.getByLabel('Ville & adresse').fill('Tunis');
+      await page.getByLabel('Téléphone *', { exact: true }).fill('+216 71 123 456');
+      await page
+        .getByLabel('Votre histoire')
+        .fill('Une collection créée pour vérifier le parcours showroom de CarNova.');
+      await page.getByRole('button', { name: 'Une voiture', exact: true }).click();
+      await page.getByLabel('Marque *', { exact: true }).fill('BMW');
+      await page.getByLabel('Modèle *', { exact: true }).fill('320i');
+      await page.getByLabel('Prix (TND)').fill('123456');
+      await page.getByRole('button', { name: 'Ouvrir mon showroom' }).click();
+      await expect(
+        page.getByRole('heading', { name: 'Collection du parcours', exact: true }),
+      ).toBeVisible();
+      await expect(page.getByRole('cell', { name: 'BMW 320i', exact: true })).toBeVisible();
+      await page.goto('/espace');
+      await page.getByRole('button', { name: /Mes showrooms/ }).click();
+      await page.getByRole('link', { name: 'Modifier', exact: true }).click();
+      await page.getByLabel('Nom du showroom').fill('Collection mise à jour');
+      await page.getByRole('button', { name: 'Enregistrer les changements', exact: true }).click();
+      await expect(
+        page.getByRole('heading', { name: 'Collection mise à jour', exact: true }),
+      ).toBeVisible();
+      await page.goto('/espace');
+      await page.getByRole('button', { name: 'Supprimer ' + title, exact: true }).click();
+      await page.getByRole('button', { name: 'Confirmer la suppression', exact: true }).click();
+      await expect(page.getByRole('heading', { name: 'Votre première annonce ?' })).toBeVisible();
+      expect(errors).toEqual([]);
+    });
+  });
+}
 
 test('3D model loads, orbit controls work and driving is available', async ({ page }) => {
   const errors: string[] = [];
