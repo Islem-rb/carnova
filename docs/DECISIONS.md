@@ -13,3 +13,5 @@
 - Preserve original uploads/models/assets. Only selected lightweight marketplace images and existing backend GLBs are copied/optimized into frontend public content; heavy original assets excluded from eager loading and unused videos excluded from build output.
 
 - The environment mounts the original .git read-only. Verification commits and the authorized push use a writable Git metadata copy at /tmp/carnova-v2.git with this repository as its worktree. Original .git and main stay untouched. The initial metadata index was empty; the next commit restores the baseline tracked tree without changing any original data on disk. Runtime logs are untracked and credential configuration is replaced first.
+
+- Existing backend files named bmw.glb and mercedes.glb contain the identical CC0 ToyCar model by Guido Odendahl, materials by Eric Chadwick. The studio explicitly labels this demonstration model. Original frontend 3d.glb is a 1972 Datsun by Karol Miklas (CC BY-SA 4.0); retain attribution and offer it on demand. Ford Raptor model has no embedded license metadata; preserve it but do not feature it.
