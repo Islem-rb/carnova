@@ -1,9 +1,10 @@
 import { Routes } from '@angular/router';
+import { Home } from './pages/home';
 import { authGuard, adminGuard } from './core/auth';
 export const routes: Routes = [
   {
     path: '',
-    loadComponent: () => import('./pages/home').then((m) => m.Home),
+    component: Home,
     title: 'CarNova — Le plaisir de trouver.',
   },
   {

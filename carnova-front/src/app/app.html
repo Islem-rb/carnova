@@ -29,7 +29,10 @@
         "
       >
         <app-icon [name]="ui.theme() === 'dark' ? 'sun' : 'moon'" /></button
-      ><a class="account-link" [routerLink]="auth.signedIn() ? '/espace' : '/login'"
+      ><a
+        class="account-link"
+        [attr.aria-label]="auth.signedIn() ? 'Mon espace' : 'Connexion'"
+        [routerLink]="auth.signedIn() ? '/espace' : '/login'"
         ><app-icon name="user" /><span>{{ auth.signedIn() ? 'Mon espace' : 'Connexion' }}</span></a
       ><a class="button button-dark header-publish" routerLink="/espace/creer-annonce"
         ><app-icon name="plus" />Déposer une annonce</a
@@ -95,7 +98,11 @@
     }
   </div>
 </footer>
-<button class="assistant-fab" (click)="ui.openAssistant()" aria-label="Ouvrir l’assistant CarNova">
+<button
+  class="assistant-fab"
+  (click)="ui.openAssistant()"
+  aria-label="Un conseil ? Ouvrir l’assistant CarNova"
+>
   <app-icon name="spark" /><span>Un conseil ?</span>
 </button>
 @defer (when ui.assistant()) {

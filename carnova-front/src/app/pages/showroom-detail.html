@@ -42,7 +42,12 @@
       </div>
     </div>
     @if (s.voitures.length) {
-      <div class="table-wrap">
+      <div
+        class="table-wrap"
+        tabindex="0"
+        role="region"
+        aria-label="Véhicules du showroom, défilement horizontal"
+      >
         <table>
           <caption class="sr-only">
             Véhicules du showroom

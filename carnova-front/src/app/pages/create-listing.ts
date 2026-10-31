@@ -68,12 +68,10 @@ export class CreateListing {
     description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(4000)]],
   });
   constructor() {
-    this.api
-      .get<BillingConfig>('/payments/config')
-      .subscribe({
-        next: (c) => this.config.set(c),
-        error: (e) => this.error.set(errorMessage(e)),
-      });
+    this.api.get<BillingConfig>('/payments/config').subscribe({
+      next: (c) => this.config.set(c),
+      error: (e) => this.error.set(errorMessage(e)),
+    });
     if (this.editId)
       this.api.get<Listing>('/annonces/' + this.editId).subscribe({
         next: (c) => {

@@ -1,0 +1,9 @@
+node_modules
+dist
+.angular
+.env
+playwright-report
+test-results
+
+src/assets/*
+!src/assets/3d.glb

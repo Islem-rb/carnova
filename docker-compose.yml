@@ -1,0 +1,67 @@
+name: carnova-v2
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: carnova
+      POSTGRES_USER: ${DATABASE_USER:-carnova}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-carnova-local-demo-only}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d carnova"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+  backend:
+    build: ./carnova-back
+    environment:
+      DATABASE_URL: jdbc:postgresql://postgres:5432/carnova
+      DATABASE_USER: ${DATABASE_USER:-carnova}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-carnova-local-demo-only}
+      JWT_SECRET: ${JWT_SECRET:-local-portfolio-demo-key-change-before-any-public-use-2026}
+      JWT_EXPIRATION_SECONDS: ${JWT_EXPIRATION_SECONDS:-3600}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:8080,http://localhost:4200}
+      UPLOADS_DIR: /data/uploads
+      MODELS_DIR: /data/models
+      DEMO_DATA: ${DEMO_DATA:-true}
+      DEMO_ADMIN_PASSWORD: ${DEMO_ADMIN_PASSWORD:-portfolio-admin-demo-only}
+      PAYMENTS_MODE: ${PAYMENTS_MODE:-mock}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY:-}
+      OLLAMA_URL: ${OLLAMA_URL:-}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-llama3.2}
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=75.0
+    ports:
+      - "127.0.0.1:${BACKEND_PORT:-8081}:8081"
+    volumes:
+      - uploads-data:/data/uploads
+      - models-data:/data/models
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8081/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      start_period: 40s
+      retries: 15
+    restart: unless-stopped
+  frontend:
+    build: ./carnova-front
+    ports:
+      - "127.0.0.1:${FRONTEND_PORT:-8080}:8080"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:8080/"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+volumes:
+  postgres-data:
+  uploads-data:
+  models-data:

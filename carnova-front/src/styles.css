@@ -3683,3 +3683,52 @@ tbody tr:last-child td {
   max-width: 90vw;
   object-fit: contain;
 }
+
+.journal-image {
+  display: block;
+}
+:root {
+  --field-border: #858e7d;
+}
+:root[data-theme='dark'] {
+  --field-border: #7c8873;
+}
+.field input,
+.field select,
+.field textarea,
+.input {
+  border-color: var(--field-border);
+}
+
+main {
+  min-height: calc(100svh - 88px);
+}
+@media (max-width: 1000px) {
+  main {
+    min-height: calc(100svh - 76px);
+  }
+}
+@media (max-width: 760px) {
+  main {
+    min-height: calc(100svh - 70px);
+  }
+}
+
+@media (max-width: 360px) {
+  .header-inner {
+    gap: 8px;
+  }
+  .header-actions {
+    gap: 6px;
+  }
+  .header-actions .theme-button {
+    width: 30px;
+  }
+  .mobile-toggle {
+    width: 36px;
+    height: 36px;
+  }
+  .account-link {
+    padding: 6px;
+  }
+}

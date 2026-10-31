@@ -41,7 +41,7 @@
             >{{ n.sourceName }}<span>· {{ date(n.publishedAt) }}</span></span
           >
           <h2 style="font-size: 24px; line-height: 1.3; margin: 12px 0">{{ n.title }}</h2>
-          <p>{{ n.summary }}</p>
+          <p>{{ n.summary.slice(0, 180) }}{{ n.summary.length > 180 ? '…' : '' }}</p>
           <button
             class="text-link"
             style="

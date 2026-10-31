@@ -98,6 +98,7 @@ export const brands = [
   'BMW',
   'Land Rover',
   'Mercedes-Benz',
+  'Maserati',
   'Porsche',
   'Tesla',
   'Toyota',

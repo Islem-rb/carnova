@@ -40,12 +40,10 @@ export class Detail {
         this.car.set(c);
         this.loading.set(false);
         if (c)
-          this.api
-            .get<ListingPage>('/annonces/search', { size: 4 })
-            .subscribe({
-              next: (r) => this.related.set(r.items.filter((x) => x.id !== c.id).slice(0, 3)),
-              error: () => {},
-            });
+          this.api.get<ListingPage>('/annonces/search', { size: 4 }).subscribe({
+            next: (r) => this.related.set(r.items.filter((x) => x.id !== c.id).slice(0, 3)),
+            error: () => {},
+          });
       });
   }
   specs(c: Listing) {

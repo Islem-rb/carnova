@@ -24,9 +24,15 @@
         ><img
           class="hero-car"
           src="/assets/market/hero.webp"
+          srcset="
+            /assets/market/hero-640.webp  640w,
+            /assets/market/hero-960.webp  960w,
+            /assets/market/hero.webp     1363w
+          "
+          sizes="(max-width: 760px) 100vw, 700px"
           alt="Berline argentée, vue de trois quarts"
-          width="1200"
-          height="660"
+          width="1363"
+          height="517"
           fetchpriority="high"
         />
         <div class="hero-label">
@@ -162,9 +168,15 @@
       <div class="studio-grid"></div>
       <img
         src="/assets/market/hero.webp"
+        srcset="
+          /assets/market/hero-640.webp  640w,
+          /assets/market/hero-960.webp  960w,
+          /assets/market/hero.webp     1363w
+        "
+        sizes="(max-width: 760px) 100vw, 700px"
         alt="Aperçu automobile du studio CarNova"
-        width="800"
-        height="440"
+        width="1363"
+        height="517"
         loading="lazy"
       /><span class="studio-cross" aria-hidden="true">+</span
       ><span class="studio-caption"
@@ -217,7 +229,7 @@
               width="640"
               height="360"
               loading="lazy" /></a
-          ><span class="eyebrow">{{ n.sourceName }}<span>· 3 min de lecture</span></span>
+          ><span class="eyebrow">{{ n.sourceName }}<span>· Regards automobile</span></span>
           <h3>
             <a routerLink="/actualites" [queryParams]="{ article: n.id }">{{ n.title }}</a>
           </h3>

@@ -35,6 +35,7 @@
     "@playwright/test": "^1.56.0",
     "@tailwindcss/postcss": "^4.1.0",
     "@types/three": "^0.185.0",
+    "chrome-launcher": "^1.2.2",
     "lighthouse": "^13.0.0",
     "postcss": "^8.5.0",
     "prettier": "^3.9.10",

@@ -32,3 +32,10 @@ for (const [name, file] of Object.entries(images)) {
 await sharp({ create: { width: 240, height: 160, channels: 3, background: '#77835d' } })
   .png()
   .toFile(resolve(project, 'tests/fixtures/listing.png'));
+
+for (const width of [640, 960]) {
+  await sharp(resolve(output, 'hero.webp'))
+    .resize({ width })
+    .webp({ quality: 84, effort: 6 })
+    .toFile(resolve(output, `hero-${width}.webp`));
+}

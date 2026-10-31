@@ -53,7 +53,7 @@
         <button (click)="send(s)" [disabled]="busy()">{{ s }}<app-icon name="diagonal" /></button>
       }
     </div>
-    <form class="chat-compose" (ngSubmit)="send()">
+    <form class="chat-compose" (submit)="$event.preventDefault(); send()">
       <label class="sr-only" for="chat-input">Votre question</label
       ><input
         id="chat-input"
