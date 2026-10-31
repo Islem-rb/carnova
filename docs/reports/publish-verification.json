@@ -1,0 +1,59 @@
+{
+  "recordedAt": "2026-10-31T14:10:44.350377+00:00",
+  "requestedRevision": "1916572",
+  "attemptedPublishHead": "c8c3ac69f85d7537585a352589c066d4690d8d75",
+  "branch": "redesign/v2",
+  "push": {
+    "status": "failed before contacting remote",
+    "reason": "Could not resolve host: github.com"
+  },
+  "hostedCi": {
+    "status": "unknown",
+    "reason": "Repository Actions API and page could not be fetched; latest local changes have not been published"
+  },
+  "docker": {
+    "status": "blocked",
+    "reason": "permission denied at unix:///var/run/docker.sock"
+  },
+  "localhost": {
+    "status": "blocked",
+    "reason": "Operation not permitted for frontend and API health HTTP requests"
+  },
+  "browserAttempt": {
+    "cases": 2,
+    "runnerStatus": "2 failures during browser launch",
+    "applicationStepsExecuted": false,
+    "reason": "project-local Playwright Chromium executable is absent",
+    "screenshotsCreated": false
+  },
+  "preparation": {
+    "desktopViewport": [
+      1440,
+      1000
+    ],
+    "mobileViewport": [
+      390,
+      844
+    ],
+    "mobileTouchEmulation": true,
+    "flow": "signup -> login -> publish listing with photo/GLB and mock checkout -> search through form",
+    "capturesPerCase": [
+      "signup",
+      "login",
+      "published-listing",
+      "search"
+    ],
+    "consoleErrorsAndOverflowChecked": true
+  },
+  "checks": {
+    "newBrowserTestTypeScript": "passed",
+    "format": "passed",
+    "playwrightDiscovery": "10 tests; both desktop and mobile publishing cases found"
+  },
+  "completion": "publication, exact-commit hosted CI conclusion and live desktop/mobile walkthrough remain pending access",
+  "githubPlugin": {
+    "available": true,
+    "installed": false,
+    "confirmedAccess": false
+  }
+}

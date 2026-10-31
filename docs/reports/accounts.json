@@ -1,0 +1,56 @@
+{
+  "recordedAt": "2026-10-31T13:50:57.490218+00:00",
+  "baselineCommit": "1916572d8c2e0e5c637dca6d85b4d471a5f657e1",
+  "features": [
+    "password reset",
+    "email verification and resend",
+    "name profile settings",
+    "authenticated password change",
+    "JWT session revocation",
+    "local captured mail"
+  ],
+  "frontend": {
+    "testsPassed": 43,
+    "productionBuild": "passed without warnings",
+    "initialRawKB": 419.44,
+    "estimatedTransferKB": 109.68,
+    "warningBudgetKB": 420,
+    "format": "passed",
+    "newTestsTypecheck": "passed"
+  },
+  "backend": {
+    "accountTestsPassed": 34,
+    "service": 18,
+    "controller": 6,
+    "mailAdapter": 5,
+    "realJwtFilter": 5,
+    "sourceTarget": 17,
+    "testRuntimeJava": 25,
+    "method": "Offline JUnit launcher; delivered production runtime JAR libraries and available cached test libraries; repository doubles; temporary Mockito proxy configuration",
+    "persistenceTestsAuthored": 2,
+    "persistenceTestSourceCompile": "passed",
+    "mavenVerify": "blocked: pinned parent/H2 dependencies absent offline",
+    "productionSourcesCompiled": 39
+  },
+  "composeConfig": "passed",
+  "mail": {
+    "service": "Mailpit v1.33.0",
+    "externalDelivery": false,
+    "actualMailboxRun": "pending Docker access"
+  },
+  "browser": {
+    "newWorkflowTests": 2,
+    "totalWorkflowTests": 9,
+    "newRoutesAddedToAccessibilityAndVisualSweeps": true,
+    "executed": false,
+    "newScreenshots": "pending",
+    "discovery": "9 tests in 4 files; passed without browser execution"
+  },
+  "publication": "local branch and bundle; push pending restricted network",
+  "remaining": [
+    "Full Maven lifecycle and real database migration/locking run",
+    "Compose startup and actual captured-mail browser flows",
+    "Fresh screenshots and accessibility sweeps",
+    "Hosted CI and branch publication"
+  ]
+}

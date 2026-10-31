@@ -1,0 +1,77 @@
+<dialog
+  #panel
+  class="assistant-dialog"
+  aria-labelledby="assistant-title"
+  (cancel)="ui.assistant.set(false)"
+  (click)="backdrop($event)"
+>
+  <div class="assistant-inner">
+    <header class="assistant-header">
+      <span class="assistant-emblem"><app-icon name="spark" /></span>
+      <div>
+        <h2 id="assistant-title">Votre copilote CarNova</h2>
+        <p>
+          <span class="status-dot"></span
+          >{{
+            provider() === 'ollama' ? 'IA locale · Ollama' : 'Guide automobile · mode hors ligne'
+          }}
+        </p>
+      </div>
+      <button class="icon-button" aria-label="Fermer l’assistant" (click)="ui.assistant.set(false)">
+        <app-icon name="close" />
+      </button>
+    </header>
+    <div class="chat-messages" #messages>
+      <div class="chat-message bot">
+        <span class="eyebrow">CARNOVA</span>
+        <p>
+          Bonjour, prenons la bonne direction.<br />Un achat à préparer, une voiture à vendre ? Je
+          vous aide à y voir plus clair.
+        </p>
+      </div>
+      @for (m of history(); track $index) {
+        <div
+          class="chat-message"
+          [class.human]="m.role === 'user'"
+          [class.bot]="m.role === 'assistant'"
+        >
+          <span class="eyebrow">{{ m.role === 'user' ? 'VOUS' : 'CARNOVA' }}</span>
+          <p>{{ m.text }}</p>
+        </div>
+      }
+      @if (busy()) {
+        <div class="chat-message bot" role="status">
+          <span class="typing-dots">Votre copilote prépare sa réponse…</span>
+        </div>
+      }
+      @if (error()) {
+        <p class="error-box" role="alert">{{ error() }}</p>
+      }
+    </div>
+    <div class="chat-suggestions">
+      @for (s of suggestions(); track s) {
+        <button (click)="send(s)" [disabled]="busy()">{{ s }}<app-icon name="diagonal" /></button>
+      }
+    </div>
+    <form class="chat-compose" (submit)="$event.preventDefault(); send()">
+      <label class="sr-only" for="chat-input">Votre question</label
+      ><input
+        id="chat-input"
+        [formControl]="message"
+        maxlength="2000"
+        placeholder="Posez votre question…"
+        autocomplete="off"
+      /><button
+        class="button button-lime"
+        type="submit"
+        aria-label="Envoyer le message"
+        [disabled]="busy() || message.invalid"
+      >
+        <app-icon name="arrow" />
+      </button>
+    </form>
+    <p class="chat-note">
+      Des repères utiles. Vérifiez les informations auprès d’un professionnel.
+    </p>
+  </div>
+</dialog>

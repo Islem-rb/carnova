@@ -1,1 +1,0 @@
-ALTER TABLE showroom_images ALTER COLUMN images TYPE TEXT; 

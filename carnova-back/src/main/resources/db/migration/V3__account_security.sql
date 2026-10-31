@@ -1,0 +1,10 @@
+ALTER TABLE users ADD COLUMN email_verified BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE users ADD COLUMN auth_version BIGINT NOT NULL DEFAULT 0;
+ALTER TABLE users ADD COLUMN reset_token_hash VARCHAR(64);
+ALTER TABLE users ADD COLUMN reset_expires_at TIMESTAMP WITH TIME ZONE;
+ALTER TABLE users ADD COLUMN reset_requested_at TIMESTAMP WITH TIME ZONE;
+ALTER TABLE users ADD COLUMN verification_token_hash VARCHAR(64);
+ALTER TABLE users ADD COLUMN verification_expires_at TIMESTAMP WITH TIME ZONE;
+ALTER TABLE users ADD COLUMN verification_requested_at TIMESTAMP WITH TIME ZONE;
+CREATE UNIQUE INDEX idx_users_reset_token ON users(reset_token_hash);
+CREATE UNIQUE INDEX idx_users_verification_token ON users(verification_token_hash);

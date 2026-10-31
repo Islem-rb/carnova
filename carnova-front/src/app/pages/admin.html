@@ -1,0 +1,213 @@
+<section class="wrap page-space">
+  <div class="account-top">
+    <div>
+      <span class="eyebrow subtle" style="margin-bottom: 15px"
+        >Vue d’ensemble · Administration</span
+      >
+      <h1>La plateforme, en perspective.</h1>
+      <p>Les données réelles de cette installation, réunies au même endroit.</p>
+    </div>
+    <div class="account-actions">
+      <a class="button button-outline" routerLink="/espace"><app-icon name="user" />Mon espace</a
+      ><button class="button button-dark" [disabled]="loading()" (click)="load()">
+        <app-icon name="rotate" />Actualiser
+      </button>
+    </div>
+  </div>
+  @if (error()) {
+    <div class="error-box" role="alert">{{ error() }}</div>
+  }
+  @if (loading()) {
+    <div class="skeleton" role="status" aria-label="Chargement de l’administration"></div>
+  } @else if (data(); as d) {
+    <div class="stat-grid">
+      @for (s of stats(d); track s.title) {
+        <div class="stat-card">
+          <app-icon [name]="s.icon" />
+          <p>{{ s.title }}</p>
+          <strong>{{ s.value }}</strong>
+        </div>
+      }
+    </div>
+    <div class="admin-grid">
+      <section class="panel">
+        <h2>Le rythme des annonces.</h2>
+        <p>Publications sur les six derniers mois.</p>
+        <figure style="margin: 0">
+          <div class="bar-chart" role="img" [attr.aria-label]="chartDescription(d)">
+            @for (m of d.months; track m.month) {
+              <div class="chart-column">
+                <strong>{{ m.count }}</strong>
+                <div class="bar" [style.height.px]="m.count ? (m.count / max(d)) * 140 : 3"></div>
+                <span>{{ month(m.month) }}</span>
+              </div>
+            }
+          </div>
+          <figcaption class="subtle" style="font-size: 10px">
+            Total des annonces créées par mois. Les annonces supprimées sont exclues.
+          </figcaption>
+        </figure>
+      </section>
+      <section class="panel">
+        <span class="eyebrow subtle">La veille automobile</span>
+        <h2 style="margin-top: 14px">Faire vivre le Journal.</h2>
+        <p>
+          Récupérez les dernières publications de la source RSS configurée. La recherche est limitée
+          à une source fixe.
+        </p>
+        <button
+          class="button button-outline"
+          style="margin-top: 23px"
+          [disabled]="refreshing()"
+          (click)="refresh()"
+        >
+          {{ refreshing() ? 'Actualisation…' : 'Actualiser la veille' }}<app-icon name="rotate" />
+        </button>
+        <div class="notice" style="margin-top: 23px; font-size: 10px">
+          <app-icon name="lock" />Cette section et les opérations du Journal sont réservées aux
+          administrateurs.
+        </div>
+      </section>
+    </div>
+    <section style="margin-bottom: 35px">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow subtle">Ce qui vient d’arriver</span>
+          <h2 style="font-size: 28px">Les dernières annonces.</h2>
+        </div>
+        <a routerLink="/annonces" class="text-link">Voir la plateforme<app-icon name="arrow" /></a>
+      </div>
+      <div
+        class="table-wrap"
+        tabindex="0"
+        role="region"
+        aria-label="Dernières annonces, défilement horizontal"
+      >
+        <table>
+          <caption class="sr-only">
+            Dernières annonces de la plateforme
+          </caption>
+          <thead>
+            <tr>
+              <th>Annonce</th>
+              <th>Vendeur</th>
+              <th>Prix</th>
+              <th>Statut</th>
+              <th>Consulter</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (c of d.recentListings; track c.id) {
+              <tr>
+                <td>
+                  <strong>{{ c.titre }}</strong>
+                </td>
+                <td>{{ c.user.name }}</td>
+                <td>{{ price(c.prix) }}</td>
+                <td>
+                  <span class="badge badge-soft">{{ label(c.statut) }}</span>
+                </td>
+                <td>
+                  <a [routerLink]="['/annonces', c.id]" [attr.aria-label]="'Consulter ' + c.titre"
+                    ><app-icon name="diagonal"
+                  /></a>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5">Aucune annonce pour le moment.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <div class="admin-grid">
+      <section class="panel">
+        <span class="eyebrow subtle">Un nouveau chapitre</span>
+        <h2 style="margin-top: 14px">Publier dans le Journal.</h2>
+        <form
+          [formGroup]="newsForm"
+          (ngSubmit)="publish()"
+          class="form-grid"
+          style="margin-top: 20px"
+        >
+          <div class="field full-width">
+            <label for="news-title">Titre</label
+            ><input id="news-title" formControlName="title" maxlength="300" />
+          </div>
+          <div class="field full-width">
+            <label for="news-summary">Texte éditorial</label
+            ><textarea
+              id="news-summary"
+              formControlName="summary"
+              rows="5"
+              maxlength="3000"
+            ></textarea>
+          </div>
+          <div class="field full-width">
+            <label for="news-image">Image de la collection</label
+            ><select id="news-image" formControlName="imageUrl">
+              <option value="/assets/market/hero.webp">Collection CarNova</option>
+              <option value="/assets/market/porsche.webp">Perspective sportive</option>
+              <option value="/assets/market/tesla.webp">Électrique</option>
+            </select>
+          </div>
+          <button
+            class="button button-dark full-width"
+            type="submit"
+            [disabled]="publishing() || newsForm.invalid"
+          >
+            {{ publishing() ? 'Publication…' : 'Publier l’article' }}<app-icon name="plus" />
+          </button>
+        </form>
+      </section>
+      <section class="panel">
+        <span class="eyebrow subtle">À l’écoute</span>
+        <h2 style="margin-top: 14px">Les derniers messages.</h2>
+        <p>Les 50 derniers messages reçus via le formulaire.</p>
+        @for (m of d.messages; track m.id) {
+          <article class="inbox-message">
+            <strong>{{ m.name }}</strong>
+            <p>
+              <a [href]="'mailto:' + m.email" style="text-decoration: underline">{{ m.email }}</a>
+            </p>
+            <p>{{ m.message }}</p>
+            <time class="subtle" style="font-size: 9px">{{ date(m.createdAt) }}</time>
+          </article>
+        } @empty {
+          <div class="empty-state" style="padding: 35px 10px">
+            <app-icon name="mail" />
+            <p>La boîte de réception est vide.</p>
+          </div>
+        }
+      </section>
+    </div>
+    <section class="panel">
+      <h2>Les articles publiés.</h2>
+      @for (n of news(); track n.id) {
+        <div class="management-row" style="margin-top: 15px">
+          <div class="management-info">
+            <h3>{{ n.title }}</h3>
+            <p>{{ n.sourceName }} · {{ date(n.publishedAt) }}</p>
+          </div>
+          @if (deleteId() === n.id) {
+            <button class="button button-outline button-small danger" (click)="removeNews(n.id)">
+              Confirmer la suppression</button
+            ><button class="text-button" (click)="deleteId.set('')">Annuler</button>
+          } @else {
+            <button
+              class="icon-button danger"
+              [attr.aria-label]="'Supprimer l’article ' + n.title"
+              (click)="deleteId.set(n.id)"
+            >
+              <app-icon name="trash" />
+            </button>
+          }
+        </div>
+      } @empty {
+        <p>Aucun article publié.</p>
+      }
+    </section>
+  }
+</section>

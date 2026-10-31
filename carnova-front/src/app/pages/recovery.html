@@ -1,0 +1,197 @@
+<section class="wrap page-space">
+  <div class="auth-layout">
+    <aside class="auth-story">
+      <div>
+        <span class="eyebrow">Toujours à vos côtés.</span>
+        <h2 style="margin-top: 32px">Retrouvez<br />votre espace.<br />En confiance.</h2>
+        <p>Un lien personnel, une étape simple et vous voilà de retour chez CarNova.</p>
+      </div>
+      <img
+        src="/assets/market/hero-640.webp"
+        alt="Berline argentée de la collection CarNova"
+        width="640"
+        height="243"
+      />
+      <span class="auth-stamp"><app-icon name="shield" />Votre compte. Votre tranquillité.</span>
+    </aside>
+    <div class="auth-form-area">
+      <a class="text-button settings-back" routerLink="/login"
+        ><app-icon name="back" />Retour à la connexion</a
+      >
+      <span class="eyebrow subtle" style="margin-bottom: 16px">Votre accès CarNova</span>
+      @if (success()) {
+        <div class="success-box" role="status" aria-live="polite">
+          <app-icon [name]="mode === 'forgot' ? 'mail' : 'check'" />
+          <h1>
+            {{
+              mode === 'forgot'
+                ? 'Consultez vos e-mails.'
+                : mode === 'reset'
+                  ? 'Vous pouvez reprendre la route.'
+                  : 'Adresse confirmée.'
+            }}
+          </h1>
+          <p>
+            {{
+              mode === 'forgot'
+                ? 'Si un compte correspond à cette adresse, un lien vous sera envoyé. Pensez à vérifier les courriers indésirables. Le lien expire après 30 minutes.'
+                : mode === 'reset'
+                  ? 'Votre mot de passe a été réinitialisé. Vos anciennes sessions sont fermées. Connectez-vous avec le nouveau.'
+                  : 'Votre adresse e-mail est maintenant vérifiée. Merci de prendre soin de votre compte.'
+            }}
+          </p>
+          <a
+            class="button button-dark"
+            [routerLink]="mode === 'verify' && auth.signedIn() ? '/espace/parametres' : '/login'"
+            >{{ mode === 'verify' && auth.signedIn() ? 'Mon compte' : 'Me connecter'
+            }}<app-icon name="arrow"
+          /></a>
+          @if (mode === 'forgot') {
+            <button type="button" class="text-button" (click)="success.set(false)">
+              Demander un autre lien
+            </button>
+          }
+        </div>
+      } @else if (mode !== 'forgot' && !hasToken) {
+        <div class="empty-state recovery-empty">
+          <app-icon name="lock" />
+          <h1>Un nouveau lien ?</h1>
+          <p>Ce lien est incomplet. Ouvrez le lien reçu par e-mail ou demandez-en un nouveau.</p>
+          <a
+            class="button button-dark"
+            [routerLink]="mode === 'reset' ? '/mot-de-passe-oublie' : '/espace/parametres'"
+            >{{ mode === 'reset' ? 'Recevoir un nouveau lien' : 'Confirmer mon adresse'
+            }}<app-icon name="arrow"
+          /></a>
+        </div>
+      } @else {
+        <h1>
+          {{
+            mode === 'forgot'
+              ? 'Un petit oubli ?'
+              : mode === 'reset'
+                ? 'Un nouveau départ.'
+                : 'C’est bien vous ?'
+          }}
+        </h1>
+        <p>
+          {{
+            mode === 'forgot'
+              ? 'Indiquez l’adresse de votre compte. Nous vous enverrons un lien pour choisir un nouveau mot de passe.'
+              : mode === 'reset'
+                ? 'Choisissez un mot de passe unique. Il remplacera l’actuel et fermera vos anciennes sessions.'
+                : 'Confirmez votre adresse pour terminer cette étape. Ce lien est personnel et valable 24 heures.'
+          }}
+        </p>
+        @if (error()) {
+          <div class="error-box" role="alert">
+            {{ error() }}
+            @if (mode !== 'forgot') {
+              <a [routerLink]="mode === 'reset' ? '/mot-de-passe-oublie' : '/espace/parametres'"
+                >Demander un nouveau lien</a
+              >
+            }
+          </div>
+        }
+        @if (mode === 'forgot') {
+          <form [formGroup]="emailForm" (ngSubmit)="submit()" [attr.aria-busy]="busy()">
+            <div class="field">
+              <label for="recovery-email">Adresse e-mail</label>
+              <input
+                id="recovery-email"
+                type="email"
+                formControlName="email"
+                autocomplete="email"
+                placeholder="vous@exemple.com"
+                maxlength="254"
+                [attr.aria-invalid]="
+                  emailForm.controls.email.touched && emailForm.controls.email.invalid
+                "
+                aria-describedby="recovery-email-error"
+              />
+              @if (emailForm.controls.email.touched && emailForm.controls.email.invalid) {
+                <span class="field-error" id="recovery-email-error"
+                  >Indiquez une adresse e-mail valide.</span
+                >
+              }
+            </div>
+            <button class="button button-dark w-full" type="submit" [disabled]="busy()">
+              {{ busy() ? 'Un instant…' : 'Recevoir le lien' }}<app-icon name="mail" />
+            </button>
+          </form>
+        } @else if (mode === 'reset') {
+          <form [formGroup]="passwordForm" (ngSubmit)="submit()" [attr.aria-busy]="busy()">
+            <div class="field">
+              <label for="reset-password">Nouveau mot de passe</label>
+              <div class="password-field">
+                <input
+                  id="reset-password"
+                  [type]="showPassword() ? 'text' : 'password'"
+                  formControlName="newPassword"
+                  autocomplete="new-password"
+                  maxlength="72"
+                  aria-describedby="reset-password-help reset-password-error"
+                  [attr.aria-invalid]="invalidPassword()"
+                />
+                <button
+                  type="button"
+                  class="icon-button"
+                  [attr.aria-label]="
+                    showPassword() ? 'Masquer les mots de passe' : 'Afficher les mots de passe'
+                  "
+                  [attr.aria-pressed]="showPassword()"
+                  (click)="showPassword.set(!showPassword())"
+                >
+                  <app-icon name="eye" />
+                </button>
+              </div>
+              <small id="reset-password-help"
+                >10 caractères minimum. 72 octets UTF-8 maximum (les accents et emoji occupent
+                plusieurs octets).</small
+              >
+              @if (invalidPassword()) {
+                <span class="field-error" id="reset-password-error"
+                  >Choisissez au moins 10 caractères, sans dépasser 72 octets UTF-8.</span
+                >
+              }
+            </div>
+            <div class="field">
+              <label for="reset-confirm">Confirmer le nouveau mot de passe</label>
+              <input
+                id="reset-confirm"
+                [type]="showPassword() ? 'text' : 'password'"
+                formControlName="confirmPassword"
+                autocomplete="new-password"
+                maxlength="72"
+                [attr.aria-invalid]="mismatch()"
+                aria-describedby="reset-confirm-error"
+              />
+              @if (mismatch()) {
+                <span class="field-error" id="reset-confirm-error"
+                  >Les deux mots de passe doivent être identiques.</span
+                >
+              }
+            </div>
+            <button class="button button-dark w-full" type="submit" [disabled]="busy()">
+              {{ busy() ? 'Un instant…' : 'Enregistrer mon mot de passe' }}<app-icon name="arrow" />
+            </button>
+          </form>
+        } @else {
+          <button
+            type="button"
+            class="button button-dark w-full"
+            [disabled]="busy()"
+            (click)="submit()"
+          >
+            {{ busy() ? 'Vérification…' : 'Confirmer mon adresse' }}<app-icon name="check" />
+          </button>
+        }
+        <div class="notice">
+          <app-icon name="lock" /><span
+            >Les liens sont personnels, temporaires et utilisables une seule fois.</span
+          >
+        </div>
+      }
+    </div>
+  </div>
+</section>

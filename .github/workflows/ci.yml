@@ -1,0 +1,66 @@
+name: CarNova CI
+on:
+  push:
+    branches: [main, redesign/v2]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+          cache-dependency-path: carnova-back/pom.xml
+      - run: mvn -B -ntp -f carnova-back/pom.xml verify
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: failure()
+        with:
+          name: backend-test-results
+          path: carnova-back/target/surefire-reports
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: carnova-front
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22.23.1'
+          cache: npm
+          cache-dependency-path: carnova-front/package-lock.json
+      - run: npm ci
+      - run: npm run format:check
+      - run: npm test
+      - run: npm run build
+  platform:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22.23.1'
+          cache: npm
+          cache-dependency-path: carnova-front/package-lock.json
+      - run: npm ci --prefix carnova-front
+      - run: npx playwright install --with-deps chromium
+        working-directory: carnova-front
+      - run: docker compose up --build --wait --wait-timeout 300
+      - run: npm run test:e2e --prefix carnova-front
+        env:
+          E2E_BASE_URL: http://localhost:8080
+          E2E_ADMIN_PASSWORD: portfolio-admin-demo-only
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: browser-report
+          path: |
+            carnova-front/playwright-report
+            carnova-front/test-results
+      - run: docker compose down
+        if: always()

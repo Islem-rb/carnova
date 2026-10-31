@@ -1,0 +1,137 @@
+.auth-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 670px;
+}
+.auth-story {
+  background: #273126;
+  color: #f3f6eb;
+  padding: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  min-height: 580px;
+}
+.auth-story .eyebrow {
+  color: var(--lime);
+}
+.auth-story h2 {
+  font-size: 48px;
+  max-width: 390px;
+  position: relative;
+  z-index: 1;
+}
+.auth-story p {
+  color: #bec7b7;
+  font-size: 12px;
+  max-width: 300px;
+  margin-top: 20px;
+}
+.auth-story img {
+  width: 115%;
+  max-width: none;
+  position: relative;
+  transform: translateX(-5%);
+}
+.auth-story .auth-stamp {
+  font-size: 10px;
+  display: flex;
+  gap: 9px;
+  align-items: center;
+}
+.auth-form-area {
+  padding: 45px 60px;
+  max-width: 590px;
+  width: 100%;
+  margin: auto;
+}
+.auth-form-area h1 {
+  font-size: 34px;
+}
+.auth-form-area > p {
+  margin: 12px 0 28px;
+  font-size: 12px;
+}
+.auth-form-area form {
+  display: flex;
+  flex-direction: column;
+  gap: 19px;
+}
+.password-field {
+  position: relative;
+}
+.password-field input {
+  padding-right: 50px;
+}
+.password-field button {
+  position: absolute;
+  right: 5px;
+  top: 4px;
+  width: 37px;
+  height: 37px;
+  border: none;
+}
+.auth-switch {
+  text-align: center;
+  font-size: 11px !important;
+  margin-top: 25px !important;
+}
+.auth-switch a {
+  font-weight: 750;
+  text-decoration: underline;
+  color: var(--ink);
+}
+.auth-form-area .notice {
+  margin-top: 24px;
+  font-size: 10px;
+}
+@media (max-width: 1200px) {
+  .auth-story {
+    padding: 40px;
+  }
+  .auth-form-area {
+    padding: 35px;
+  }
+}
+@media (max-width: 1000px) {
+  .auth-layout {
+    grid-template-columns: 0.9fr 1fr;
+    min-height: 620px;
+  }
+  .auth-story {
+    padding: 32px;
+    min-height: 550px;
+  }
+  .auth-story h2 {
+    font-size: 38px;
+  }
+  .auth-form-area {
+    padding: 25px;
+  }
+}
+@media (max-width: 760px) {
+  .auth-layout {
+    display: block;
+  }
+  .auth-story {
+    display: none;
+  }
+  .auth-form-area {
+    padding: 15px 0;
+    max-width: 460px;
+  }
+  .auth-form-area h1 {
+    font-size: 33px;
+  }
+  .auth-form-area > p {
+    font-size: 12px;
+  }
+}
+.recovery-link {
+  align-self: flex-end;
+  text-decoration: underline;
+  font-size: 12px;
+}

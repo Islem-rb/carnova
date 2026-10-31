@@ -1,0 +1,26 @@
+{
+  "datsun": "71 MB optional model rendered successfully in Chromium; studio-datsun-desktop.png reviewed.",
+  "viewports": [
+    {
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "width": 390,
+      "height": 844
+    },
+    {
+      "width": 320,
+      "height": 740
+    }
+  ],
+  "reflow": "All 16 application routes fit 320 CSS pixels; wide tables use labelled keyboard-scrollable regions.",
+  "visualReview": [
+    "Desktop and mobile contact sheets inspected.",
+    "Journal overlap corrected; all lazy images loaded before full-page captures.",
+    "Showroom header wraps on narrow screens.",
+    "Studio, Datsun, auth, listings, listing detail, account, admin, Journal, showroom, contact and publishing states reviewed.",
+    "Native assistant dialog, sending, Escape and fallback tested."
+  ],
+  "normalPageConsoleErrors": 0
+}

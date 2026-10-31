@@ -1,0 +1,115 @@
+<a href="#main" class="skip-link">Aller au contenu</a>
+<header class="site-header">
+  <div class="header-inner wrap">
+    <a class="wordmark" routerLink="/" aria-label="CarNova, accueil"
+      ><span class="brand-mark"
+        ><svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <path
+            d="M23 8a11 11 0 1 0 0 16M9 16h16m-5-5 5 5-5 5"
+            stroke="currentColor"
+            stroke-width="2.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          /></svg></span
+      >car<span>nova</span><span class="brand-dot">.</span></a
+    >
+    <nav class="desktop-nav" aria-label="Navigation principale">
+      <a routerLink="/annonces" routerLinkActive="active">Les voitures</a
+      ><a routerLink="/showrooms" routerLinkActive="active">Showrooms</a
+      ><a routerLink="/studio" routerLinkActive="active"
+        >Studio 3D <span class="nav-new">Nouveau</span></a
+      ><a routerLink="/actualites" routerLinkActive="active">Le Journal</a>
+    </nav>
+    <div class="header-actions">
+      <button
+        class="icon-button theme-button"
+        (click)="ui.toggleTheme()"
+        [attr.aria-label]="
+          ui.theme() === 'dark' ? 'Activer le mode clair' : 'Activer le mode sombre'
+        "
+      >
+        <app-icon [name]="ui.theme() === 'dark' ? 'sun' : 'moon'" /></button
+      ><a
+        class="account-link"
+        [attr.aria-label]="auth.signedIn() ? 'Mon espace' : 'Connexion'"
+        [routerLink]="auth.signedIn() ? '/espace' : '/login'"
+        ><app-icon name="user" /><span>{{ auth.signedIn() ? 'Mon espace' : 'Connexion' }}</span></a
+      ><a class="button button-dark header-publish" routerLink="/espace/creer-annonce"
+        ><app-icon name="plus" />Déposer une annonce</a
+      ><button
+        class="icon-button mobile-toggle"
+        (click)="menu.set(!menu())"
+        [attr.aria-expanded]="menu()"
+        aria-controls="mobile-nav"
+        [attr.aria-label]="menu() ? 'Fermer le menu' : 'Ouvrir le menu'"
+      >
+        <app-icon [name]="menu() ? 'close' : 'menu'" />
+      </button>
+    </div>
+  </div>
+  @if (menu()) {
+    <nav id="mobile-nav" class="mobile-nav wrap" aria-label="Navigation mobile">
+      <a routerLink="/annonces">Les voitures<app-icon name="arrow" /></a
+      ><a routerLink="/showrooms">Showrooms<app-icon name="arrow" /></a
+      ><a routerLink="/studio">Studio 3D<app-icon name="cube" /></a
+      ><a routerLink="/actualites">Le Journal<app-icon name="book" /></a
+      ><a routerLink="/guide">Guide pratique</a
+      ><a [routerLink]="auth.signedIn() ? '/espace' : '/login'">{{
+        auth.signedIn() ? 'Mon espace' : 'Connexion'
+      }}</a
+      ><a class="button button-lime" routerLink="/espace/creer-annonce"
+        >Déposer une annonce<app-icon name="plus"
+      /></a>
+    </nav>
+  }
+</header>
+<main id="main" tabindex="-1"><router-outlet /></main>
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <div>
+        <a class="wordmark" routerLink="/">carnova<span class="brand-dot">.</span></a>
+        <p>De belles voitures.<br />Et tout ce qui va avec.</p>
+      </div>
+      <div>
+        <span class="eyebrow">Explorer</span><a routerLink="/annonces">Trouver une voiture</a
+        ><a routerLink="/showrooms">Nos showrooms</a><a routerLink="/studio">Explorer en 3D</a>
+      </div>
+      <div>
+        <span class="eyebrow">Vous accompagner</span><a routerLink="/guide">Guide pratique</a
+        ><a routerLink="/actualites">Le Journal</a
+        ><button class="text-button" (click)="ui.openAssistant()">L'assistant CarNova</button>
+      </div>
+      <div>
+        <span class="eyebrow">CarNova</span><a routerLink="/about">Notre histoire</a
+        ><a routerLink="/contact">Nous contacter</a
+        ><a routerLink="/espace/creer-annonce">Vendre votre voiture</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© {{ year }} CarNova. Pensé pour la route.</span
+      ><span><span class="status-dot"></span>Fait avec soin, en Tunisie</span
+      ><a routerLink="/about" fragment="credits">Crédits & confidentialité</a>
+    </div>
+    @if (ui.demo()) {
+      <p class="demo-note">
+        Portfolio de démonstration · Les véhicules de présentation ne sont pas des offres réelles.
+      </p>
+    }
+  </div>
+</footer>
+<button
+  class="assistant-fab"
+  (click)="ui.openAssistant()"
+  aria-label="Un conseil ? Ouvrir l’assistant CarNova"
+>
+  <app-icon name="spark" /><span>Un conseil ?</span>
+</button>
+@defer (when ui.assistant()) {
+  @if (ui.assistant()) {
+    <app-assistant />
+  }
+}
+<div class="toast" role="status" [class.visible]="ui.toast()">
+  <app-icon name="check" />{{ ui.toast() }}
+</div>

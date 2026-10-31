@@ -1,0 +1,188 @@
+<section class="wrap page-space">
+  <nav class="breadcrumb" aria-label="Fil d’Ariane">
+    <a routerLink="/">Accueil</a><app-icon name="chevron" /><a routerLink="/annonces"
+      >Les voitures</a
+    ><app-icon name="chevron" /><span>{{ car()?.titre || 'Les détails' }}</span>
+  </nav>
+  @if (loading()) {
+    <div class="skeleton skeleton-line"></div>
+    <div class="skeleton skeleton-detail" role="status" aria-label="Chargement de l’annonce"></div>
+  } @else if (error()) {
+    <div class="empty-state">
+      <div class="empty-icon"><app-icon name="car" /></div>
+      <h1>Cette voiture prend une autre route.</h1>
+      <p role="alert">{{ error() }}</p>
+      <a class="button button-dark" routerLink="/annonces"
+        >Retour aux annonces<app-icon name="arrow"
+      /></a>
+    </div>
+  } @else if (car(); as c) {
+    <div class="detail-header">
+      <div>
+        <span
+          class="badge"
+          [class.badge-lime]="c.statut === 'DISPONIBLE'"
+          [class.badge-soft]="c.statut !== 'DISPONIBLE'"
+          >{{ label(c.statut) }}</span
+        >
+        <h1>{{ c.titre }}</h1>
+        <div class="detail-meta">
+          <span><app-icon name="pin" />{{ c.ville || 'Tunisie' }}</span
+          ><span><app-icon name="car" />{{ c.modele || c.marque || 'Automobile' }}</span
+          ><span>Réf. CN–{{ c.id.toString().padStart(4, '0') }}</span>
+        </div>
+      </div>
+      <div class="account-actions">
+        <button
+          class="button button-outline"
+          [attr.aria-pressed]="ui.saved().includes(c.id)"
+          (click)="ui.toggleSave(c.id)"
+        >
+          <app-icon name="heart" />{{
+            ui.saved().includes(c.id) ? 'Enregistrée' : 'Enregistrer'
+          }}</button
+        ><button class="button button-outline" (click)="share()">
+          <app-icon name="diagonal" />Partager
+        </button>
+      </div>
+    </div>
+    <div class="detail-layout">
+      <div class="detail-primary">
+        <div class="gallery-main">
+          <button
+            class="w-full h-full"
+            style="border: 0; padding: 0; background: none"
+            (click)="gallery.showModal()"
+            aria-label="Agrandir la photo du véhicule"
+          >
+            <img
+              [src]="imageUrl(activeImage() || c.imageUrl)"
+              [alt]="c.titre"
+              width="960"
+              height="640"
+              fetchpriority="high"
+              (error)="fallback($event)"
+            />
+          </button>
+        </div>
+        <div class="gallery-thumbs">
+          @for (img of c.images.length ? c.images : [c.imageUrl || '']; track $index) {
+            <button
+              [class.selected]="(activeImage() || c.imageUrl) === img"
+              [attr.aria-label]="'Afficher la photo ' + ($index + 1)"
+              [attr.aria-pressed]="(activeImage() || c.imageUrl) === img"
+              (click)="activeImage.set(img)"
+            >
+              <img
+                [src]="imageUrl(img)"
+                [alt]="'Photo ' + ($index + 1)"
+                width="120"
+                height="80"
+                loading="lazy"
+              />
+            </button>
+          }
+        </div>
+        <dialog
+          #gallery
+          class="gallery-dialog"
+          aria-label="Galerie du véhicule"
+          (click)="gallery.close()"
+        >
+          <button
+            class="icon-button"
+            style="position: absolute; top: 15px; right: 15px; background: var(--surface)"
+            aria-label="Fermer la galerie"
+          >
+            <app-icon name="close" /></button
+          ><img [src]="imageUrl(activeImage() || c.imageUrl)" [alt]="c.titre" />
+        </dialog>
+        <div class="detail-block">
+          <h2>Les détails qui comptent.</h2>
+          <dl class="spec-grid">
+            @for (s of specs(c); track s.title) {
+              <div>
+                <dt>{{ s.title }}</dt>
+                <dd>{{ s.value }}</dd>
+              </div>
+            }
+          </dl>
+        </div>
+        <div class="detail-block">
+          <h2>Le mot du vendeur.</h2>
+          <p class="description-text">{{ c.description }}</p>
+        </div>
+        @if (c.model3dUrl) {
+          <div class="detail-block">
+            <span class="badge badge-soft"><app-icon name="cube" />Une autre perspective</span>
+            <h2 style="margin-top: 15px">Explorez le modèle 3D.</h2>
+            <p style="font-size: 12px; margin-bottom: 20px">
+              Le modèle associé est fourni à titre d’illustration. Vérifiez les caractéristiques du
+              véhicule auprès du vendeur.
+            </p>
+            @defer (on interaction) {
+              <app-viewer [url]="c.model3dUrl" />
+            } @placeholder {
+              <button class="button button-dark">
+                <app-icon name="cube" />Charger le modèle 3D
+              </button>
+            }
+          </div>
+        }
+        <div class="detail-block">
+          <div class="notice">
+            <app-icon name="shield" />Prenez le temps de vérifier les documents et de faire
+            inspecter le véhicule. N’envoyez jamais d’acompte avant d’avoir rencontré le vendeur et
+            vu la voiture.
+          </div>
+        </div>
+      </div>
+      <aside class="detail-sidebar">
+        <span class="eyebrow subtle">{{ label(c.typeAnnonce) }}</span>
+        <div class="detail-price">{{ price(c.prix) }}</div>
+        <p>Prix indiqué par le vendeur{{ c.typeAnnonce === 'LOCATION' ? ' · par jour' : '' }}.</p>
+        <div class="seller">
+          <span class="avatar">{{ c.user.name.charAt(0) }}</span>
+          <div>
+            <strong>{{ c.user.name }}</strong>
+            <p>Vendeur sur CarNova</p>
+          </div>
+        </div>
+        @if (c.telephone) {
+          <a class="button button-dark" [href]="'tel:' + c.telephone"
+            ><app-icon name="phone" />{{ c.telephone }}</a
+          >
+        }
+        <button
+          class="button button-outline"
+          [attr.aria-pressed]="ui.saved().includes(c.id)"
+          (click)="ui.toggleSave(c.id)"
+        >
+          <app-icon name="heart" />Garder en favoris</button
+        ><button class="button button-lime sidebar-assistant" (click)="ui.openAssistant(c.id)">
+          <app-icon name="spark" />Un avis avant de choisir ?
+        </button>
+        <div class="notice" style="margin-top: 22px; font-size: 10px">
+          <app-icon name="info" />CarNova vous met en relation. Organisez un essai et vérifiez les
+          informations avant l’achat.
+        </div>
+      </aside>
+    </div>
+    @if (related().length) {
+      <section class="home-section">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow subtle">Continuez la découverte</span>
+            <h2>D’autres belles pistes.</h2>
+          </div>
+          <a class="text-link" routerLink="/annonces">Tout explorer<app-icon name="arrow" /></a>
+        </div>
+        <div class="car-grid">
+          @for (r of related(); track r.id) {
+            <app-car-card [car]="r" />
+          }
+        </div>
+      </section>
+    }
+  }
+</section>

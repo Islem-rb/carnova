@@ -1,0 +1,406 @@
+<section class="wrap page-space">
+  <a class="back-link" routerLink="/espace"><app-icon name="back" />Mon espace</a>
+  <div class="page-intro">
+    <span class="eyebrow subtle">Le début d’une nouvelle histoire</span>
+    <h1>{{ editId ? 'Votre annonce, peaufinée.' : 'Faites passer le volant.' }}</h1>
+    <p>Quelques informations, de belles photos et une description qui va à l’essentiel.</p>
+  </div>
+  @if (loading()) {
+    <div class="skeleton skeleton-detail" role="status" aria-label="Chargement de l’annonce"></div>
+  } @else {
+    <div class="wizard-shell">
+      <aside class="wizard-steps">
+        <ol>
+          @for (s of steps; track $index) {
+            <li
+              [class.current]="step() === $index"
+              [class.done]="step() > $index"
+              [attr.aria-current]="step() === $index ? 'step' : null"
+            >
+              <span class="step-number">
+                @if (step() > $index) {
+                  <app-icon name="check" />
+                } @else {
+                  0{{ $index + 1 }}
+                }
+              </span>
+              <div>
+                <strong>{{ s.title }}</strong
+                ><small>{{ s.description }}</small>
+              </div>
+            </li>
+          }
+        </ol>
+        <div class="notice">
+          <app-icon name="shield" />Une annonce précise, c’est une rencontre qui commence bien.
+        </div>
+      </aside>
+      <form class="wizard-card" [formGroup]="form" (ngSubmit)="next()">
+        <span class="eyebrow subtle" style="margin-bottom: 12px">Étape {{ step() + 1 }} sur 4</span>
+        <h2>{{ steps[step()].title }}</h2>
+        <p>{{ steps[step()].description }}</p>
+        @if (error()) {
+          <div class="error-box" role="alert">{{ error() }}</div>
+        }
+        @switch (step()) {
+          @case (0) {
+            <div class="form-grid">
+              <div class="field full-width">
+                <label for="car-title">Titre de votre annonce *</label
+                ><input
+                  id="car-title"
+                  formControlName="titre"
+                  placeholder="Ex. BMW 320i M Sport, entretien suivi"
+                  maxlength="150"
+                  [attr.aria-invalid]="invalid('titre')"
+                />
+                @if (invalid('titre')) {
+                  <span class="field-error">Indiquez un titre de 3 à 150 caractères.</span>
+                }
+              </div>
+              <div class="field">
+                <label for="car-brand">Marque *</label
+                ><input
+                  id="car-brand"
+                  formControlName="marque"
+                  list="car-brands"
+                  placeholder="Ex. BMW"
+                  maxlength="50"
+                /><datalist id="car-brands">
+                  @for (b of brands; track b) {
+                    <option [value]="b"></option>
+                  }
+                </datalist>
+                @if (invalid('marque')) {
+                  <span class="field-error">Indiquez la marque.</span>
+                }
+              </div>
+              <div class="field">
+                <label for="car-model">Modèle & finition *</label
+                ><input
+                  id="car-model"
+                  formControlName="modele"
+                  placeholder="Ex. 320i M Sport"
+                  maxlength="80"
+                />
+                @if (invalid('modele')) {
+                  <span class="field-error">Indiquez le modèle.</span>
+                }
+              </div>
+              <div class="field">
+                <label for="car-year">Année *</label
+                ><input id="car-year" type="number" min="1900" max="2028" formControlName="annee" />
+                @if (invalid('annee')) {
+                  <span class="field-error">Année de 1900 à 2028.</span>
+                }
+              </div>
+              <div class="field">
+                <label for="car-category">Carrosserie *</label
+                ><select id="car-category" formControlName="typeVehicule">
+                  <option value="BERLINE">Berline</option>
+                  <option value="SUV">SUV & 4×4</option>
+                  <option value="COUPE">Coupé</option>
+                  <option value="CITADINE">Citadine</option>
+                  <option value="PICKUP">Pick-up</option>
+                  <option value="CAMION">Camion</option>
+                  <option value="MOTO">Moto</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="car-fuel">Énergie *</label
+                ><select id="car-fuel" formControlName="carburant">
+                  <option value="ESSENCE">Essence</option>
+                  <option value="DIESEL">Diesel</option>
+                  <option value="HYBRIDE">Hybride</option>
+                  <option value="ELECTRIQUE">Électrique</option>
+                  <option value="GPL">GPL</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="car-gear">Transmission *</label
+                ><select id="car-gear" formControlName="boiteVitesse">
+                  <option value="AUTOMATIQUE">Automatique</option>
+                  <option value="MANUELLE">Manuelle</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="car-color">Couleur</label
+                ><input
+                  id="car-color"
+                  formControlName="couleur"
+                  placeholder="Ex. Gris métallisé"
+                  maxlength="40"
+                />
+              </div>
+            </div>
+          }
+          @case (1) {
+            <div class="form-grid">
+              <div class="field">
+                <label for="car-type">Votre projet *</label
+                ><select id="car-type" formControlName="typeAnnonce">
+                  <option value="VENTE">Vendre</option>
+                  <option value="LOCATION">Louer</option>
+                  <option value="ACHAT">Publier une demande d’achat</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="car-price">{{
+                  form.controls.typeAnnonce.value === 'LOCATION'
+                    ? 'Prix par jour (TND) *'
+                    : 'Prix (TND) *'
+                }}</label
+                ><input
+                  id="car-price"
+                  type="number"
+                  min="1"
+                  max="100000000"
+                  formControlName="prix"
+                  placeholder="Ex. 148000"
+                />
+                @if (invalid('prix')) {
+                  <span class="field-error">Indiquez un prix supérieur à zéro.</span>
+                }
+              </div>
+              <div class="field">
+                <label for="car-km">Kilométrage *</label
+                ><input
+                  id="car-km"
+                  type="number"
+                  min="0"
+                  max="3000000"
+                  formControlName="kilometrage"
+                />
+                @if (invalid('kilometrage')) {
+                  <span class="field-error">Indiquez un kilométrage valide.</span>
+                }
+              </div>
+              <div class="field">
+                <label for="car-city">Ville *</label
+                ><input
+                  id="car-city"
+                  formControlName="ville"
+                  list="car-cities"
+                  placeholder="Ex. Tunis"
+                  maxlength="80"
+                /><datalist id="car-cities">
+                  @for (c of cities; track c) {
+                    <option [value]="c"></option>
+                  }
+                </datalist>
+                @if (invalid('ville')) {
+                  <span class="field-error">Indiquez votre ville.</span>
+                }
+              </div>
+              <div class="field full-width">
+                <label for="car-phone">Téléphone de contact *</label
+                ><input
+                  id="car-phone"
+                  type="tel"
+                  formControlName="telephone"
+                  placeholder="+216 71 000 000"
+                  autocomplete="tel"
+                  maxlength="25"
+                /><small>Ce numéro sera visible sur votre annonce.</small>
+                @if (invalid('telephone')) {
+                  <span class="field-error">Utilisez un numéro de 8 à 25 caractères.</span>
+                }
+              </div>
+              <div class="field full-width">
+                <label for="car-description">Racontez votre voiture *</label
+                ><textarea
+                  id="car-description"
+                  formControlName="description"
+                  rows="5"
+                  minlength="10"
+                  maxlength="4000"
+                  placeholder="Entretien, équipements, historique, défauts connus… Vos futurs acheteurs apprécieront les détails."
+                ></textarea
+                ><small>{{ form.controls.description.value.length }} / 4 000 caractères</small>
+                @if (invalid('description')) {
+                  <span class="field-error">Ajoutez une description d’au moins 10 caractères.</span>
+                }
+              </div>
+            </div>
+          }
+          @case (2) {
+            <label class="upload-area" for="car-photos"
+              ><app-icon name="upload" /><strong>{{
+                uploading() ? 'Envoi de vos photos…' : 'Ajoutez vos plus belles photos'
+              }}</strong
+              ><small>JPEG ou PNG · 8 Mo par photo · 8 photos maximum</small
+              ><input
+                id="car-photos"
+                type="file"
+                accept="image/jpeg,image/png"
+                multiple
+                [disabled]="uploading()"
+                (change)="photos($event)"
+            /></label>
+            <div class="upload-preview">
+              @for (img of images(); track img) {
+                <div>
+                  <img
+                    [src]="imageUrl(img)"
+                    alt="Photo de votre annonce"
+                    width="150"
+                    height="100"
+                  /><button
+                    type="button"
+                    class="icon-button"
+                    aria-label="Retirer cette photo"
+                    (click)="remove(img)"
+                  >
+                    <app-icon name="close" />
+                  </button>
+                </div>
+              }
+            </div>
+            <div class="notice" style="margin-top: 24px">
+              <app-icon name="image" />Commencez par une vue d’ensemble, puis l’habitacle et les
+              détails. Les photos sont facultatives et peuvent être ajoutées plus tard.
+            </div>
+            <div class="field section-divider">
+              <label for="car-glb">Un modèle 3D ? (facultatif)</label
+              ><input
+                id="car-glb"
+                type="file"
+                accept=".glb"
+                [disabled]="uploading()"
+                (change)="model($event)"
+              /><small
+                >GLB 2.0, données et textures intégrées, 40 Mo maximum. Ajoutez uniquement un modèle
+                que vous avez le droit de partager.</small
+              >
+              @if (modelUrl()) {
+                <span class="badge badge-soft"><app-icon name="check" />Modèle 3D ajouté</span
+                ><button type="button" class="text-button danger" (click)="modelUrl.set(null)">
+                  Retirer le modèle
+                </button>
+              }
+            </div>
+          }
+          @case (3) {
+            <span class="badge badge-lime">Prête pour un nouveau départ</span>
+            <h3 style="margin-top: 18px">{{ form.controls.titre.value }}</h3>
+            <dl class="review-summary">
+              <div>
+                <dt>Véhicule</dt>
+                <dd>{{ form.controls.marque.value }} {{ form.controls.modele.value }}</dd>
+              </div>
+              <div>
+                <dt>Prix{{ form.controls.typeAnnonce.value === 'LOCATION' ? ' / jour' : '' }}</dt>
+                <dd>{{ price(form.controls.prix.value) }}</dd>
+              </div>
+              <div>
+                <dt>Année & kilométrage</dt>
+                <dd>
+                  {{ form.controls.annee.value }} ·
+                  {{ form.controls.kilometrage.value.toLocaleString('fr-FR') }} km
+                </dd>
+              </div>
+              <div>
+                <dt>Localisation</dt>
+                <dd>{{ form.controls.ville.value }}</dd>
+              </div>
+              <div>
+                <dt>Énergie & boîte</dt>
+                <dd>
+                  {{ label(form.controls.carburant.value) }} ·
+                  {{ label(form.controls.boiteVitesse.value) }}
+                </dd>
+              </div>
+              <div>
+                <dt>Visuels</dt>
+                <dd>{{ images().length }} photo(s){{ modelUrl() ? ' · Modèle 3D' : '' }}</dd>
+              </div>
+            </dl>
+            <p class="description-text" style="margin-top: 22px">
+              {{ form.controls.description.value }}
+            </p>
+            @if (!editId) {
+              @if (config(); as c) {
+                <div class="notice" style="margin-top: 24px">
+                  <app-icon name="info" /><span>{{
+                    c.mode === 'mock'
+                      ? 'Mode démo : publication gratuite. Le paiement ci-dessous est une simulation, sans débit.'
+                      : 'Stripe TEST : des frais simulés de 5 € doivent être validés avant publication. Aucune carte réelle nécessaire.'
+                  }}</span>
+                </div>
+                @if (!paid()) {
+                  <button
+                    type="button"
+                    class="button button-outline w-full"
+                    style="margin-top: 15px"
+                    [disabled]="paying()"
+                    (click)="startPayment()"
+                  >
+                    {{
+                      paying()
+                        ? 'Préparation…'
+                        : c.mode === 'mock'
+                          ? 'Simuler le paiement de 5 €'
+                          : 'Préparer le paiement test de 5 €'
+                    }}<app-icon name="lock" />
+                  </button>
+                } @else {
+                  <p role="status" class="badge badge-soft" style="margin-top: 16px">
+                    <app-icon name="check" />Paiement test confirmé
+                  </p>
+                }
+                <div id="payment-element" style="margin-top: 16px"></div>
+                @if (stripeReady() && !paid()) {
+                  <button
+                    type="button"
+                    class="button button-dark w-full"
+                    [disabled]="paying()"
+                    (click)="confirmStripe()"
+                  >
+                    Valider le paiement TEST<app-icon name="lock" />
+                  </button>
+                }
+              }
+            }
+            <div class="notice" style="margin-top: 22px">
+              <app-icon name="check" />En publiant, vous confirmez que les informations sont exactes
+              et que vous disposez des droits sur les visuels.
+            </div>
+          }
+        }
+        <div class="wizard-actions">
+          @if (step() > 0) {
+            <button
+              type="button"
+              class="button button-outline"
+              [disabled]="busy() || uploading()"
+              (click)="previous()"
+            >
+              <app-icon name="back" />Précédent
+            </button>
+          } @else {
+            <a class="button button-outline" routerLink="/espace">Retour à mon espace</a>
+          }
+          <button
+            type="submit"
+            class="button button-dark"
+            [disabled]="
+              busy() ||
+              uploading() ||
+              (step() === 3 && !editId && (!config() || (config()?.mode === 'test' && !paid())))
+            "
+          >
+            {{
+              busy()
+                ? 'Publication…'
+                : step() === 3
+                  ? editId
+                    ? 'Enregistrer les changements'
+                    : 'Publier mon annonce'
+                  : 'Continuer'
+            }}<app-icon name="arrow" />
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+</section>

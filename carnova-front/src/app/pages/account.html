@@ -1,0 +1,204 @@
+<section class="wrap page-space">
+  <div class="account-top">
+    <div>
+      <span class="eyebrow subtle" style="margin-bottom: 15px">Votre espace, votre rythme</span>
+      <h1>Bonjour {{ firstName() }}<span style="color: #718c23">.</span></h1>
+      <p>Vos annonces, vos envies et la suite de l’histoire.</p>
+    </div>
+    <div class="account-actions">
+      <a class="button button-outline" routerLink="/espace/parametres"
+        ><app-icon name="gear" />Mon compte</a
+      >
+      @if (auth.isAdmin()) {
+        <a class="button button-outline" routerLink="/admin"
+          ><app-icon name="chart" />Administration</a
+        >
+      }
+      <a class="button button-dark" routerLink="/espace/creer-annonce"
+        ><app-icon name="plus" />Publier une annonce</a
+      ><button class="icon-button" aria-label="Se déconnecter" (click)="logout()">
+        <app-icon name="logout" />
+      </button>
+    </div>
+  </div>
+  <div class="stat-grid">
+    <div class="stat-card">
+      <app-icon name="car" />
+      <p>Mes annonces</p>
+      <strong>{{ cars().length }}</strong>
+    </div>
+    <div class="stat-card">
+      <app-icon name="check" />
+      <p>Disponibles</p>
+      <strong>{{ available() }}</strong>
+    </div>
+    <div class="stat-card">
+      <app-icon name="heart" />
+      <p>Mes coups de cœur</p>
+      <strong>{{ ui.saved().length }}</strong>
+    </div>
+    <div class="stat-card">
+      <app-icon name="store" />
+      <p>Mes showrooms</p>
+      <strong>{{ showrooms().length }}</strong>
+    </div>
+  </div>
+  <div class="account-tabs" aria-label="Sections de votre espace">
+    @for (t of tabs; track t.value) {
+      <button
+        [class.selected]="tab() === t.value"
+        [attr.aria-pressed]="tab() === t.value"
+        (click)="tab.set(t.value); cancelDelete()"
+      >
+        {{ t.text }}
+        <span class="subtle">{{
+          t.value === 'annonces'
+            ? cars().length
+            : t.value === 'favoris'
+              ? ui.saved().length
+              : showrooms().length
+        }}</span>
+      </button>
+    }
+  </div>
+  @if (error()) {
+    <div class="error-box" role="alert">
+      {{ error() }}<br /><button class="button button-outline" (click)="load()">Réessayer</button>
+    </div>
+  }
+  @if (loading()) {
+    <div class="skeleton" role="status" aria-label="Chargement de votre espace"></div>
+  } @else {
+    @switch (tab()) {
+      @case ('annonces') {
+        @for (c of cars(); track c.id) {
+          <article class="management-row">
+            <img [src]="imageUrl(c.imageUrl)" [alt]="c.titre" width="200" height="130" />
+            <div class="management-info">
+              <a [routerLink]="['/annonces', c.id]"
+                ><h3>{{ c.titre }}</h3></a
+              >
+              <p>{{ price(c.prix) }} · {{ c.ville || 'Tunisie' }}</p>
+            </div>
+            <div class="management-actions">
+              <label class="sr-only" [for]="'status-' + c.id">Statut de {{ c.titre }}</label
+              ><select
+                [id]="'status-' + c.id"
+                [value]="c.statut"
+                [disabled]="busy() === c.id"
+                (change)="status(c, $event)"
+              >
+                <option value="DISPONIBLE">Disponible</option>
+                <option value="RESERVE">Réservée</option>
+                <option value="VENDU">Vendue</option></select
+              ><a
+                class="button button-outline button-small"
+                [routerLink]="['/espace/modifier-annonce', c.id]"
+                >Modifier</a
+              >
+              @if (pendingDelete() === 'annonce-' + c.id) {
+                <button
+                  class="button button-outline button-small danger"
+                  [disabled]="busy() === c.id"
+                  (click)="deleteCar(c.id)"
+                >
+                  Confirmer la suppression</button
+                ><button class="text-button" (click)="cancelDelete()">Annuler</button>
+              } @else {
+                <button
+                  class="icon-button danger"
+                  [attr.aria-label]="'Supprimer ' + c.titre"
+                  (click)="pendingDelete.set('annonce-' + c.id)"
+                >
+                  <app-icon name="trash" />
+                </button>
+              }
+            </div>
+          </article>
+        } @empty {
+          <div class="empty-state">
+            <div class="empty-icon"><app-icon name="car" /></div>
+            <h2>Votre première annonce ?</h2>
+            <p>Présentez votre voiture et donnez envie de prendre le volant.</p>
+            <a class="button button-dark" routerLink="/espace/creer-annonce"
+              >Créer mon annonce<app-icon name="plus"
+            /></a>
+          </div>
+        }
+      }
+      @case ('favoris') {
+        <div class="car-grid">
+          @for (c of visibleFavorites(); track c.id) {
+            <app-car-card [car]="c" />
+          } @empty {
+            <div class="empty-state">
+              <div class="empty-icon"><app-icon name="heart" /></div>
+              <h2>Gardez vos coups de cœur.</h2>
+              <p>
+                Un clic sur le cœur d’une annonce et vous la retrouverez ici, dans ce navigateur.
+              </p>
+              <a class="button button-dark" routerLink="/annonces"
+                >Explorer les voitures<app-icon name="arrow"
+              /></a>
+            </div>
+          }
+        </div>
+      }
+      @case ('showrooms') {
+        <div class="section-head">
+          <div>
+            <h2 style="font-size: 25px">Vos collections.</h2>
+            <p>Un espace pour raconter votre passion.</p>
+          </div>
+          <a class="button button-dark button-small" routerLink="/espace/creer-showroom"
+            ><app-icon name="plus" />Créer un showroom</a
+          >
+        </div>
+        @for (s of showrooms(); track s.id) {
+          <article class="management-row">
+            <img [src]="imageUrl(s.images[0])" [alt]="s.nom" width="200" height="130" />
+            <div class="management-info">
+              <a [routerLink]="['/showrooms', s.id]"
+                ><h3>{{ s.nom }}</h3></a
+              >
+              <p>{{ s.ville }} · {{ s.voitures.length }} voiture(s)</p>
+            </div>
+            <div class="management-actions">
+              <a
+                class="button button-outline button-small"
+                [routerLink]="['/espace/modifier-showroom', s.id]"
+                >Modifier</a
+              >
+              @if (pendingDelete() === 'showroom-' + s.id) {
+                <button
+                  class="button button-outline button-small danger"
+                  [disabled]="busy() === s.id"
+                  (click)="deleteShowroom(s.id)"
+                >
+                  Confirmer la suppression</button
+                ><button class="text-button" (click)="cancelDelete()">Annuler</button>
+              } @else {
+                <button
+                  class="icon-button danger"
+                  [attr.aria-label]="'Supprimer ' + s.nom"
+                  (click)="pendingDelete.set('showroom-' + s.id)"
+                >
+                  <app-icon name="trash" />
+                </button>
+              }
+            </div>
+          </article>
+        } @empty {
+          <div class="empty-state">
+            <div class="empty-icon"><app-icon name="store" /></div>
+            <h2>Votre collection mérite son espace.</h2>
+            <p>Créez un showroom et réunissez vos véhicules au même endroit.</p>
+            <a class="button button-dark" routerLink="/espace/creer-showroom"
+              >Créer mon showroom<app-icon name="plus"
+            /></a>
+          </div>
+        }
+      }
+    }
+  }
+</section>

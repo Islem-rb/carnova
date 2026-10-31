@@ -1,0 +1,43 @@
+{
+  "recordedAt": "2026-10-31T15:21:02.423494+00:00",
+  "sha": "c1921b07e9a56a2860732009eaaf305bd748e58f",
+  "publication": "confirmed after user SSH push; exact remote ref checked",
+  "runId": 41212911198,
+  "runUrl": "https://github.com/Islem-rb/carnova/actions/runs/41212911198",
+  "backend": {
+    "conclusion": "success",
+    "tests": 60,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "runtimeJava": 17
+  },
+  "frontend": {
+    "conclusion": "success",
+    "tests": 43,
+    "format": "passed",
+    "productionBuild": "passed without warnings",
+    "initialRawKB": 419.44,
+    "transferKB": 109.68
+  },
+  "platform": {
+    "conclusion": "failure",
+    "compose": "success",
+    "backendDockerTests": 60,
+    "browserPassed": 9,
+    "browserFailed": 1,
+    "desktopPublishing": "passed",
+    "touchMobilePublishing": "passed",
+    "accountRecoveryVerification": "passed",
+    "accessibility": "passed",
+    "visualCapture": "passed",
+    "remainingFailure": "3D model loads, orbit controls work and driving is available: 90000 ms timeout on both attempts"
+  },
+  "artifact": {
+    "id": 13047108038,
+    "url": "https://github.com/Islem-rb/carnova/actions/runs/41212911198/artifacts/13047108038",
+    "locallyAvailable": false,
+    "visuallyReviewed": false
+  },
+  "handoff": "docs/HANDOFF_CLAUDE.md"
+}

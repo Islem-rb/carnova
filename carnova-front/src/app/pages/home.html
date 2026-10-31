@@ -1,0 +1,261 @@
+<div class="wrap">
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-topline">
+      <span class="eyebrow"><span class="status-dot"></span>La route vous appartient</span
+      ><span>Votre prochain chapitre, en Tunisie.</span>
+    </div>
+    <div class="hero-main">
+      <div class="hero-copy">
+        <span class="eyebrow">Pour les envies d’ailleurs.</span>
+        <h1 id="hero-title">Le plaisir<br />de <em>trouver.</em><br />La liberté de rouler.</h1>
+        <p>
+          Une citadine pour le quotidien. Un coup de cœur pour le week-end. Trouvez celle qui vous
+          ressemble.
+        </p>
+        <div class="hero-cta">
+          <a class="button button-dark" routerLink="/annonces"
+            >Explorer les voitures<app-icon name="arrow" /></a
+          ><a class="text-link" routerLink="/studio"><app-icon name="cube" />Entrez dans la 3D</a>
+        </div>
+      </div>
+      <div class="hero-art">
+        <div class="hero-orbit"></div>
+        <span class="hero-watermark" aria-hidden="true">DRIVE.</span
+        ><img
+          class="hero-car"
+          src="/assets/market/hero.webp"
+          srcset="
+            /assets/market/hero-640.webp  640w,
+            /assets/market/hero-960.webp  960w,
+            /assets/market/hero.webp     1363w
+          "
+          sizes="(max-width: 760px) 100vw, 700px"
+          alt="Berline argentée, vue de trois quarts"
+          width="1363"
+          height="517"
+          fetchpriority="high"
+        />
+        <div class="hero-label">
+          <strong>Une nouvelle perspective.</strong
+          ><span>Des voitures, des histoires, votre choix.</span>
+        </div>
+        <div class="hero-round" aria-hidden="true">Le prochain<br />départ<br />↗</div>
+      </div>
+    </div>
+    <div class="search-panel">
+      <div class="search-tabs" aria-label="Type de recherche">
+        @for (t of types; track t.value) {
+          <button
+            [class.selected]="type() === t.value"
+            [attr.aria-pressed]="type() === t.value"
+            (click)="type.set(t.value)"
+          >
+            {{ t.text }}
+          </button>
+        }
+      </div>
+      <form class="search-fields" [formGroup]="search" (ngSubmit)="find()">
+        <div class="search-field">
+          <label for="home-brand">La marque</label
+          ><select id="home-brand" formControlName="marque">
+            <option value="">Toutes les marques</option>
+            @for (b of brands; track b) {
+              <option>{{ b }}</option>
+            }
+          </select>
+        </div>
+        <div class="search-field">
+          <label for="home-model">Le modèle</label
+          ><input id="home-model" formControlName="q" placeholder="Une idée en tête ?" />
+        </div>
+        <div class="search-field">
+          <label for="home-price">Votre budget</label
+          ><select id="home-price" formControlName="maxPrice">
+            <option value="">Sans limite</option>
+            <option value="50000">Jusqu’à 50 000 TND</option>
+            <option value="100000">Jusqu’à 100 000 TND</option>
+            <option value="200000">Jusqu’à 200 000 TND</option>
+            <option value="400000">Jusqu’à 400 000 TND</option>
+          </select>
+        </div>
+        <div class="search-field location-search">
+          <label for="home-city">Où ça ?</label
+          ><select id="home-city" formControlName="ville">
+            <option value="">Toute la Tunisie</option>
+            @for (c of cities; track c) {
+              <option>{{ c }}</option>
+            }
+          </select>
+        </div>
+        <button class="button button-lime" type="submit">
+          <app-icon name="search" />Trouver ma voiture
+        </button>
+      </form>
+    </div>
+    <div class="hero-trust">
+      <span><app-icon name="car" />Des particuliers et des professionnels</span
+      ><span><app-icon name="cube" />Une exploration en 3D</span
+      ><span><app-icon name="spark" />Un copilote pour vous guider</span>
+    </div>
+  </section>
+  <div class="brand-strip" aria-label="Quelques marques à découvrir">
+    <span class="eyebrow">Des marques iconiques.<br />Votre propre histoire.</span>
+    @for (b of ['PORSCHE', 'BMW', 'Mercedes-Benz', 'AUDI', 'LAND ROVER']; track b) {
+      <a class="brand-name" routerLink="/annonces" [queryParams]="{ marque: brandValue(b) }">{{
+        b
+      }}</a>
+    }
+  </div>
+  <section class="home-section">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow subtle">Le prochain coup de cœur</span>
+        <h2>Une sélection qui donne envie.</h2>
+        <p>De nouvelles possibilités, à chaque virage.</p>
+      </div>
+      <a class="text-link" routerLink="/annonces">Toutes les annonces<app-icon name="arrow" /></a>
+    </div>
+    <div class="category-tabs">
+      @for (c of categories; track c.value) {
+        <button
+          [class.selected]="category() === c.value"
+          [attr.aria-pressed]="category() === c.value"
+          (click)="selectCategory(c.value)"
+        >
+          {{ c.text }}
+        </button>
+      }
+    </div>
+    <div class="car-grid" style="margin-top: 25px">
+      @if (loading()) {
+        @for (i of [1, 2, 3]; track i) {
+          <div class="skeleton" aria-label="Chargement d’une annonce"></div>
+        }
+      } @else if (error()) {
+        <div class="error-box full-width" role="alert">
+          {{ error() }}<br /><button class="button button-outline" (click)="load()">
+            Réessayer
+          </button>
+        </div>
+      } @else {
+        @for (car of cars(); track car.id) {
+          <app-car-card [car]="car" />
+        } @empty {
+          <div class="empty-state">
+            <h3>La bonne voiture se fait attendre.</h3>
+            <p>Cette catégorie n’a pas encore d’annonce. Explorez les autres possibilités.</p>
+            <a class="button button-outline" routerLink="/annonces"
+              >Voir toutes les voitures<app-icon name="arrow"
+            /></a>
+          </div>
+        }
+      }
+    </div>
+  </section>
+  <section class="studio-promo" aria-labelledby="studio-promo-title">
+    <div class="studio-promo-copy">
+      <span class="eyebrow"><app-icon name="cube" />Le studio CarNova</span>
+      <h2 id="studio-promo-title">Faites le tour.<br />Avant le premier tour.</h2>
+      <p>
+        Changez d’angle. Approchez les détails. Explorez nos modèles de démonstration en trois
+        dimensions, directement dans votre navigateur.
+      </p>
+      <a class="button button-lime" routerLink="/studio"
+        >Explorer le Studio 3D<app-icon name="diagonal"
+      /></a>
+    </div>
+    <div class="studio-promo-art">
+      <div class="studio-grid"></div>
+      <img
+        src="/assets/market/hero.webp"
+        srcset="
+          /assets/market/hero-640.webp  640w,
+          /assets/market/hero-960.webp  960w,
+          /assets/market/hero.webp     1363w
+        "
+        sizes="(max-width: 760px) 100vw, 700px"
+        alt="Aperçu automobile du studio CarNova"
+        width="1363"
+        height="517"
+        loading="lazy"
+      /><span class="studio-cross" aria-hidden="true">+</span
+      ><span class="studio-caption"
+        ><app-icon name="rotate" />360° · Une autre façon de découvrir</span
+      >
+    </div>
+  </section>
+  <section class="benefit-grid" aria-label="L’expérience CarNova">
+    <div>
+      <span class="benefit-icon"><app-icon name="search" /></span>
+      <h3>Le choix, simplement.</h3>
+      <p>
+        Les bons filtres, les informations essentielles. Moins de bruit, plus de voitures qui vous
+        ressemblent.
+      </p>
+    </div>
+    <div>
+      <span class="benefit-icon"><app-icon name="spark" /></span>
+      <h3>Un peu d’avance.</h3>
+      <p>
+        Un assistant et des guides pour préparer votre achat, comprendre les détails et poser les
+        bonnes questions.
+      </p>
+    </div>
+    <div>
+      <span class="benefit-icon"><app-icon name="store" /></span>
+      <h3>Des rencontres, aussi.</h3>
+      <p>
+        Découvrez les collections des vendeurs et prenez contact pour poursuivre la conversation au
+        volant.
+      </p>
+    </div>
+  </section>
+  <section class="home-section">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow subtle">Pour nourrir la passion</span>
+        <h2>Le Journal.</h2>
+        <p>Des idées, des repères et l’envie de prendre la route.</p>
+      </div>
+      <a class="text-link" routerLink="/actualites">Ouvrir le Journal<app-icon name="arrow" /></a>
+    </div>
+    <div class="news-grid">
+      @for (n of news(); track n.id) {
+        <article class="journal-card">
+          <a routerLink="/actualites" [queryParams]="{ article: n.id }" class="journal-image"
+            ><img
+              [src]="imageUrl(n.imageUrl)"
+              [alt]="n.title"
+              width="640"
+              height="360"
+              loading="lazy" /></a
+          ><span class="eyebrow">{{ n.sourceName }}<span>· Regards automobile</span></span>
+          <h3>
+            <a routerLink="/actualites" [queryParams]="{ article: n.id }">{{ n.title }}</a>
+          </h3>
+          <p>{{ n.summary }}</p>
+          <a routerLink="/actualites" [queryParams]="{ article: n.id }" class="text-link"
+            >Lire l’article<app-icon name="diagonal"
+          /></a>
+        </article>
+      } @empty {
+        <div class="notice full-width">
+          <app-icon name="book" />Retrouvez nos conseils pratiques dans le guide automobile.<a
+            routerLink="/guide"
+            class="text-link"
+            >Découvrir</a
+          >
+        </div>
+      }
+    </div>
+  </section>
+  <section class="sell-banner">
+    <div>
+      <h2>Votre voiture a une belle histoire.</h2>
+      <p>Offrez-lui un nouveau chapitre. Publiez votre annonce en quelques étapes.</p>
+    </div>
+    <a class="button" routerLink="/espace/creer-annonce"
+      >Déposer mon annonce<app-icon name="arrow"
+    /></a>
+  </section>
+</div>

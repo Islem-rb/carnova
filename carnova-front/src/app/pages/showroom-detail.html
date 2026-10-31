@@ -1,0 +1,91 @@
+<section class="wrap page-space">
+  <a routerLink="/showrooms" class="back-link"><app-icon name="back" />Tous les showrooms</a>
+  @if (loading()) {
+    <div class="skeleton skeleton-detail" role="status" aria-label="Chargement du showroom"></div>
+  } @else if (error()) {
+    <div class="error-box" role="alert">{{ error() }}</div>
+  } @else if (showroom(); as s) {
+    <img
+      class="showroom-cover"
+      [src]="imageUrl(s.images[0])"
+      [alt]="s.nom"
+      width="1300"
+      height="500"
+      fetchpriority="high"
+    />
+    <div class="section-head">
+      <div class="page-intro" style="margin-bottom: 0">
+        <span class="eyebrow subtle"><app-icon name="store" />Le showroom</span>
+        <h1>{{ s.nom }}</h1>
+        <p>
+          <app-icon name="pin" /> {{ s.ville || 'Tunisie' }} · Une collection de {{ s.user.name }}
+        </p>
+      </div>
+      <div class="account-actions">
+        @if (s.telephone) {
+          <a class="button button-dark" [href]="'tel:' + s.telephone"
+            ><app-icon name="phone" />Contacter le vendeur</a
+          >
+        }
+        <button class="button button-lime" (click)="ui.openAssistant()">
+          <app-icon name="spark" />Préparer ma visite
+        </button>
+      </div>
+    </div>
+    <p class="description-text" style="max-width: 800px; margin-bottom: 35px">
+      {{ s.description }}
+    </p>
+    <div class="section-head">
+      <div>
+        <span class="eyebrow subtle">La collection</span>
+        <h2>{{ s.voitures.length }} belles raisons de passer.</h2>
+      </div>
+    </div>
+    @if (s.voitures.length) {
+      <div
+        class="table-wrap"
+        tabindex="0"
+        role="region"
+        aria-label="Véhicules du showroom, défilement horizontal"
+      >
+        <table>
+          <caption class="sr-only">
+            Véhicules du showroom
+            {{
+              s.nom
+            }}
+          </caption>
+          <thead>
+            <tr>
+              <th>Marque & modèle</th>
+              <th>Année</th>
+              <th>Couleur</th>
+              <th>Prix annoncé</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (v of s.voitures; track $index) {
+              <tr>
+                <td>
+                  <strong>{{ v.marque }} {{ v.modele }}</strong>
+                </td>
+                <td>{{ v.annee }}</td>
+                <td>{{ v.couleur || 'Non précisée' }}</td>
+                <td>{{ price(v.prix) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <div class="empty-state">
+        <h2>La collection se prépare.</h2>
+        <p>Contactez le vendeur pour connaître ses prochaines disponibilités.</p>
+      </div>
+    }
+    <div class="notice" style="margin-top: 30px">
+      <app-icon name="shield" />La disponibilité et les caractéristiques sont indiquées par le
+      vendeur. Confirmez-les avant votre visite.
+    </div>
+  }
+</section>

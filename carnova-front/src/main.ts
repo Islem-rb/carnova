@@ -1,7 +1,18 @@
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-
-import { AppModule } from './app/app.module';
-
-
-platformBrowserDynamic().bootstrapModule(AppModule)
-  .catch(err => console.error(err));
+import { bootstrapApplication } from '@angular/platform-browser';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideRouter, withInMemoryScrolling, withComponentInputBinding } from '@angular/router';
+import { App } from './app/app';
+import { routes } from './app/routes';
+import { authInterceptor } from './app/core/auth';
+bootstrapApplication(App, {
+  providers: [
+    provideHttpClient(withInterceptors([authInterceptor])),
+    provideRouter(
+      routes,
+      withComponentInputBinding(),
+      withInMemoryScrolling({ scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled' }),
+    ),
+  ],
+}).catch(() => {
+  document.body.textContent = 'Le chargement de CarNova a échoué. Veuillez actualiser la page.';
+});

@@ -1,0 +1,183 @@
+/* Account settings share the marketplace fields, surfaces and focus treatment. */
+.settings-page {
+  max-width: 1160px;
+}
+.settings-back {
+  display: inline-flex;
+  gap: 9px;
+  align-items: center;
+  margin-bottom: 30px;
+}
+.settings-dot {
+  color: #718c23;
+}
+.settings-mark {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 24px;
+  background: var(--lime);
+  color: #20221f;
+  font-size: 30px;
+}
+.settings-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+  gap: 42px;
+  align-items: start;
+}
+.settings-summary {
+  position: sticky;
+  top: 110px;
+  padding: 24px 0;
+  overflow-wrap: anywhere;
+}
+.settings-summary h2 {
+  font-size: 26px;
+  margin: 12px 0 8px;
+}
+.settings-summary p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.8;
+}
+.settings-summary .notice {
+  margin: 24px 0;
+}
+.settings-footnote {
+  font-size: 11px !important;
+}
+.settings-sections {
+  display: grid;
+  gap: 24px;
+  min-width: 0;
+}
+.settings-card {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 30px;
+  min-width: 0;
+}
+.settings-card-head {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  margin-bottom: 26px;
+}
+.settings-card h2 {
+  font-size: 21px;
+}
+.settings-card p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+  margin: 7px 0 20px;
+}
+.settings-card-head p {
+  margin: 5px 0 0;
+}
+.settings-icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  flex-shrink: 0;
+  font-size: 21px;
+}
+.settings-card form {
+  display: grid;
+  gap: 22px;
+}
+.settings-card-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+.settings-card-footer small {
+  color: var(--muted);
+  font-size: 11px;
+  max-width: 210px;
+}
+.settings-email {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.settings-email strong {
+  font-size: 14px;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.settings-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+}
+.settings-badge.verified {
+  background: var(--lime);
+  color: #20221f;
+  border-color: transparent;
+}
+.settings-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.settings-checkbox input {
+  width: 18px;
+  height: 18px;
+  accent-color: #596f17;
+}
+.settings-card .button {
+  max-width: 100%;
+  white-space: normal;
+  text-align: center;
+}
+@media (max-width: 760px) {
+  .settings-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+  .settings-summary {
+    position: static;
+    padding: 0;
+  }
+  .settings-summary .notice {
+    margin: 16px 0;
+  }
+  .settings-card {
+    padding: 22px 18px;
+  }
+  .settings-mark {
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    font-size: 22px;
+  }
+  .settings-card-footer .button {
+    width: 100%;
+  }
+}
+.recovery-link {
+  align-self: flex-end;
+  text-decoration: underline;
+  font-size: 12px;
+}

@@ -1,0 +1,174 @@
+<section class="wrap page-space">
+  <div class="auth-layout">
+    <aside class="auth-story">
+      <div>
+        <span class="eyebrow">Le plaisir de se retrouver.</span>
+        <h2 style="margin-top: 32px">Les belles histoires<br />commencent<br />par une envie.</h2>
+        <p>Vos coups de cœur, vos annonces et votre prochaine voiture. Tout commence ici.</p>
+      </div>
+      <img
+        src="/assets/market/hero.webp"
+        srcset="
+          /assets/market/hero-640.webp  640w,
+          /assets/market/hero-960.webp  960w,
+          /assets/market/hero.webp     1363w
+        "
+        sizes="(max-width: 760px) 100vw, 700px"
+        alt="Berline argentée de la collection CarNova"
+        width="1363"
+        height="517"
+      /><span class="auth-stamp"
+        ><app-icon name="shield" />Un espace à vous. Une nouvelle perspective.</span
+      >
+    </aside>
+    <div class="auth-form-area">
+      <span class="eyebrow subtle" style="margin-bottom: 16px">{{
+        signup() ? 'Bienvenue chez CarNova' : 'Heureux de vous revoir'
+      }}</span>
+      <h1>{{ signup() ? 'Prenons la route.' : 'On se retrouve ?' }}</h1>
+      <p>
+        {{
+          signup()
+            ? 'Créez votre compte pour publier et retrouver votre collection.'
+            : 'Connectez-vous pour poursuivre votre histoire.'
+        }}
+      </p>
+      @if (success()) {
+        <div class="success-box" role="status">
+          <app-icon name="check" />
+          <h2>Votre compte est prêt.</h2>
+          <p>
+            Un lien de confirmation vous sera envoyé par e-mail. Connectez-vous pour gérer votre
+            compte et vos annonces.
+          </p>
+          <a class="button button-dark" routerLink="/login" [queryParams]="returnParams()"
+            >Me connecter<app-icon name="arrow"
+          /></a>
+        </div>
+      } @else {
+        @if (passwordChanged && !signup()) {
+          <div class="notice" role="status" style="margin-bottom: 20px">
+            <app-icon name="check" />Mot de passe modifié. Reconnectez-vous avec votre nouveau mot
+            de passe.
+          </div>
+        }
+        @if (expired && !signup()) {
+          <div class="notice" style="margin-bottom: 20px">
+            <app-icon name="lock" />Votre session a expiré. Reconnectez-vous pour continuer.
+          </div>
+        }
+        @if (error()) {
+          <div class="error-box" role="alert">{{ error() }}</div>
+        }
+        <form [formGroup]="form" (ngSubmit)="submit()">
+          @if (signup()) {
+            <div class="form-grid">
+              <div class="field">
+                <label for="auth-first">Prénom</label
+                ><input
+                  id="auth-first"
+                  formControlName="prenom"
+                  autocomplete="given-name"
+                  maxlength="80"
+                  [attr.aria-invalid]="invalid('prenom')"
+                />
+                @if (invalid('prenom')) {
+                  <span class="field-error">Indiquez votre prénom.</span>
+                }
+              </div>
+              <div class="field">
+                <label for="auth-last">Nom</label
+                ><input
+                  id="auth-last"
+                  formControlName="nom"
+                  autocomplete="family-name"
+                  maxlength="80"
+                  [attr.aria-invalid]="invalid('nom')"
+                />
+                @if (invalid('nom')) {
+                  <span class="field-error">Indiquez votre nom.</span>
+                }
+              </div>
+            </div>
+          }
+          <div class="field">
+            <label for="auth-email">Adresse e-mail</label
+            ><input
+              id="auth-email"
+              type="email"
+              formControlName="email"
+              autocomplete="email"
+              placeholder="vous@exemple.com"
+              maxlength="254"
+              [attr.aria-invalid]="invalid('email')"
+            />
+            @if (invalid('email')) {
+              <span class="field-error">Indiquez une adresse e-mail valide.</span>
+            }
+          </div>
+          <div class="field">
+            <label for="auth-password">Mot de passe</label>
+            <div class="password-field">
+              <input
+                id="auth-password"
+                [type]="showPassword() ? 'text' : 'password'"
+                formControlName="password"
+                [autocomplete]="signup() ? 'new-password' : 'current-password'"
+                [placeholder]="signup() ? '10 caractères minimum' : 'Votre mot de passe'"
+                maxlength="72"
+                [attr.aria-invalid]="invalid('password')"
+              /><button
+                type="button"
+                class="icon-button"
+                [attr.aria-label]="
+                  showPassword() ? 'Masquer le mot de passe' : 'Afficher le mot de passe'
+                "
+                [attr.aria-pressed]="showPassword()"
+                (click)="showPassword.set(!showPassword())"
+              >
+                <app-icon name="eye" />
+              </button>
+            </div>
+            @if (invalid('password')) {
+              <span class="field-error">{{
+                signup()
+                  ? 'Utilisez au moins 10 caractères, sans dépasser 72 octets UTF-8.'
+                  : 'Saisissez votre mot de passe (72 octets UTF-8 maximum).'
+              }}</span>
+            }
+            @if (signup()) {
+              <small>Au moins 10 caractères. Évitez un mot de passe déjà utilisé ailleurs.</small>
+            }
+          </div>
+          @if (!signup()) {
+            <a class="text-button recovery-link" routerLink="/mot-de-passe-oublie"
+              >Mot de passe oublié ?</a
+            >
+          }
+          <button class="button button-dark w-full" type="submit" [disabled]="busy()">
+            {{ busy() ? 'Un instant…' : signup() ? 'Créer mon compte' : 'Me connecter'
+            }}<app-icon name="arrow" />
+          </button>
+        </form>
+        <p class="auth-switch">
+          {{ signup() ? 'Déjà en route avec nous ?' : 'Pas encore de compte ?' }}
+          <a [routerLink]="signup() ? '/login' : '/inscription'" [queryParams]="returnParams()">{{
+            signup() ? 'Se connecter' : 'Créer mon compte'
+          }}</a>
+        </p>
+        <div class="notice">
+          <app-icon name="lock" /><span
+            >{{
+              signup()
+                ? 'Votre compte sert à gérer vos annonces et showrooms.'
+                : 'Votre session reste dans cet onglet et expire automatiquement.'
+            }}
+            <a routerLink="/about" fragment="credits" style="text-decoration: underline"
+              >En savoir plus sur vos données.</a
+            ></span
+          >
+        </div>
+      }
+    </div>
+  </div>
+</section>

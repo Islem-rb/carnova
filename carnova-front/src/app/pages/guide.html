@@ -1,0 +1,64 @@
+<section class="wrap page-space">
+  <div class="page-intro">
+    <span class="eyebrow subtle">Les bons repères, au bon moment</span>
+    <h1>La route, un peu plus claire.</h1>
+    <p>
+      Préparer un achat, un retour ou une démarche. Des listes simples pour commencer, puis les
+      sources officielles pour confirmer.
+    </p>
+  </div>
+  <div class="editorial-layout">
+    <nav class="editorial-nav" aria-label="Chapitres du guide">
+      @for (t of topics; track t.key) {
+        <a [routerLink]="['/guide', t.key]" routerLinkActive="active">{{
+          t.key === 'achat'
+            ? 'Acheter sereinement'
+            : t.key === 'fcr'
+              ? 'Retour définitif · FCR'
+              : t.key === 'douanes'
+                ? 'Droits de douane'
+                : t.key === 'visite-technique'
+                  ? 'Visite technique'
+                  : 'Vignette'
+        }}</a>
+      }
+    </nav>
+    <article class="prose">
+      <span class="eyebrow subtle"><app-icon name="book" />Le guide CarNova</span>
+      <h2>{{ current().title }}</h2>
+      <p>{{ current().intro }}</p>
+      <h3>Votre liste de préparation.</h3>
+      <ol>
+        @for (item of current().items; track item) {
+          <li>{{ item }}</li>
+        }
+      </ol>
+      <div class="notice">
+        <app-icon name="info" /><span
+          >Ce guide est une aide à la préparation, sans calcul fiscal ni décision d’éligibilité. Les
+          règles, documents et tarifs doivent être confirmés auprès de l’organisme compétent pour
+          votre situation.</span
+        >
+      </div>
+      <h3>La source à consulter.</h3>
+      <p>
+        <a [href]="current().source" target="_blank" rel="noopener noreferrer"
+          >{{ current().sourceName }} ↗</a
+        >
+      </p>
+      <p style="font-size: 10px; margin-top: 14px">
+        Repères éditoriaux mis à jour le 31 octobre 2026. Certains services officiels peuvent être
+        temporairement indisponibles.
+      </p>
+      <div class="section-divider">
+        <h3>Une question pour préparer la suite ?</h3>
+        <p style="margin-bottom: 20px">
+          Notre copilote vous aide à organiser vos questions avant votre rendez-vous.
+        </p>
+        <button class="button button-dark" (click)="ui.openAssistant()">
+          <app-icon name="spark" />Parler au copilote
+        </button>
+      </div>
+    </article>
+  </div>
+</section>

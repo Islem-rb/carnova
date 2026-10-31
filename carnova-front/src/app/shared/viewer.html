@@ -1,0 +1,109 @@
+<div #host class="viewer" (viewer-error)="failed.set(true)">
+  <div class="viewer-top">
+    <span class="eyebrow"
+      ><app-icon name="cube" />{{
+        drive() ? 'CarNova · conduite libre' : 'CarNova · perspective 360°'
+      }}</span
+    ><span class="badge" style="background: #33402c; color: #d5f45b">{{
+      drive() ? 'Simulation locale' : 'Studio interactif'
+    }}</span>
+  </div>
+  @if (loading() && !failed()) {
+    <div class="viewer-loading" role="status">
+      <span class="loader-ring"></span><strong>Changeons de perspective.</strong>
+      <p>Chargement du modèle{{ progress() ? ' · ' + progress() + ' %' : '…' }}</p>
+      <span class="eyebrow" style="font-size: 8px; color: #c6d0bc"
+        >Les belles choses prennent un instant.</span
+      >
+    </div>
+  }
+  @if (failed()) {
+    <div class="viewer-loading viewer-fallback" role="status">
+      <app-icon name="image" /><strong>Une autre façon de voir.</strong
+      ><img
+        src="/assets/market/hero.webp"
+        srcset="
+          /assets/market/hero-640.webp  640w,
+          /assets/market/hero-960.webp  960w,
+          /assets/market/hero.webp     1363w
+        "
+        sizes="(max-width: 760px) 100vw, 700px"
+        alt="Aperçu automobile en deux dimensions"
+        width="1363"
+        height="517"
+      />
+      <p>
+        La 3D n’est pas disponible ici. Cette vue reste accessible, et les annonces vous attendent.
+      </p>
+      <button class="button button-lime" (click)="retry()">
+        Réessayer la 3D<app-icon name="rotate" />
+      </button>
+    </div>
+  }
+  @if (!loading() && !failed()) {
+    @if (drive()) {
+      <div class="speed-display" aria-hidden="true">{{ speed() }} <small>km/h</small></div>
+      <div class="drive-pad" aria-label="Commandes de conduite tactile">
+        <button
+          aria-label="Accélérer"
+          (pointerdown)="press('ArrowUp', $event)"
+          (pointerup)="release('ArrowUp', $event)"
+          (pointercancel)="release('ArrowUp', $event)"
+          (lostpointercapture)="key('ArrowUp', false)"
+        >
+          ↑</button
+        ><button
+          aria-label="Tourner à gauche"
+          (pointerdown)="press('ArrowLeft', $event)"
+          (pointerup)="release('ArrowLeft', $event)"
+          (pointercancel)="release('ArrowLeft', $event)"
+          (lostpointercapture)="key('ArrowLeft', false)"
+        >
+          ←</button
+        ><button
+          aria-label="Freiner ou reculer"
+          (pointerdown)="press('ArrowDown', $event)"
+          (pointerup)="release('ArrowDown', $event)"
+          (pointercancel)="release('ArrowDown', $event)"
+          (lostpointercapture)="key('ArrowDown', false)"
+        >
+          ↓</button
+        ><button
+          aria-label="Tourner à droite"
+          (pointerdown)="press('ArrowRight', $event)"
+          (pointerup)="release('ArrowRight', $event)"
+          (pointercancel)="release('ArrowRight', $event)"
+          (lostpointercapture)="key('ArrowRight', false)"
+        >
+          →
+        </button>
+      </div>
+    }
+    <div class="viewer-controls">
+      <span class="viewer-hint"
+        ><app-icon [name]="drive() ? 'gauge' : 'rotate'" />{{
+          drive()
+            ? 'Sélectionnez la scène · Flèches / ZQSD'
+            : 'Glissez pour tourner · Pincez pour zoomer'
+        }}</span
+      >
+      <div>
+        @if (!drive()) {
+          <button
+            class="icon-button"
+            [attr.aria-label]="rotating() ? 'Arrêter la rotation' : 'Lancer la rotation'"
+            [attr.aria-pressed]="rotating()"
+            (click)="toggleRotate()"
+          >
+            <app-icon [name]="rotating() ? 'pause' : 'play'" />
+          </button>
+        }
+        <button class="icon-button" aria-label="Réinitialiser la vue" (click)="resetView()">
+          <app-icon name="rotate" /></button
+        ><button class="icon-button" aria-label="Afficher en plein écran" (click)="fullscreen()">
+          <app-icon name="fullscreen" />
+        </button>
+      </div>
+    </div>
+  }
+</div>

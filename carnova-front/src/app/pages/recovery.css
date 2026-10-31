@@ -1,0 +1,35 @@
+.recovery-link {
+  align-self: flex-end;
+  text-decoration: underline;
+  font-size: 12px;
+}
+.recovery-empty {
+  padding: 24px 0;
+}
+.recovery-empty > app-icon {
+  margin-bottom: 22px;
+  font-size: 34px;
+}
+.recovery-empty h1,
+.success-box h1 {
+  font-size: 30px;
+  margin-top: 16px;
+}
+.auth-form-area .error-box a {
+  display: block;
+  margin-top: 10px;
+  text-decoration: underline;
+}
+.auth-form-area .success-box .text-button {
+  display: block;
+  margin: 22px auto 0;
+  text-decoration: underline;
+}
+.settings-back {
+  /* Own line: the eyebrow that follows is inline-level too. */
+  display: flex;
+  width: fit-content;
+  gap: 9px;
+  align-items: center;
+  margin-bottom: 30px;
+}
