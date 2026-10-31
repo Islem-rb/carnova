@@ -26,7 +26,9 @@
   text-decoration: underline;
 }
 .settings-back {
-  display: inline-flex;
+  /* Own line: the eyebrow that follows is inline-level too. */
+  display: flex;
+  width: fit-content;
   gap: 9px;
   align-items: center;
   margin-bottom: 30px;
