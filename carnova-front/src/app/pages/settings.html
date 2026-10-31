@@ -1,0 +1,249 @@
+<section class="wrap page-space settings-page">
+  <a class="text-button settings-back" routerLink="/espace"><app-icon name="back" />Mon espace</a>
+  <div class="account-top">
+    <div>
+      <span class="eyebrow subtle" style="margin-bottom: 15px"
+        >Les détails qui vous ressemblent</span
+      >
+      <h1>Votre compte<span class="settings-dot">.</span></h1>
+      <p>Un profil à jour. Un accès en confiance.</p>
+    </div>
+    <div class="settings-mark" aria-hidden="true"><app-icon name="user" /></div>
+  </div>
+  @if (loading()) {
+    <div class="skeleton" role="status" aria-label="Chargement des paramètres"></div>
+  } @else if (loadError()) {
+    <div class="error-box" role="alert">
+      {{ loadError() }}<br /><button type="button" class="button button-outline" (click)="load()">
+        Réessayer
+      </button>
+    </div>
+  } @else if (profile(); as user) {
+    <div class="settings-layout">
+      <aside class="settings-summary">
+        <span class="eyebrow subtle">Mon compte</span>
+        <h2>{{ user.prenom }}</h2>
+        <p>{{ user.email }}</p>
+        <div class="notice">
+          <app-icon name="shield" /><span>{{
+            user.emailVerified
+              ? 'Votre adresse e-mail est confirmée.'
+              : 'Confirmez votre adresse e-mail pour compléter votre compte.'
+          }}</span>
+        </div>
+        <p class="settings-footnote">
+          Vos nom et prénom apparaissent sur vos annonces. Votre adresse e-mail reste privée.
+        </p>
+      </aside>
+      <div class="settings-sections">
+        <section class="settings-card" aria-labelledby="profile-heading">
+          <div class="settings-card-head">
+            <span class="settings-icon"><app-icon name="user" /></span>
+            <div>
+              <h2 id="profile-heading">Votre profil</h2>
+              <p>Faisons les présentations.</p>
+            </div>
+          </div>
+          @if (profileSuccess()) {
+            <div class="notice" role="status">
+              <app-icon name="check" /><span>{{ profileSuccess() }}</span>
+            </div>
+          }
+          @if (profileError()) {
+            <div class="error-box" role="alert">{{ profileError() }}</div>
+          }
+          <form
+            [formGroup]="profileForm"
+            (ngSubmit)="saveProfile()"
+            [attr.aria-busy]="profileBusy()"
+          >
+            <div class="form-grid">
+              <div class="field">
+                <label for="settings-first">Prénom</label
+                ><input
+                  id="settings-first"
+                  formControlName="prenom"
+                  autocomplete="given-name"
+                  maxlength="80"
+                  [attr.aria-invalid]="invalidName('prenom')"
+                  aria-describedby="settings-first-error"
+                />
+                @if (invalidName('prenom')) {
+                  <span class="field-error" id="settings-first-error"
+                    >Indiquez votre prénom (80 caractères maximum).</span
+                  >
+                }
+              </div>
+              <div class="field">
+                <label for="settings-last">Nom</label
+                ><input
+                  id="settings-last"
+                  formControlName="nom"
+                  autocomplete="family-name"
+                  maxlength="80"
+                  [attr.aria-invalid]="invalidName('nom')"
+                  aria-describedby="settings-last-error"
+                />
+                @if (invalidName('nom')) {
+                  <span class="field-error" id="settings-last-error"
+                    >Indiquez votre nom (80 caractères maximum).</span
+                  >
+                }
+              </div>
+            </div>
+            <div class="settings-card-footer">
+              <small>Ces informations sont visibles sur vos annonces.</small
+              ><button
+                type="submit"
+                class="button button-dark"
+                [disabled]="profileBusy() || !profileForm.dirty"
+              >
+                {{ profileBusy() ? 'Enregistrement…' : 'Enregistrer mon profil'
+                }}<app-icon name="check" />
+              </button>
+            </div>
+          </form>
+        </section>
+        <section class="settings-card" aria-labelledby="verification-heading">
+          <div class="settings-card-head">
+            <span class="settings-icon"><app-icon name="mail" /></span>
+            <div>
+              <h2 id="verification-heading">Votre adresse e-mail</h2>
+              <p>Un lien direct avec votre compte.</p>
+            </div>
+          </div>
+          <div class="settings-email">
+            <strong>{{ user.email }}</strong
+            ><span class="settings-badge" [class.verified]="user.emailVerified"
+              ><app-icon [name]="user.emailVerified ? 'check' : 'clock'" />{{
+                user.emailVerified ? 'Confirmée' : 'À confirmer'
+              }}</span
+            >
+          </div>
+          @if (!user.emailVerified) {
+            <p>
+              Ouvrez le lien reçu par e-mail pour confirmer cette adresse. Vous pouvez demander un
+              nouveau lien si le précédent a expiré.
+            </p>
+            @if (verificationSuccess()) {
+              <div class="notice" role="status">
+                <app-icon name="check" /><span>{{ verificationSuccess() }}</span>
+              </div>
+            }
+            @if (verificationError()) {
+              <div class="error-box" role="alert">{{ verificationError() }}</div>
+            }
+            <button
+              type="button"
+              class="button button-outline"
+              [disabled]="verificationBusy() || cooldown() > 0"
+              (click)="resendVerification()"
+            >
+              {{
+                verificationBusy()
+                  ? 'Un instant…'
+                  : cooldown() > 0
+                    ? 'Renvoyer dans ' + cooldown() + ' s'
+                    : 'Renvoyer un lien de confirmation'
+              }}<app-icon name="mail" />
+            </button>
+          }
+        </section>
+        <section class="settings-card" aria-labelledby="password-heading">
+          <div class="settings-card-head">
+            <span class="settings-icon"><app-icon name="lock" /></span>
+            <div>
+              <h2 id="password-heading">Votre mot de passe</h2>
+              <p>Une clé qui reste la vôtre.</p>
+            </div>
+          </div>
+          @if (passwordError()) {
+            <div class="error-box" role="alert">{{ passwordError() }}</div>
+          }
+          <form
+            [formGroup]="passwordForm"
+            (ngSubmit)="changePassword()"
+            [attr.aria-busy]="passwordBusy()"
+          >
+            <div class="field">
+              <label for="settings-current">Mot de passe actuel</label
+              ><input
+                id="settings-current"
+                [type]="showPassword() ? 'text' : 'password'"
+                formControlName="currentPassword"
+                autocomplete="current-password"
+                maxlength="72"
+                [attr.aria-invalid]="invalidPassword('currentPassword')"
+                aria-describedby="settings-current-error"
+              />
+              @if (invalidPassword('currentPassword')) {
+                <span class="field-error" id="settings-current-error"
+                  >Indiquez votre mot de passe actuel (72 octets UTF-8 maximum).</span
+                >
+              }
+              <a class="text-button recovery-link" routerLink="/mot-de-passe-oublie"
+                >Mot de passe oublié ?</a
+              >
+            </div>
+            <div class="field">
+              <label for="settings-password">Nouveau mot de passe</label
+              ><input
+                id="settings-password"
+                [type]="showPassword() ? 'text' : 'password'"
+                formControlName="newPassword"
+                autocomplete="new-password"
+                maxlength="72"
+                [attr.aria-invalid]="invalidPassword('newPassword')"
+                aria-describedby="settings-password-help settings-password-error"
+              /><small id="settings-password-help"
+                >10 caractères minimum. 72 octets UTF-8 maximum (les accents et emoji occupent
+                plusieurs octets).</small
+              >
+              @if (invalidPassword('newPassword')) {
+                <span class="field-error" id="settings-password-error"
+                  >Choisissez au moins 10 caractères, sans dépasser 72 octets UTF-8.</span
+                >
+              }
+            </div>
+            <div class="field">
+              <label for="settings-confirm">Confirmer le nouveau mot de passe</label
+              ><input
+                id="settings-confirm"
+                [type]="showPassword() ? 'text' : 'password'"
+                formControlName="confirmPassword"
+                autocomplete="new-password"
+                maxlength="72"
+                [attr.aria-invalid]="invalidPassword('confirmPassword')"
+                aria-describedby="settings-confirm-error"
+              />
+              @if (invalidPassword('confirmPassword')) {
+                <span class="field-error" id="settings-confirm-error"
+                  >Les deux mots de passe doivent être identiques.</span
+                >
+              }
+            </div>
+            <label class="settings-checkbox"
+              ><input
+                type="checkbox"
+                [checked]="showPassword()"
+                (change)="showPassword.set(!showPassword())"
+              />Afficher les mots de passe</label
+            >
+            <div class="notice">
+              <app-icon name="shield" /><span
+                >Après modification, toutes vos sessions seront fermées. Reconnectez-vous avec le
+                nouveau mot de passe.</span
+              >
+            </div>
+            <div class="settings-card-footer">
+              <button type="submit" class="button button-dark" [disabled]="passwordBusy()">
+                {{ passwordBusy() ? 'Modification…' : 'Modifier mon mot de passe'
+                }}<app-icon name="arrow" />
+              </button>
+            </div>
+          </form>
+        </section>
+      </div>
+    </div>
+  }
+</section>

@@ -1,0 +1,106 @@
+.account-tabs {
+  display: flex;
+  gap: 28px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 30px;
+  overflow: auto;
+}
+.account-tabs button {
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+  padding: 0 0 17px;
+}
+.account-tabs .selected {
+  border-color: var(--ink);
+  color: var(--ink);
+  font-weight: 750;
+}
+.management-row {
+  display: flex;
+  gap: 22px;
+  align-items: center;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 15px;
+}
+.management-row > img {
+  width: 150px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: 7px;
+  background: var(--soft);
+}
+.management-info {
+  flex: 1;
+  min-width: 0;
+}
+.management-info h3 {
+  font-size: 17px;
+}
+.management-info p {
+  font-size: 11px;
+  margin-top: 7px;
+}
+.management-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.management-actions select {
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 10px;
+}
+@media (max-width: 1000px) {
+  .management-row {
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .management-actions {
+    margin-left: auto;
+  }
+}
+@media (max-width: 760px) {
+  .account-tabs {
+    gap: 22px;
+    margin-bottom: 24px;
+  }
+  .account-tabs button {
+    font-size: 11px;
+  }
+  .management-row {
+    padding: 12px;
+    gap: 15px;
+  }
+  .management-row > img {
+    width: 100px;
+    height: 80px;
+  }
+  .management-info h3 {
+    font-size: 15px;
+  }
+  .management-info p {
+    font-size: 10px;
+  }
+  .management-actions {
+    width: 100%;
+    border-top: 1px solid var(--line);
+    padding-top: 12px;
+    justify-content: space-between;
+    gap: 7px;
+  }
+  .management-actions .button {
+    font-size: 10px;
+    padding: 8px;
+  }
+}

@@ -29,6 +29,30 @@ export const routes: Routes = [
     title: 'Créer un compte · CarNova',
   },
   {
+    path: 'mot-de-passe-oublie',
+    loadComponent: () => import('./pages/recovery').then((m) => m.Recovery),
+    data: { recovery: 'forgot' },
+    title: 'Mot de passe oublié · CarNova',
+  },
+  {
+    path: 'reinitialiser-mot-de-passe',
+    loadComponent: () => import('./pages/recovery').then((m) => m.Recovery),
+    data: { recovery: 'reset' },
+    title: 'Nouveau mot de passe · CarNova',
+  },
+  {
+    path: 'verifier-email',
+    loadComponent: () => import('./pages/recovery').then((m) => m.Recovery),
+    data: { recovery: 'verify' },
+    title: 'Confirmer votre e-mail · CarNova',
+  },
+  {
+    path: 'espace/parametres',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/settings').then((m) => m.Settings),
+    title: 'Mon compte · CarNova',
+  },
+  {
     path: 'espace',
     canActivate: [authGuard],
     loadComponent: () => import('./pages/account').then((m) => m.Account),

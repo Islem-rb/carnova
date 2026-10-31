@@ -5,7 +5,11 @@ import { Api } from '../core/api';
 import { Ui } from '../core/ui';
 import { Overview, News, price, label, errorMessage } from '../core/models';
 import { Icon } from '../shared/icon';
-@Component({ imports: [RouterLink, ReactiveFormsModule, Icon], templateUrl: './admin.html' })
+@Component({
+  imports: [RouterLink, ReactiveFormsModule, Icon],
+  templateUrl: './admin.html',
+  styleUrl: './account.css',
+})
 export class Admin {
   private readonly api = inject(Api);
   private readonly ui = inject(Ui);

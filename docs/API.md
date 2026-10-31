@@ -4,9 +4,15 @@ Base URL: `http://localhost:8081`, or same-origin `/api` through the frontend. I
 
 | Method | Endpoint | Access | Notes |
 | --- | --- | --- | --- |
-| POST | `/api/auth/signup` | Public, rate limited | nom, prenom, email, password (10–72 characters); always ROLE_USER; 201 |
+| POST | `/api/auth/signup` | Public, rate limited | nom, prenom, email, password (10+ characters, ≤72 UTF-8 bytes); always ROLE_USER; 201 |
 | POST | `/api/auth/signin` | Public, rate limited | email/password; session token, identity, roles and expiresIn |
-| GET | `/api/auth/me`, `/api/auth/test` | Authenticated | Private identity / compatibility check |
+| GET | `/api/auth/me`, `/api/auth/test` | Authenticated | Private profile includes names and emailVerified / compatibility check |
+| PATCH | `/api/auth/me` | Authenticated | `{prenom,nom}`; updates only current user's names |
+| POST | `/api/auth/forgot-password` | Public, rate limited | `{email}`; generic 202; local capture reset link valid 30 minutes |
+| POST | `/api/auth/reset-password` | Public, rate limited | `{token,newPassword}`; one use, revokes sessions |
+| POST | `/api/auth/verify-email` | Public, rate limited | `{token}`; one use, valid 24 hours |
+| POST | `/api/auth/verification-email` | Authenticated, rate limited | `{}`; resend with a 60-second cooldown |
+| POST | `/api/auth/change-password` | Authenticated, rate limited | `{currentPassword,newPassword}`; revokes sessions |
 | GET | `/api/meta` | Public | Version and explicit portfolio-demo indicator |
 | GET | `/api/annonces` | Public | Compatibility array, most recent 100 |
 | GET | `/api/annonces/search` | Public | q, marque, carburant, typeVehicule, ville, typeAnnonce, maxPrice, minYear, maxKm, sort, page, size (1–50); returns items/total/page/pages |
@@ -39,3 +45,5 @@ Base URL: `http://localhost:8081`, or same-origin `/api` through the frontend. I
 Listing JSON uses French field names: `titre`, `description`, `typeAnnonce`, `marque`, `modele`, `annee`, `prix` (TND), `kilometrage`, `carburant`, `boiteVitesse`, `couleur`, `ville`, `typeVehicule`, `telephone`, `images`, `model3dUrl`. Enum values remain French uppercase. Empty photos/model are permitted. Legacy listings with missing specs show an explicit unspecified value.
 
 Intentional security changes and removals are documented in [DECISIONS.md](DECISIONS.md). Public URL probing, destructive bulk news purging, nonexistent photo-to-3D reconstruction and test-token UI routes are not recreated.
+
+Account link delivery, token lifecycle and verification limits: [ACCOUNTS.md](ACCOUNTS.md).

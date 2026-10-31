@@ -7,7 +7,11 @@ import { Ui } from '../core/ui';
 import { Listing, Showroom, price, label, imageUrl, errorMessage } from '../core/models';
 import { Icon } from '../shared/icon';
 import { CarCard } from '../shared/card';
-@Component({ imports: [RouterLink, Icon, CarCard], templateUrl: './account.html' })
+@Component({
+  imports: [RouterLink, Icon, CarCard],
+  templateUrl: './account.html',
+  styleUrl: './account.css',
+})
 export class Account {
   private readonly api = inject(Api);
   private readonly router = inject(Router);

@@ -3,7 +3,7 @@ import { CanActivateFn, Router } from '@angular/router';
 import { HttpInterceptorFn } from '@angular/common/http';
 import { catchError, tap, throwError } from 'rxjs';
 import { Api } from './api';
-import { Session } from './models';
+import { Profile, Session } from './models';
 function restore(): Session | null {
   try {
     const s = JSON.parse(sessionStorage.getItem('carnova-session') ?? 'null') as Session | null;
@@ -23,19 +23,27 @@ export class Auth {
     this.scheduleExpiry();
   }
   signin(email: string, password: string) {
-    return this.api.post<Session>('/auth/signin', { email, password }).pipe(
-      tap((s) => {
-        const value = { ...s, expiresAt: Date.now() + s.expiresIn * 1000 };
-        this.session.set(value);
-        try {
-          sessionStorage.setItem('carnova-session', JSON.stringify(value));
-        } catch {}
-        this.scheduleExpiry();
-      }),
-    );
+    return this.api
+      .post<Session>('/auth/signin', { email, password })
+      .pipe(tap((s) => this.store({ ...s, expiresAt: Date.now() + s.expiresIn * 1000 })));
   }
   signup(body: { nom: string; prenom: string; email: string; password: string }) {
     return this.api.post<{ message: string }>('/auth/signup', body);
+  }
+  refreshProfile() {
+    return this.api.get<Profile>('/auth/me').pipe(tap((profile) => this.updateProfile(profile)));
+  }
+  updateProfile(profile: Profile) {
+    const current = this.session();
+    if (!current || current.id !== profile.id) return;
+    this.store({ ...current, name: profile.name, email: profile.email, roles: profile.roles });
+  }
+  private store(value: Session) {
+    this.session.set(value);
+    try {
+      sessionStorage.setItem('carnova-session', JSON.stringify(value));
+    } catch {}
+    this.scheduleExpiry();
   }
   logout() {
     this.session.set(null);
@@ -64,7 +72,14 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
   const auth = inject(Auth);
   const router = inject(Router);
   const token = auth.session()?.token;
-  const local = request.url.startsWith('/api/');
+  const publicAuth = new Set([
+    '/api/auth/signin',
+    '/api/auth/signup',
+    '/api/auth/forgot-password',
+    '/api/auth/reset-password',
+    '/api/auth/verify-email',
+  ]);
+  const local = request.url.startsWith('/api/') && !publicAuth.has(request.url.split('?')[0]);
   return next(
     token && local ? request.clone({ setHeaders: { Authorization: 'Bearer ' + token } }) : request,
   ).pipe(

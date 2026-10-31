@@ -5,7 +5,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Auth } from '../core/auth';
 import { errorMessage } from '../core/models';
 import { Icon } from '../shared/icon';
-@Component({ imports: [ReactiveFormsModule, RouterLink, Icon], templateUrl: './auth-page.html' })
+import { nonBlank, passwordBytes } from '../core/password';
+@Component({
+  imports: [ReactiveFormsModule, RouterLink, Icon],
+  styleUrls: ['./auth.css'],
+  templateUrl: './auth-page.html',
+})
 export class AuthPage {
   private readonly auth = inject(Auth);
   private readonly route = inject(ActivatedRoute);
@@ -15,6 +20,7 @@ export class AuthPage {
   readonly busy = signal(false);
   readonly error = signal('');
   readonly showPassword = signal(false);
+  readonly passwordChanged = this.route.snapshot.queryParamMap.has('passwordChanged');
   readonly expired = this.route.snapshot.queryParamMap.has('expired');
   readonly form = inject(FormBuilder).nonNullable.group({
     prenom: [''],
@@ -29,13 +35,16 @@ export class AuthPage {
       this.error.set('');
       for (const k of ['prenom', 'nom'] as const) {
         const c = this.form.controls[k];
-        c.setValidators(this.signup() ? [Validators.required, Validators.maxLength(80)] : []);
+        c.setValidators(
+          this.signup() ? [Validators.required, nonBlank, Validators.maxLength(80)] : [],
+        );
         c.updateValueAndValidity();
       }
       const p = this.form.controls.password;
       p.setValidators([
         Validators.required,
         Validators.maxLength(72),
+        passwordBytes,
         ...(this.signup() ? [Validators.minLength(10)] : []),
       ]);
       p.updateValueAndValidity();

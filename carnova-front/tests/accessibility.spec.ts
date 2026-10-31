@@ -14,6 +14,10 @@ test('accessibility: main desktop and mobile pages meet automated WCAG AA checks
     '/annonces/1',
     '/login',
     '/inscription',
+    '/mot-de-passe-oublie',
+    '/reinitialiser-mot-de-passe',
+    '/verifier-email',
+    '/espace/parametres',
     '/showrooms',
     '/showrooms/1',
     '/actualites',
@@ -54,7 +58,16 @@ test('accessibility: main desktop and mobile pages meet automated WCAG AA checks
       ).toBe(true);
     }
   }
-  for (const path of ['/', '/annonces', '/login', '/espace', '/admin', '/studio']) {
+  for (const path of [
+    '/',
+    '/annonces',
+    '/login',
+    '/espace',
+    '/espace/parametres',
+    '/mot-de-passe-oublie',
+    '/admin',
+    '/studio',
+  ]) {
     await page.goto(path);
     await expect(page.locator('main h1').first()).toBeVisible();
     await page.getByRole('button', { name: 'Activer le mode sombre' }).click();

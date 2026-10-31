@@ -37,12 +37,21 @@
         <div class="success-box" role="status">
           <app-icon name="check" />
           <h2>Votre compte est prêt.</h2>
-          <p>Connectez-vous pour publier votre première annonce.</p>
+          <p>
+            Un lien de confirmation vous sera envoyé par e-mail. Connectez-vous pour gérer votre
+            compte et vos annonces.
+          </p>
           <a class="button button-dark" routerLink="/login" [queryParams]="returnParams()"
             >Me connecter<app-icon name="arrow"
           /></a>
         </div>
       } @else {
+        @if (passwordChanged && !signup()) {
+          <div class="notice" role="status" style="margin-bottom: 20px">
+            <app-icon name="check" />Mot de passe modifié. Reconnectez-vous avec votre nouveau mot
+            de passe.
+          </div>
+        }
         @if (expired && !signup()) {
           <div class="notice" style="margin-bottom: 20px">
             <app-icon name="lock" />Votre session a expiré. Reconnectez-vous pour continuer.
@@ -122,13 +131,20 @@
             </div>
             @if (invalid('password')) {
               <span class="field-error">{{
-                signup() ? 'Utilisez entre 10 et 72 caractères.' : 'Saisissez votre mot de passe.'
+                signup()
+                  ? 'Utilisez au moins 10 caractères, sans dépasser 72 octets UTF-8.'
+                  : 'Saisissez votre mot de passe (72 octets UTF-8 maximum).'
               }}</span>
             }
             @if (signup()) {
               <small>Au moins 10 caractères. Évitez un mot de passe déjà utilisé ailleurs.</small>
             }
           </div>
+          @if (!signup()) {
+            <a class="text-button recovery-link" routerLink="/mot-de-passe-oublie"
+              >Mot de passe oublié ?</a
+            >
+          }
           <button class="button button-dark w-full" type="submit" [disabled]="busy()">
             {{ busy() ? 'Un instant…' : signup() ? 'Créer mon compte' : 'Me connecter'
             }}<app-icon name="arrow" />

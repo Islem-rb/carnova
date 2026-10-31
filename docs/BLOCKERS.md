@@ -1,3 +1,11 @@
+# Account milestone verification limits (31 October 2026)
+
+Implementation and offline checks are complete; see [ACCOUNTS.md](ACCOUNTS.md). The new Maven persistence tests/browser workflows have been added but cannot be run with the current restricted network, inaccessible Docker socket and forbidden local HTTP access. Offline Maven confirms the pinned Spring Boot 3.5.16 parent is absent. Production/test Java compilation and 34 account JUnit tests were run using delivered runtime libraries, cached test libraries, Java 17 target and the available Java 25 JVM. A temporary interface-only Mockito configuration addresses this sandbox's restricted agent attachment.
+
+The Superdesign CLI preflight failed to resolve the npm registry, so the UI extends the existing repository design system directly. No paid design generation, new service account or external email sending was used. Full browser/real-mail capture/database verification and new screenshots remain pending, not assumed successful.
+
+---
+
 # Current follow-up access limits
 
 - GitHub API/page access is unavailable; shell DNS/network access is restricted. Actual hosted CI status and follow-up push are unverified/pending.

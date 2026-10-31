@@ -12,11 +12,11 @@ public final class Contracts {
       @NotBlank @Size(max = 80) String nom,
       @NotBlank @Size(max = 80) String prenom,
       @NotBlank @Email @Size(max = 254) String email,
-      @NotBlank @Size(min = 10, max = 72) String password,
+      @NotBlank @Size(min = 10, max = 72) @PasswordBytes String password,
       String role) {}
 
   public record Login(
-      @NotBlank @Email @Size(max = 254) String email, @NotBlank @Size(max = 72) String password) {}
+      @NotBlank @Email @Size(max = 254) String email, @NotBlank @Size(max = 72) @PasswordBytes String password) {}
 
   public record Session(
       String token,
@@ -26,6 +26,31 @@ public final class Contracts {
       String name,
       List<String> roles,
       long expiresIn) {}
+
+  public record EmailRequest(@NotBlank @Email @Size(max = 254) String email) {}
+
+  public record TokenRequest(@NotBlank @Pattern(regexp = "[A-Za-z0-9_-]{43}") String token) {}
+
+  public record ResetPassword(
+      @NotBlank @Pattern(regexp = "[A-Za-z0-9_-]{43}") String token,
+      @NotBlank @Size(min = 10, max = 72) @PasswordBytes String newPassword) {}
+
+  public record ChangePassword(
+      @NotBlank @Size(max = 72) @PasswordBytes String currentPassword,
+      @NotBlank @Size(min = 10, max = 72) @PasswordBytes String newPassword) {}
+
+  public record ProfileInput(
+      @NotBlank @Size(max = 80) String prenom,
+      @NotBlank @Size(max = 80) String nom) {}
+
+  public record Profile(
+      Long id, String email, String name, List<String> roles,
+      String prenom, String nom, boolean emailVerified) {
+    public static Profile of(CarNova.carnova.entity.User user) {
+      return new Profile(user.id, user.email, user.prenom + " " + user.nom,
+          List.of(user.role), user.prenom, user.nom, user.emailVerified);
+    }
+  }
 
   public record Seller(Long id, String name) {}
 

@@ -4,7 +4,7 @@ The verified Compose stack uses a new, project-scoped PostgreSQL 17 named volume
 
 ## New database
 
-Flyway creates V1 (legacy-compatible core tables) and V2 (vehicle/listing specs, galleries, contact inbox and indexes). Hibernate validates the resulting schema. `ddl-auto=update`, automatic baselining and destructive clean are not used. Demo seeding is opt-in with `DEMO_DATA=true` and only runs when the users table is empty. It never overwrites existing accounts/listings.
+Flyway creates V1 (legacy-compatible core tables), V2 (vehicle/listing specs, galleries, contact inbox and indexes), and V3 (email-verification state, hashed account tokens with expiry/cooldown fields, and session versions). V3 adds columns/indexes without replacing user rows. Existing users remain able to sign in; email verification starts false. Hibernate validates the resulting schema. `ddl-auto=update`, automatic baselining and destructive clean are not used. Demo seeding is opt-in with `DEMO_DATA=true` and only runs when the users table is empty. It never overwrites existing accounts/listings.
 
 ## Adopting an existing installation
 
@@ -13,7 +13,7 @@ This operation was deliberately not performed during the redesign. Before pointi
 1. Back up the database and media, and restore the backup into a separate staging database.
 2. Compare the staging schema to `V1__legacy_core_schema.sql`, including legacy role values, null owners, column names (`showroom_images.image_data`), constraints and timestamp types.
 3. Check whether any old migration was actually applied. The original V2 file was inconsistent and Flyway was not configured in the original POM; an installation that manually adopted it needs its own reviewed migration path.
-4. For a schema matching V1 with no Flyway history, explicitly baseline at version 1 using Flyway tooling, then apply V2. Never turn on automatic baseline-on-migrate against an unknown database.
+4. For a schema matching V1 with no Flyway history, explicitly baseline at version 1 using Flyway tooling, then apply V2 and V3. Never turn on automatic baseline-on-migrate against an unknown database.
 5. Mount copies of the existing upload/model directories using `UPLOADS_DIR` and `MODELS_DIR`, with read/write access for container UID 10001. Rehearse all owner and media flows before switching an installation.
 6. Keep the backup and previous release available. Do not try to reverse a migration by deleting data; restore into a separate database for rollback if needed.
 

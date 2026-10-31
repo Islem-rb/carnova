@@ -56,15 +56,8 @@ public class SecurityConfig {
     var source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", cors);
     var converter = new JwtAuthenticationConverter();
-    // Role is looked up from the database; stale or forged role claims cannot grant access.
-    converter.setJwtGrantedAuthoritiesConverter(jwt ->
-        users
-            .findByEmailIgnoreCase(jwt.getSubject())
-            .map(u ->
-                List.<org.springframework.security.core.GrantedAuthority>of(
-                    new org.springframework.security.core.authority.SimpleGrantedAuthority(
-                        u.getRole())))
-            .orElse(List.of()));
+    // Read role and session version from the database for every authenticated request.
+    converter.setJwtGrantedAuthoritiesConverter(new SessionAuthorities(users));
     http.csrf(c -> c.disable())
         .cors(c -> c.configurationSource(source))
         .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -87,6 +80,9 @@ public class SecurityConfig {
                     HttpMethod.POST,
                     "/api/auth/signin",
                     "/api/auth/signup",
+                    "/api/auth/forgot-password",
+                    "/api/auth/reset-password",
+                    "/api/auth/verify-email",
                     "/api/assistant/chat",
                     "/api/contact")
                 .permitAll()

@@ -6,6 +6,9 @@
       <p>Vos annonces, vos envies et la suite de l’histoire.</p>
     </div>
     <div class="account-actions">
+      <a class="button button-outline" routerLink="/espace/parametres"
+        ><app-icon name="gear" />Mon compte</a
+      >
       @if (auth.isAdmin()) {
         <a class="button button-outline" routerLink="/admin"
           ><app-icon name="chart" />Administration</a

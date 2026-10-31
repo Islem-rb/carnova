@@ -67,6 +67,15 @@ export interface Session {
   expiresIn: number;
   expiresAt: number;
 }
+export interface Profile {
+  id: number;
+  email: string;
+  name: string;
+  roles: string[];
+  prenom: string;
+  nom: string;
+  emailVerified: boolean;
+}
 export interface ChatResponse {
   answer: string;
   provider: string;

@@ -15,6 +15,7 @@ docker compose up --build --wait
 ```
 
 - **Platform:** http://localhost:8080
+- **Account capture inbox:** http://localhost:8025 (local test emails)
 - **API health:** http://localhost:8081/actuator/health
 - **Swagger UI:** http://localhost:8081/swagger-ui.html
 - **OpenAPI schema:** http://localhost:8081/v3/api-docs
@@ -32,6 +33,12 @@ docker compose down
 ```
 
 The original `carnova-back/uploads/` and `models/` folders remain intact. New container uploads, models and PostgreSQL data live in separate named volumes. Existing database adoption is an explicit, reviewed procedure in [docs/DATABASE.md](docs/DATABASE.md).
+
+## Account essentials
+
+Open **Mon espace → Mon compte** to edit your name, confirm your email, or change your password. **Mot de passe oublié ?** on sign-in starts recovery. Signup sends a verification link to the local capture inbox; reset links arrive there too. Existing users can keep signing in. Successful password changes/resets close every old session.
+
+The portfolio uses a local Mailpit inbox and sends no external email. [Account setup, API, security decisions and current checks](docs/ACCOUNTS.md) explain the flow. Set `FRONTEND_URL` to the browser origin when changing ports or using Angular's dev server.
 
 ## What is here
 
@@ -52,6 +59,7 @@ flowchart LR
     N -->|Same-origin API and media| A[Spring Boot 3.5 / Java 17]
     A -->|JPA / Flyway| P[(PostgreSQL 17)]
     A --> U[(Upload and model volumes)]
+    A -->|After-commit account emails| E[Local Mailpit capture inbox]
     A --> G[Offline automotive guide]
     A -. optional .-> O[Local Ollama]
     A --> M[Local mock payments]
@@ -114,7 +122,7 @@ Docker also builds and runs the backend tests on Java 17. CI builds/tests both a
 
 ## Review and evidence
 
-The [follow-up review](docs/FOLLOWUP_REVIEW.md) records the latest request-lifecycle fixes and 18 passing frontend tests. It separates current offline checks from the earlier live Docker/browser/Lighthouse measurements and lists the hosted CI check still pending access.
+The latest [account milestone](docs/ACCOUNTS.md) records 43 passing frontend tests, 34 passing backend account tests and the production build. The earlier [follow-up review](docs/FOLLOWUP_REVIEW.md) records the search/detail fixes. Both separate current offline checks from historical Docker/browser/Lighthouse evidence. Fresh database/browser verification and publication remain pending access.
 
 Start with the landing page, a listing, the publishing wizard and the 3D studio. Then open the administrator view to inspect actual metrics and the inbox. [PROGRESS.md](PROGRESS.md) records completed phases and remaining limits; [docs/VERIFICATION.md](docs/VERIFICATION.md) records measured checks.
 

@@ -1,3 +1,15 @@
+# Account essentials — implementation complete, full live verification pending
+
+**Added:** password recovery, email confirmation/resend, editable name settings, and authenticated password changes. Open **Mon espace → Mon compte**. Account emails are captured locally at `http://localhost:8025`; start all four services with `docker compose up --build --wait` when Docker is available. See [account guide](docs/ACCOUNTS.md).
+
+**Verified now:** 43 frontend unit tests; 34 new backend service/controller/mail/JWT-filter tests through the offline JUnit runner; Java 17-target production/test compilation; production build without warnings (**419.44 KB raw / 109.68 KB transfer**, unchanged 420 KB budget); formatting and new test TypeScript checks; Compose configuration validation.
+
+**Pending:** the two authored persistence integration tests, fresh full Maven verification, nine browser workflows including two new account workflows, new screenshots/accessibility sweeps, hosted CI and branch push. Current package-network/Docker/local HTTP restrictions prevent these runs. Earlier live evidence below remains historical. Local account mail is a capture inbox, with no external delivery configured.
+
+**Review first:** [ACCOUNTS.md](docs/ACCOUNTS.md), [API](docs/API.md), and additive [V3 migration](carnova-back/src/main/resources/db/migration/V3__account_security.sql). Work remains on `redesign/v2` in `/tmp/carnova-review`, with reviewed changes mirrored into the shared workspace and preserved in the ignored delivery bundle; original Git metadata/main/uploads/models remain unchanged.
+
+---
+
 # Follow-up review — local fixes verified, remote/live checks pending
 
 **Review baseline:** pushed redesign/v2 commit `c1cfe48`. A normal writable checkout is available at `/tmp/carnova-review`; changed source files are mirrored into this shared workspace. The original `.git` remains read-only and unchanged.
