@@ -186,6 +186,14 @@
             {{ busy() ? 'Vérification…' : 'Confirmer mon adresse' }}<app-icon name="check" />
           </button>
         }
+        @if (!site.emailDelivery()) {
+          <div class="notice" role="note">
+            <app-icon name="info" /><span
+              >Démo en ligne : l’envoi d’e-mails est désactivé, aucun lien ne sera reçu. La
+              confirmation d’adresse reste facultative pour utiliser CarNova.</span
+            >
+          </div>
+        }
         <div class="notice">
           <app-icon name="lock" /><span
             >Les liens sont personnels, temporaires et utilisables une seule fois.</span

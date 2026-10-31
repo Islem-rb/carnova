@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize, take, timer } from 'rxjs';
 import { Api } from '../core/api';
+import { Site } from '../core/site';
 import { Auth } from '../core/auth';
 import { Profile, errorMessage } from '../core/models';
 import { matchingPasswords, nonBlank, passwordBytes } from '../core/password';
@@ -16,6 +17,7 @@ import { Icon } from '../shared/icon';
 })
 export class Settings {
   private readonly api = inject(Api);
+  readonly site = inject(Site);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   readonly auth = inject(Auth);

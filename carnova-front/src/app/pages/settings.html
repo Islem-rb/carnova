@@ -125,6 +125,14 @@
               Ouvrez le lien reçu par e-mail pour confirmer cette adresse. Vous pouvez demander un
               nouveau lien si le précédent a expiré.
             </p>
+            @if (!site.emailDelivery()) {
+              <div class="notice" role="note">
+                <app-icon name="info" /><span
+                  >Démo en ligne : l’envoi d’e-mails est désactivé, aucun lien ne sera reçu. La
+                  confirmation d’adresse reste facultative pour utiliser CarNova.</span
+                >
+              </div>
+            }
             @if (verificationSuccess()) {
               <div class="notice" role="status">
                 <app-icon name="check" /><span>{{ verificationSuccess() }}</span>

@@ -26,6 +26,16 @@ class AccountMailTests {
     mail.committed(new AccountMail.Message("client@example.com", token, true));
     server.verify();
   }
+  @Test void disabledMailNeverContactsTheMailServiceOrSchedulesWork() {
+    var builder = RestClient.builder().baseUrl("http://mailpit:8025");
+    var server = MockRestServiceServer.bindTo(builder).build();
+    var tasks = new java.util.ArrayList<Runnable>();
+    var mail = new AccountMail(builder.build(), "http://localhost:8080", "bonjour@carnova.test", false, new TaskExecutorAdapter(tasks::add));
+    mail.committed(new AccountMail.Message("client@example.com", "x".repeat(43), false));
+    assertThat(mail.enabled()).isFalse();
+    assertThat(tasks).isEmpty();
+    server.verify();
+  }
   @Test void mailFailureDoesNotEscapeOrRevealAccountExistence() {
     var builder = RestClient.builder().baseUrl("http://mailpit:8025");
     var server = MockRestServiceServer.bindTo(builder).build();

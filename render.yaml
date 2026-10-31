@@ -1,0 +1,49 @@
+# Render Blueprint: one free Docker web service (API + Angular from one origin).
+# The database lives on Neon's free plan; Render's free Postgres is deleted after 30 days.
+# Setup steps and the reasons behind each value: docs/DEPLOY.md
+services:
+  - type: web
+    name: carnova
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    branch: main
+    # Deploy a commit only after every GitHub check on it has passed (CI gates the deploy).
+    autoDeployTrigger: checksPass
+    healthCheckPath: /actuator/health
+    envVars:
+      # Neon connection, split into JDBC URL + credentials (see docs/DEPLOY.md).
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_USER
+        sync: false
+      - key: DATABASE_PASSWORD
+        sync: false
+      # 32 random bytes, generated once by Render and never stored in the repository.
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DEMO_DATA
+        value: "true"
+      # Password of admin@carnova.local, chosen by you; share it only where you want.
+      - key: DEMO_ADMIN_PASSWORD
+        sync: false
+      - key: PAYMENTS_MODE
+        value: mock
+      # No mail service on the free demo: account links are never sent, the UI says so.
+      - key: MAIL_ENABLED
+        value: "false"
+      # Set by Render's Cloudflare edge; clients cannot choose it like X-Forwarded-For entries.
+      - key: CLIENT_IP_HEADER
+        value: True-Client-IP
+      # Health checks must not query Neon, or its free compute never scales to zero.
+      - key: MANAGEMENT_HEALTH_DB_ENABLED
+        value: "false"
+      # Few, short-lived connections: Neon can suspend when nobody is using the demo.
+      - key: SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE
+        value: "4"
+      - key: SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE
+        value: "0"
+      - key: SPRING_DATASOURCE_HIKARI_IDLE_TIMEOUT
+        value: "120000"

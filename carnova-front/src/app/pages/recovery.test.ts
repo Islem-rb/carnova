@@ -10,6 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { of, Subject, throwError } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { Api } from '../core/api';
+import { Site } from '../core/site';
 import { Auth } from '../core/auth';
 import { Recovery } from './recovery';
 const injectors: EnvironmentInjector[] = [];
@@ -26,6 +27,7 @@ function setup(mode: 'forgot' | 'reset' | 'verify', token = 'x'.repeat(43)) {
     [
       FormBuilder,
       { provide: Api, useValue: api },
+      { provide: Site, useValue: { emailDelivery: () => true } },
       { provide: Auth, useValue: auth },
       { provide: Router, useValue: router },
       {

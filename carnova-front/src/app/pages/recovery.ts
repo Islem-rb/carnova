@@ -4,6 +4,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, finalize, of, switchMap } from 'rxjs';
 import { Api } from '../core/api';
+import { Site } from '../core/site';
 import { Auth } from '../core/auth';
 import { errorMessage } from '../core/models';
 import { matchingPasswords, passwordBytes } from '../core/password';
@@ -20,6 +21,7 @@ export class Recovery {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   readonly auth = inject(Auth);
+  readonly site = inject(Site);
   readonly mode = this.route.snapshot.data['recovery'] as 'forgot' | 'reset' | 'verify';
   private readonly token =
     new URLSearchParams(this.route.snapshot.fragment ?? '').get('token') ?? '';

@@ -20,6 +20,23 @@ import org.springframework.web.cors.*;
 
 @Configuration
 public class SecurityConfig {
+  /** Same policy as carnova-front/nginx.conf; keep both in sync. */
+  static final String CSP =
+      "default-src 'self'; script-src 'self' https://js.stripe.com; style-src 'self'"
+          + " 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'"
+          + " blob: data: https://api.stripe.com https://*.stripe.com; frame-src"
+          + " https://js.stripe.com https://hooks.stripe.com; worker-src 'self' blob:; object-src"
+          + " 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'";
+
+  /** Frontend files and client-side routes, when the Angular build is packaged in the jar. */
+  static boolean publicPage(jakarta.servlet.http.HttpServletRequest r) {
+    String path = r.getRequestURI().substring(r.getContextPath().length());
+    return ("GET".equals(r.getMethod()) || "HEAD".equals(r.getMethod()))
+        && !path.startsWith("/api/")
+        && !path.equals("/api")
+        && !path.startsWith("/actuator");
+  }
+
   @Bean
   PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder(12);
@@ -62,15 +79,20 @@ public class SecurityConfig {
         .cors(c -> c.configurationSource(source))
         .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .headers(h ->
-            h.contentSecurityPolicy(c ->
-                c.policyDirectives(
-                    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self'"
-                        + " 'unsafe-inline'; img-src 'self' data:; frame-ancestors 'none'")))
+            h.contentSecurityPolicy(c -> c.policyDirectives(CSP))
+                .referrerPolicy(r ->
+                    r.policy(
+                        org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter
+                            .ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
+                .addHeaderWriter(
+                    new org.springframework.security.web.header.writers.StaticHeadersWriter(
+                        "Permissions-Policy", "camera=(), microphone=(), geolocation=()")))
         .authorizeHttpRequests(a ->
             a.requestMatchers(HttpMethod.OPTIONS, "/**")
                 .permitAll()
                 .requestMatchers(
                     "/api/meta",
+                    "/error",
                     "/actuator/health",
                     "/v3/api-docs/**",
                     "/swagger-ui/**",
@@ -108,6 +130,8 @@ public class SecurityConfig {
                     "/uploads/**",
                     "/api/news/**",
                     "/api/payments/config")
+                .permitAll()
+                .requestMatchers(SecurityConfig::publicPage)
                 .permitAll()
                 .anyRequest()
                 .authenticated())

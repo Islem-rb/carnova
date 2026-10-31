@@ -1,0 +1,17 @@
+# Only what the root Dockerfile needs (the per-service Dockerfiles have their own ignore files).
+*
+!carnova-front/package.json
+!carnova-front/package-lock.json
+!carnova-front/angular.json
+!carnova-front/tsconfig.json
+!carnova-front/tsconfig.app.json
+!carnova-front/.postcssrc.json
+!carnova-front/src
+carnova-front/src/assets/*
+!carnova-front/src/assets/3d.glb
+carnova-front/src/**/*.test.ts
+!carnova-front/public
+!carnova-back/pom.xml
+!carnova-back/src
+carnova-back/src/test
+!carnova-back/models

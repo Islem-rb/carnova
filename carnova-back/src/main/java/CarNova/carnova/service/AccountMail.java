@@ -20,20 +20,31 @@ public class AccountMail {
   private final RestClient client;
   private final AsyncTaskExecutor executor;
   private final String frontend, sender;
+  private final boolean enabled;
 
   @Autowired
   public AccountMail(@Value("${app.mailpit-url:http://localhost:8025}") String url,
       @Value("${app.frontend-url:http://localhost:8080}") String frontend,
       @Value("${app.mail-from:bonjour@carnova.test}") String sender,
+      @Value("${app.mail-enabled:true}") boolean enabled,
       @Qualifier("applicationTaskExecutor") AsyncTaskExecutor executor) {
-    this(client(url), frontend, sender, executor);
+    this(client(url), frontend, sender, enabled, executor);
   }
 
   AccountMail(RestClient client, String frontend, String sender, AsyncTaskExecutor executor) {
+    this(client, frontend, sender, true, executor);
+  }
+
+  AccountMail(RestClient client, String frontend, String sender, boolean enabled, AsyncTaskExecutor executor) {
     this.client = client;
     this.frontend = origin(frontend);
     this.sender = sender;
+    this.enabled = enabled;
     this.executor = executor;
+  }
+
+  public boolean enabled() {
+    return enabled;
   }
 
   private static RestClient client(String url) {
@@ -45,6 +56,8 @@ public class AccountMail {
 
   @TransactionalEventListener
   public void committed(Message message) {
+    // Hosted demo without a mail service: links are never sent and never exposed elsewhere.
+    if (!enabled) return;
     // Submit only after commit, with no mailbox/network timing in the public reset response.
     try {
       executor.execute(() -> deliver(message));
