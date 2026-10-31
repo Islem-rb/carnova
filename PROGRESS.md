@@ -1,3 +1,11 @@
+# GitHub connection available — publication and hosted verification in progress
+
+The installed GitHub connector can now read the repository and Actions. The old hosted run at `c1cfe48` passed backend/frontend and six of seven browser tests; its 3D-to-driving interaction timed out. Static rendering/paint/reset corrections pass 43 frontend tests, production build without warnings and formatting. Connector publication and exact-revision CI are next. Terminal DNS and local Docker remain blocked; hosted Actions can provide the full stack/browser run.
+
+Publication will append to `redesign/v2` using an expected-head, non-forced update. The API creates a new commit SHA for the same reviewed tree; original local commits are preserved and the connector commit is merged locally without resetting/rebasing. See [decisions](docs/DECISIONS.md).
+
+---
+
 # Publication and live verification — blocked by current access
 
 **Attempted:** publish the latest account milestone (which includes requested commit `1916572`), retrieve GitHub Actions, connect to Docker/frontend/API, and launch the requested desktop/mobile browser cases. Push failed on GitHub DNS; hosted CI is unknown; Docker/local HTTP access is denied; Chromium is unavailable. **No application walkthrough or fresh screenshots were produced.**

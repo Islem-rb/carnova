@@ -107,6 +107,7 @@ export async function createScene(
   let speed = 0;
   let yaw = 0;
   let lastTime = performance.now();
+  let needsRender = true;
   const keys = new Set<string>();
   const paintMaterials: T.MeshStandardMaterial[] = [];
   function reset() {
@@ -119,6 +120,7 @@ export async function createScene(
     camera.position.set(5, 2.4, 6);
     controls.target.set(0, 0.8, 0);
     controls.update();
+    needsRender = true;
     onSpeed(0);
   }
   reset();
@@ -129,6 +131,7 @@ export async function createScene(
       renderer.setSize(w, h, false);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
+      needsRender = true;
     }
   });
   observer.observe(host);
@@ -199,12 +202,11 @@ export async function createScene(
     reset,
     rotate(v) {
       controls.autoRotate = v;
+      needsRender = true;
     },
     color(value) {
-      for (const m of paintMaterials) {
-        m.color.set(value);
-        m.needsUpdate = true;
-      }
+      for (const material of paintMaterials) material.color.set(value);
+      needsRender = true;
     },
     key(value, down) {
       if (down) keys.add(value);
@@ -218,7 +220,9 @@ export async function createScene(
     frame = requestAnimationFrame(loop);
     const dt = Math.min((now - lastTime) / 1000, 0.05);
     lastTime = now;
+    let changed = false;
     if (drive && car) {
+      changed = true;
       const forward = keys.has('ArrowUp') || keys.has('w') || keys.has('z');
       const back = keys.has('ArrowDown') || keys.has('s');
       const left = keys.has('ArrowLeft') || keys.has('a') || keys.has('q');
@@ -241,8 +245,13 @@ export async function createScene(
       camera.lookAt(car.position.clone().add(new T.Vector3(0, 0.7, 0)));
       light.position.set(car.position.x + 5, 8, car.position.z + 4);
       onSpeed(Math.round(Math.abs(speed) * 3.6));
-    } else controls.update();
-    renderer.render(scene, camera);
+    } else changed = controls.update();
+    // OrbitControls reports camera changes, including damping and auto-rotation.
+    // Static scenes and paint-only changes do not need continuous GPU work or shader recompilation.
+    if (changed || needsRender) {
+      needsRender = false;
+      renderer.render(scene, camera);
+    }
   }
   frame = requestAnimationFrame(loop);
   try {

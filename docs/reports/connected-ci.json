@@ -1,0 +1,31 @@
+{
+  "recordedAt": "2026-10-31T14:37:19.440916+00:00",
+  "githubConnection": "confirmed: repository read/write and Actions reads available",
+  "terminalGit": "DNS blocked",
+  "localDocker": "socket denied",
+  "oldHostedRun": {
+    "id": 41159293499,
+    "sha": "c1cfe482d9edf2c81b9ed3b0dbb4e2effeda6b19",
+    "url": "https://github.com/Islem-rb/carnova/actions/runs/41159293499",
+    "backend": "success",
+    "frontend": "success",
+    "platform": "failure",
+    "browserPassed": 6,
+    "browserFailed": 1,
+    "failure": "3D-to-driving link actionability timeout after rotation/repaint"
+  },
+  "correction": [
+    "render static viewer on camera/content changes",
+    "paint uniforms without shader recompilation",
+    "reset stops auto-rotation and synchronizes control state"
+  ],
+  "localChecks": {
+    "frontendTestsPassed": 43,
+    "productionBuild": "passed without warnings",
+    "initialKB": 419.44,
+    "transferKB": 109.68,
+    "format": "passed"
+  },
+  "publication": "pending connector append commit; original local history retained",
+  "newHostedRun": "pending"
+}

@@ -100,6 +100,11 @@ export class Viewer {
     this.rotating.update((v) => !v);
     this.scene?.rotate(this.rotating());
   }
+  resetView() {
+    this.rotating.set(false);
+    this.scene?.rotate(false);
+    this.scene?.reset();
+  }
   async fullscreen() {
     try {
       if (document.fullscreenElement) await document.exitFullscreen();

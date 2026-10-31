@@ -145,6 +145,10 @@ test('3D model loads, orbit controls work and driving is available', async ({ pa
     'true',
   );
   await page.getByRole('button', { name: 'Réinitialiser la vue' }).click();
+  await expect(page.getByRole('button', { name: 'Lancer la rotation' })).toHaveAttribute(
+    'aria-pressed',
+    'false',
+  );
   await page.getByRole('button', { name: 'Peinture bleu nuit' }).click();
   await page.getByRole('link', { name: 'Conduire', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Accélérer' })).toBeVisible({ timeout: 60000 });
