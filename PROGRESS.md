@@ -1,3 +1,15 @@
+# Published revision verified — one 3D browser failure remains
+
+**Publication confirmed:** user SSH push published `c1921b0` to `redesign/v2`, preserving `1916572`, the account milestone and subsequent fixes. The [actual hosted run](https://github.com/Islem-rb/carnova/actions/runs/41212911198) now verifies that exact revision; older “unpublished” entries below are historical.
+
+**Passed:** Java 17 Maven **60 tests** (including persistence), frontend **43 tests**, formatting and production build without warnings; four-service Compose startup; **9/10 browser checks**, including the full signup → login → listing/photo/GLB/mock checkout → search flows on desktop and touch-mobile, real captured-mail account recovery/verification, accessibility and visual capture.
+
+**Remaining:** the standalone 3D viewer → driving workflow still exceeds 90 seconds on both attempts. The prior rendering/reset correction improves idle work but has not resolved this failure. Trace artifact `13047108038` is available on the run; local transfer/visual inspection remains blocked in the Codex session. A user-local ZIP path was requested but not supplied before handoff.
+
+**Continue here:** [Claude Code handoff](docs/HANDOFF_CLAUDE.md), [machine-readable hosted evidence](docs/reports/hosted-ci-41212911198.json). Use the normal `/tmp/carnova-review` checkout on `redesign/v2`; the shared workspace's original Git index is stale/read-only. No new application changes were made after the pushed revision; this handoff adds local documentation only. Retest Claude's own permissions instead of assuming the previous session restrictions apply.
+
+---
+
 # GitHub connected — hosted CI inspected; publication blocked by tool approval
 
 **Confirmed:** the GitHub plugin can read CarNova and reports repository push permission. Remote `redesign/v2` still points to `c1cfe48`. Its [hosted run](https://github.com/Islem-rb/carnova/actions/runs/41159293499) passed backend/frontend and six browser tests; the 3D-to-driving case timed out. This is the older revision, not validation of the new account/mobile work.
