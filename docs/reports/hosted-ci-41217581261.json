@@ -1,0 +1,20 @@
+{
+  "recordedAt": "2026-10-31T16:10:00+00:00",
+  "sha": "e7bd2c1",
+  "publication": "pushed by Claude Code over the user's SSH remote, non-forced fast-forward c1921b0..e7bd2c1",
+  "runId": 41217581261,
+  "runUrl": "https://github.com/Islem-rb/carnova/actions/runs/41217581261",
+  "conclusion": "success",
+  "jobs": {
+    "backend": { "id": 124585233493, "conclusion": "success" },
+    "frontend": { "id": 124585233177, "conclusion": "success" },
+    "platform": { "id": 124585233414, "conclusion": "success", "durationSeconds": 366 }
+  },
+  "browserReportArtifact": { "id": 13049150380, "bytes": 1472532 },
+  "evidenceLimits": "Job conclusions and durations read from the public Actions API. Per-test log lines need an authenticated API token, which was not available in this session (no gh CLI on the host), so test counts are from local runs, not from these hosted logs.",
+  "previousRun": {
+    "runId": 41212911198,
+    "sha": "c1921b0",
+    "platform": "failure after 557 s: 3D model → driving test exceeded 90 s on both attempts"
+  }
+}

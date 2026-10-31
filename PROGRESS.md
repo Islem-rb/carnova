@@ -1,3 +1,17 @@
+# 3D/driving failure fixed — hosted CI fully green
+
+**Root cause (measured):** under SwiftShader, the WebGL implementation headless CI uses, the drive scene rendered every frame even when parked, at **~850 ms per frame** on a 16-core machine. The ToyCar's transmission/clearcoat/sheen materials, MSAA and soft shadows made each frame expensive, which starved the main thread so every Playwright action waited. Pinning the browser to 2 cores reproduced the hosted 90 s timeout on the old code locally. Studio reset also coasted on OrbitControls damping momentum.
+
+**Fix (`e7bd2c1`):** drive mode renders only while keys are held, the car moves or the camera settles; reset snaps; a software-WebGL tier drops MSAA, shadows and transmission and draws motion at reduced resolution with a sharp settled frame. GPU users keep full quality. No timeout, forced-click or test changes. Parked drive frame: 850 → **17 ms**; focused test on 2 cores: timeout → **25 s (3/3)**.
+
+**Hosted CI:** [run 41217581261](https://github.com/Islem-rb/carnova/actions/runs/41217581261) at `e7bd2c1`: backend, frontend and platform/browser jobs **all success** (platform 6 min 6 s; previously failed after 9 min 17 s). Evidence: [hosted-ci-41217581261.json](docs/reports/hosted-ci-41217581261.json). Hosted per-test logs need an authenticated token that this session did not have; the counts below are local.
+
+**Local verification on the production container:** 45 frontend unit tests (2 new for renderer detection), formatting, production build without warnings (419.49 KB / 109.71 KB); full browser suite **10/10**, three times during the work.
+
+**Also:** reviewing the regenerated captures found the recovery pages' back link running into the eyebrow ("connexionVOTRE ACCÈS"), fixed in `25ce2d5`; refreshed screenshots now include the recovery/verification/settings pages. Studio captures keep the earlier GPU look (see [decisions](docs/DECISIONS.md)). Lighthouse was not rerun.
+
+---
+
 # Published revision verified — one 3D browser failure remains
 
 **Publication confirmed:** user SSH push published `c1921b0` to `redesign/v2`, preserving `1916572`, the account milestone and subsequent fixes. The [actual hosted run](https://github.com/Islem-rb/carnova/actions/runs/41212911198) now verifies that exact revision; older “unpublished” entries below are historical.

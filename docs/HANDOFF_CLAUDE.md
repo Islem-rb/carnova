@@ -1,5 +1,7 @@
 # CarNova — Claude Code handoff
 
+> **Status (31 October 2026, Claude Code):** the remaining 3D/driving failure is fixed (`e7bd2c1`) and hosted run [41217581261](https://github.com/Islem-rb/carnova/actions/runs/41217581261) is green on all jobs. See `PROGRESS.md` and `docs/DECISIONS.md`. The rest of this document is the original handoff and is now historical. Note: this host had working Git/SSH push, Docker and network, but no `gh` CLI.
+
 ## Immediate objective
 
 Continue the existing redesign's **publish and verify** phase. Do not restart the redesign or add unrelated features. The latest application code is published; finish the remaining 3D browser failure, achieve green CI, review the captured desktop/mobile screens, update evidence/progress, and push `redesign/v2`.
